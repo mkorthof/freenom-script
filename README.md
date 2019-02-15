@@ -22,9 +22,11 @@ To run the script weekly can you use cron:
 
 ```
 0 9 * * 0 root bash -c 'sleep $((RANDOM \% 60))m; /usr/local/bin/freenom.sh -r -a' 
+0 * * * * root bash -c 'sleep $((RANDOM \% 15))m; /usr/local/bin/freenom.sh -u example.com'
 ```
 
-This example will run the script with "renew all domains" options every week on Sunday between 9.00 and 10.00
+This first line in this example will run the script with "renew all domains" options every week on Sunday between 9.00 and 10.00
+The second line updates the A record of example.com with the current client IP address at hourly intervals
 
 ### Usage
 
