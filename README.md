@@ -7,7 +7,7 @@ You'll need to have already registered an account at Freenom.com first with at l
 
 ### Installation
 
-Note this shell script requires "Bash"
+Note that this shell script requires "Bash"
 
 1) Suggested installation location: "/usr/local/bin"
 2) Edit "freenom.sh" and set your email and password which you use to sign-in to freenom.com
