@@ -21,7 +21,7 @@ To run the script weekly can you use cron:
 - create "/etc/cron.d/freenom" and add this line:
 
 ```
-0 9 * * 0 root bash -c 'sleep $((RANDOM \% 60))m; /usr/local/bin/freedns.sh -r -a' 
+0 9 * * 0 root bash -c 'sleep $((RANDOM \% 60))m; /usr/local/bin/freenom.sh -r -a' 
 ```
 
 This example will run the script with "renew all domains" options every week on Sunday between 9.00 and 10.00
