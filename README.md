@@ -18,7 +18,7 @@ This shell script uses "bash"
 To run the script weekly can you use cron:
 
 - copy "freenom.sh" to "/usr/local/bin"
-- create "/etc/cron.d/freenom" and add this line:
+- create "/etc/cron.d/freenom" and add:
 
 ```
 0 9 * * 0 root bash -c 'sleep $((RANDOM \% 60))m; /usr/local/bin/freenom.sh -r -a' 
