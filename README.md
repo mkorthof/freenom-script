@@ -30,7 +30,7 @@ To run the script automatically cron can be used:
 This first line in this example will run the script with "renew all domains" options every week on Sunday between 9.00 and 10.00
 The second line updates the A record of example.com with the current client IP address at hourly intervals
 
-Alternatively the same can be accomplished with a [https://www.freedesktop.org/software/systemd/man/systemd.timer.html](systemd.timer)
+Alternatively the same can be accomplished with a [systemd.timer](https://www.freedesktop.org/software/systemd/man/systemd.timer.html)
 
 ### Usage
 
