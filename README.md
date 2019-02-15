@@ -7,7 +7,7 @@ You'll need to have already registered an account at Freenom.com first with at l
 
 ### Installation
 
-## Manual
+#### Manual
 
 - Note this shell script requires "Bash"
 - Suggested installation location: "/usr/local/bin"
@@ -16,7 +16,7 @@ You'll need to have already registered an account at Freenom.com first with at l
 2) Test the script by running `freenom.sh -l`, make sure your domains are listed
 3) To update A record or Renew domains, see Usage below or `freenom.sh -h`
 
-## Cron 
+#### Cron 
 
 To run the script automatically can you use cron:
 
