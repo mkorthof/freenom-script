@@ -17,7 +17,7 @@ This shell script uses "bash"
 
 To run the script weekly can you use cron:
 
-- copy "freedns.sh" to "/usr/local/bin"
+- copy "freenom.sh" to "/usr/local/bin"
 - create "/etc/cron.d/freenom" and add this line:
 
 ```
