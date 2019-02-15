@@ -7,21 +7,20 @@ You'll need to have already registered an account at Freenom.com first with at l
 
 ### Installation
 
-#### Manual
+Note this shell script requires "Bash"
 
-- Note this shell script requires "Bash"
-- Suggested installation location: "/usr/local/bin"
+1) Suggested installation location: "/usr/local/bin"
+2) Edit "freenom.sh" and set your email and password which you use to sign-in to freenom.com
+3) Test the script by running `freenom.sh -l`, make sure your domains are listed
+4) To update A record or Renew domains, see Usage below or `freenom.sh -h`
 
-1) Edit "freenom.sh" and set your email and password which you use to sign-in to freenom.com
-2) Test the script by running `freenom.sh -l`, make sure your domains are listed
-3) To update A record or Renew domains, see Usage below or `freenom.sh -h`
-
-#### Cron 
+#### Cron:
 
 To run the script automatically can you use cron:
 
-- follow steps above, copy "freenom.sh" to "/usr/local/bin"
-- create a new file "/etc/cron.d/freenom" and add the following line(s):
+- Follow steps above, copy "freenom.sh" to "/usr/local/bin"
+- Create a new file "/etc/cron.d/freenom"
+- Add the following line(s):
 
 ```
 0 9 * * 0 root bash -c 'sleep $((RANDOM \% 60))m; /usr/local/bin/freenom.sh -r -a' 
