@@ -1,0 +1,9 @@
+html/
+freenom.com.ddns/
+*.bak
+*.html
+*.log
+*.tmp
+*.txt
+freenom.ip
+typescript
