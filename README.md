@@ -12,7 +12,8 @@ Note that this shell script requires "Bash"
 1) Suggested installation location: "/usr/local/bin"
 2) Edit "freenom.sh" and set your email and password which you use to sign-in to freenom.com
 3) Test the script by running `freenom.sh -l`, make sure your domains are listed
-4) To update A record or Renew domains, see Usage below or `freenom.sh -h`
+4) To update A record or Renew domains use the *-u* option, see Usage below or `freenom.sh -h`
+    (*nameservers must be set to the default Freenom NS*)
 
 #### Cron:
 
