@@ -46,17 +46,25 @@ freenom_passwd="yourpassword"
 
 freenom_update_ipver="4"
 
-# Log file location
+# Output files
+
+# Set path, 'basename' can be used for same filename as current script
+# Set freenom_update_ip_logall="0" to disable "ip unchanged" log messages
+# Path and files:
+# - /dir/to/freenom.log
+# - /dir/to/freenom.ip
+# - /dir/to/freenom.errorUpdateResult.html
 
 # Examples:
-#   - log to tmp: log_file="/tmp/freenom"
-#   - script dir: log_file="$(basename -s '.sh' "$0")"
+#   - tmpdir  : out_path="/tmp/$(basename $0)"
+#   - current : out_path="$(basename -s '.sh' "$0")"
 
-log_file="$(basename -s '.sh' "$0")"
+out_path="/var/log/$(basename -s '.sh' "$0")"
 
 # Optional overrides (ok to leave these as-is)
 
 freenom_update_ip="0"
+freenom_update_ip_logall="1"
 freenom_list="0"
 freenom_list_renewals="0"
 freenom_renew_domain="0"
@@ -99,20 +107,20 @@ elif echo -- "$@" | grep -qi -- '\-l'; then
   fi
   echo "..."; echo
 elif echo -- "$@" | grep -qi -- '\-u'; then
-  echo -e "[$(date)] Start - Update IP" >> "${log_file}.log"
-  freenom_update_ip="1"
+  echo -e "[$(date)] Start - Update IP." >> "${out_path}.log"
   if [ "$2" != "" ]; then
     freenom_domain_name="$2"
     if echo "$3" | grep "^[0-9]\+$"; then freenom_domain_id="$3"
       if echo -- "$@" | grep -qi -- '\-s'; then freenom_subdomain_name="$5"; fi
     else
+      freenom_update_ip="1"
       freenom_domain_id=""
       if echo -- "$@" | grep -qi -- '\-s'; then freenom_subdomain_name="$4"; fi
     fi
   fi
 elif echo -- "$@" | grep -qi -- '\-r'; then
-  echo -e "[$(date)] Start - Domain renewal" >> "${log_file}.log"
   freenom_renew_domain="1"
+  echo -e "[$(date)] Start - Domain renewal." >> "${out_path}.log"
   if echo -- "$@" | grep -qi -- '\-a'; then
     freenom_renew_all="1"
   else
@@ -160,11 +168,14 @@ if [ "$freenom_update_ip" -eq "1" ]; then
   current_ip="$(${getIp[$((RANDOM%${#getIp[@]}))]} 2>/dev/null | tr -d '"')"
 
   if [ "$current_ip" == "" ]; then
-      echo "[$(date)] Couldn't get current global ip address." >> "${log_file}.log"
-      exitCode="$(( exitCode+1 ))"
+      echo "[$(date)] Couldn't get current global ip address." >> "${out_path}.log"
+      #exitCode="$(( exitCode+1 ))"
       exit 1
   fi
-  if [ "$(cat "${log_file}.ip" 2>/dev/null)" == "$current_ip" ]; then
+  if [ "$(cat "${out_path}.ip" 2>/dev/null)" == "$current_ip" ]; then
+      if [ "$freenom_update_ip_logall" -eq "1" ]; then
+        echo "[$(date)] Update not needed, ip unchanged." >> "${out_path}.log"
+      fi
       exit 0
   fi
 fi
@@ -181,12 +192,12 @@ loginResult="$(curl $args -A "$agent" -e 'https://my.freenom.com/clientarea.php'
     -F "username=$freenom_email" -F "password=$freenom_passwd" -F "token=$token" \
     "https://my.freenom.com/dologin.php")"
 if [ "$(echo -e "$loginResult" | grep "Location: /clientarea.php?incorrect=true")" != "" ]; then
-    echo "[$(date)] Login failed." >> "${log_file}.log"
+    echo "[$(date)] Login failed." >> "${out_path}.log"
     rm -f "$cookie_file"
     exitCode="$(( exitCode+1 ))"
 fi
 
-# get domaindetails for all domains
+# get domaindetails for all domains, run always
 myDomainsURL="https://my.freenom.com/clientarea.php?action=domains&itemlimit=all&token=$token"
 # DEBUG: for debugging use local file instead:
 # DEBUG: myDomainsURL="file:///home/user/src/freenom/myDomainsPage"
@@ -201,8 +212,14 @@ if [ "$myDomainsPage" ]; then
     domainDetails="$( curl $args -A "$agent" --compressed -k -L -b "$cookie_file" "https://my.freenom.com/$u" )"
     domainId[$i]="$( echo $u | sed -ne 's/.*id=\([0-9]\+\).*/\1/p;g' )"
     domainName[$i]="$( echo -e "$domainDetails" | sed -n 's/.*Domain:\(.*\)<[a-z].*/\1/p' | sed -e 's/<[^>]\+>//g' -e 's/  *//g' )"
-    domainRegDate[$i]="$( echo -e "$domainDetails" | sed -n 's/.*Registration Date:\(.*\)<.*/\1/p' | sed -e 's/<[^>]\+>//g' -e 's/  *//g' )"
-    domainExpiryDate[$i]="$( echo -e "$domainDetails" | sed -n 's/.*Expiry date:\(.*\)<.*/\1/p' | sed 's/<[^>]\+>//g' )"
+    
+    # on ip update we just need a domain name
+    if [[ "$freenom_update_ip" -eq "1" && "${domainName[$i]}" == "$freenom_domain_name" ]]; then
+      break
+    else
+      domainRegDate[$i]="$( echo -e "$domainDetails" | sed -n 's/.*Registration Date:\(.*\)<.*/\1/p' | sed -e 's/<[^>]\+>//g' -e 's/  *//g' )"
+      domainExpiryDate[$i]="$( echo -e "$domainDetails" | sed -n 's/.*Expiry date:\(.*\)<.*/\1/p' | sed 's/<[^>]\+>//g' )"
+    fi
     i=$(( i+1 ))
   done  
 fi
@@ -220,7 +237,7 @@ if [[ "$freenom_list" -eq 0 && "$freenom_renew_all" -eq 0 ]]; then
   fi
 fi
 
-# if record does not exists, add new record, else update the first record; records[0]
+# update ip: if record does not exists, add new record, else update the first record; records[0]
 if [ "$freenom_update_ip" -eq "1" ]; then
   dnsManagementURL="https://my.freenom.com/clientarea.php?managedns=$freenom_domain_name&domainid=$freenom_domain_id"
   dnsManagementPage="$(curl $args -A "$agent" --compressed -k -L -b "$cookie_file" "$dnsManagementURL")"
@@ -289,6 +306,7 @@ if [ "$freenom_list" -eq "1" ]; then
     printf "[%02d] Domain: \"%s\" Id: \"%s\" RegDate: \"%s\" ExpiryDate: \"%s\"%s\n" \
       "$((i+1))" "${domainName[$i]}" "${domainId[$i]}" "${domainRegDate[$i]}" "${domainExpiryDate[$i]}" "$showRenewal"
   done
+  echo
   exit 0
 fi
 
@@ -359,7 +377,7 @@ func_renewDomain() {
         -F "paymentmethod=credit" \
         "$renewalURL" 2>&1)"
         if [ "$renewalResult" ] ; then
-          echo -e "$renewalResult" > "${log_file}.renewalResult_${domainId[$i]}.html"
+          echo -e "$renewalResult" > "${out_path}.renewalResult_${domainId[$i]}.html"
           renewOK="$renewOK\nSuccessfully renewed domain ${domainName[$i]} (${domainId[$i]} ${renewalPeriod})"
         else
           exitCode="$(( exitCode+1 ))"
@@ -399,20 +417,20 @@ rm -f "$cookie_file"
 
 if [ "$freenom_update_ip" -eq "1" ]; then
   if [ "$(echo -e "$updateResult" | grep "$current_ip")" == "" ]; then
-      echo "[$(date)] Update failed. (${freenom_domain_name} $freenom_domain_id)" >> "${log_file}.log"
-      echo -e "$updateResult" > "${log_file}.errorUpdateResult.html"
+      echo "[$(date)] Update failed. (${freenom_domain_name} ${freenom_domain_id})" >> "${out_path}.log"
+      echo -e "$updateResult" > "${out_path}.errorUpdateResult.html"
       exitCode="$(( exitCode+1 ))"
   else
       # save ip address
-      echo -n "$current_ip" > "${log_file}.ip"
-      #exit 0
+      echo -n "$current_ip" > "${out_path}.ip"
+      echo "[$(date)] Update successful. (${freenom_domain_name} ${freenom_domain_id} ${current_ip})" >> "${out_path}.log"
   fi
 fi
 
 # write results to to logfile, exit with exitcode
 if [ "$freenom_renew_domain" -eq "1" ]; then
   if [ "$renewOK" ]; then
-    echo -e "[$(date)] renewal OK: $renewOK" >> "${log_file}.log"
+    echo -e "[$(date)] renewal OK: $renewOK" >> "${out_path}.log"
   fi
   if [ "$exitCode" -gt "0" ]; then
     if [ -z "$renewError" ]; then
@@ -421,9 +439,9 @@ if [ "$freenom_renew_domain" -eq "1" ]; then
             sed -e 's/<[^>]\+>//g' -e 's/\(  \|\t\|\)//g' | sed ':a;N;$!ba;s/\n/, /g')"
       fi
     fi
-    echo -e "[$(date)] Renewal failed. Error(s): ${renewError}" >> "${log_file}.log"
+    echo -e "[$(date)] Renewal failed. Error(s): ${renewError}" >> "${out_path}.log"
   else
-    echo "[$(date)] Successfully renewed domain $freenom_domain_name (${freenom_domain_id/% /})" >> "${log_file}.log"
+    echo "[$(date)] Successfully renewed domain $freenom_domain_name (${freenom_domain_id/% /})" >> "${out_path}.log"
   fi
 fi
 
