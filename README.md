@@ -4,6 +4,7 @@ This shell script makes sure your Freenom domains don't expire by auto renewing 
 It's original functionality of updating an A record with the clients ip address is also retained.
 
 You'll need to have already registered an account at Freenom.com first with at least one (free) domain added before you can run the script.
+For "DynDNS" (updating A record) nameservers must be set to the default Freenom NS. To force updating remove "freenom.ip" file.
 
 ### Installation
 
@@ -12,8 +13,7 @@ Note that this shell script requires "Bash"
 1) Suggested installation location: "/usr/local/bin"
 2) Edit "freenom.sh" and set your email and password which you use to sign-in to freenom.com
 3) Test the script by running `freenom.sh -l`, make sure your domains are listed
-4) To update A record or Renew domains use the *-u* option, see Usage below or `freenom.sh -h`  
-    (*nameservers must be set to the default Freenom NS*)
+4) To update A record or Renew domains, see Usage below or `freenom.sh -h`  
 
 #### Cron:
 
