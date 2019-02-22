@@ -29,8 +29,8 @@
 #   freenom_passwd="pswd"
 #   source "/home/${LOGNAME}/.secret/.freenom"
 
-freenom_email="you@example.com"
-freenom_passwd="yourpassword"
+#freenom_email="you@example.com"
+#freenom_passwd="yourpassword"
 
 # The following is not needed anymore and can be skipped as we get domain_id's automatically now
 # NOTE: There is a "hidden" option to specificy domain_id's as 3rd argument if you need it
@@ -79,27 +79,30 @@ debug=0
 # Main # 
 ########
 
-# help and handle arguments
-if echo "$*" | grep -qi '\-h'; then
-cat <<-_EOF_
+# help function, handle arguments
+func_help () {
+  cat <<-_EOF_
 
-USAGE: $0 [-l|-u|-r] [-d|-a] [domain] [-s <subdomain>]
+  USAGE: $0 [-l|-u|-r] [-d|-a] [domain] [-s <subdomain>]
 
-OPTIONS:  -l    List domains with id's
-                add [-d] to show renewal Details 
-          -u    Update <domain> a-record with current ip
-                add [-s] to update <Subdomain>
-          -r    Renew domain(s), add [-a] for All domains
+  OPTIONS:  -l    List domains with id's
+                  add [-d] to show renewal Details 
+            -u    Update <domain> a-record with current ip
+                  add [-s] to update <Subdomain>
+            -r    Renew domain(s), add [-a] for All domains
 
-EXAMPLE:  ./$(basename "$0") -u example.com -s mail
-          ./$(basename "$0") -r example.com
-          ./$(basename "$0") -r -a
+  EXAMPLE:  ./$(basename "$0") -u example.com -s mail
+            ./$(basename "$0") -r example.com
+            ./$(basename "$0") -r -a
 
-NOTE:     Using -u or -r and specifying "domain" as argument
-          overrides setting in "$(basename "$0")"
+  NOTE:     Using -u or -r and specifying "domain" as argument
+            overrides setting in "$(basename "$0")"
 
 _EOF_
-exit 0
+  exit 0
+}
+if echo "$@" | grep -qi '\-h'; then
+  func_help
 elif echo -- "$@" | grep -qi -- '\-l'; then
   freenom_list="1"
   echo
@@ -131,6 +134,8 @@ elif echo -- "$@" | grep -qi -- '\-r'; then
       if echo "$3" | grep "^[0-9]\+$"; then freenom_domain_id="$3"; else freenom_domain_id=""; fi
     fi
   fi
+else
+  func_help
 fi
 
 if [ "$debug" -eq 1 ]; then
@@ -179,7 +184,7 @@ if [ "$freenom_update_ip" -eq "1" ]; then
   fi
   if [ "$(cat "${out_path}.ip" 2>/dev/null)" == "$current_ip" ]; then
       if [ "$freenom_update_ip_logall" -eq "1" ]; then
-        echo "[$(date)] Done. Update not needed, ip unchanged" >> "${out_path}.log"
+        echo "[$(date)] Done - Update not needed, ip unchanged" >> "${out_path}.log"
       fi
       exit 0
   fi
@@ -237,7 +242,8 @@ if [[ "$freenom_list" -eq 0 && "$freenom_renew_all" -eq 0 ]]; then
     done
     if [ "$freenom_domain_id" == "" ]; then
       echo "ERROR: Could not find Domain ID for \"$freenom_domain_id\""
-      echo "       Try setting \"freenom_domain_id\" in script or use \"$0 [-u|-r] [domain] [id]\""
+      echo "       Try setting \"freenom_domain_id\" in script"
+      echo "       Or use: \"$0 [-u|-r] [domain] [id]\""
       exit 1
     fi
   fi
@@ -448,15 +454,15 @@ if [ "$freenom_renew_domain" -eq "1" ]; then
             sed -e 's/<[^>]\+>//g' -e 's/\(  \|\t\|\)//g' | sed ':a;N;$!ba;s/\n/, /g')"
       fi
     fi
-    echo -e "[$(date)] Did not renew domain(s), reason: ${renewError}" >> "${out_path}.log"
+    echo -e "[$(date)] Did not renew these domain(s), reason: ${renewError}" >> "${out_path}.log"
   else
     echo "[$(date)] Successfully renewed domain $freenom_domain_name (${freenom_domain_id/% /})" >> "${out_path}.log"
   fi
 fi
 
-echo -e "[$(date)] Done" >> "${out_path}.log"
+echo -n "[$(date)] Done" >> "${out_path}.log"
 if [ "$exitCode" -gt "0" ]; then
-  echo " (with errors)" >> "${out_path}.log"
+  echo "  - with errors" >> "${out_path}.log"
   exit 1
 else
   echo >> "${out_path}.log"
