@@ -36,20 +36,20 @@ Alternatively the same can be accomplished with a [systemd.timer](https://www.fr
 ### Usage
 
 ```
-USAGE: ./freenom.sh [-l|-r|-u] [-n|-a] [domain] [-s <subdomain>]
+USAGE: ./freenom.sh [-l|-u|-r] [-d|-a] [domain] [-s <subdomain>]
 
-OPTIONS:  -l    list domains with id's
-                add [-n] to show renewal details
-          -u    update <domain> A record with current ip
-                add [-s] to update <subdomain>
-          -r    renew domain(s), add [-a] for all domains
+OPTIONS:  -l    List domains with id's
+                add [-d] to show renewal Details
+          -u    Update <domain> a-record with current ip
+                add [-s] to update <Subdomain>
+          -r    Renew domain(s), add [-a] for All domains
 
 EXAMPLE:  ./freenom.sh -u example.com -s mail
           ./freenom.sh -r example.com
           ./freenom.sh -r -a
 
-NOTE:     Using -u or -r and specifying "domain" overrides
-          setting in "freenom.sh"
+NOTE:     Using -u or -r and specifying "domain" as argument
+          overrides setting in "freenom.sh"
 ```
 
 ### Sources 
