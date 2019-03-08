@@ -36,9 +36,10 @@
 # NOTE: There is a "hidden" option to specificy domain_id's as 3rd argument if you need it
 #   Open DNS management page in your browser, URL vs settings:
 #   https://my.freenom.com/clientarea.php?managedns={freenom_domain_name}&domainid={freenom_domain_id}
-#   freenom_domain_name="domain.name"
+#   freenom_domain_name="example.cf"
 #   freenom_subdomain_name=""
-#   freenom_domain_id="000000000"
+#   freenom_domain_id="1234567890"
+
 
 # Use ipv4 or ipv6: [4/6]
 
