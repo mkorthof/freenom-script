@@ -1,9 +1,11 @@
 html/
-freenom.com.ddns/
+log/
+out/
+result/
+tmp/
 *.bak
 *.html
+*.ip
 *.log
 *.tmp
 *.txt
-freenom.ip
-typescript
