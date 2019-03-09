@@ -5,6 +5,7 @@ It's original functionality of updating an A record with the clients ip address 
 
 You'll need to have already registered an account at Freenom.com first with at least one (free) domain added before you can run the script.
 For "DynDNS" (updating A record) nameservers must be set to the default Freenom NS. To force updating remove "freenom.ip" file.
+A records are now added without replacing exiting record, if the record already exists it is modified. 
 
 ### Installation
 
@@ -33,23 +34,62 @@ The second line updates the A record of example.com with the current client IP a
 
 Alternatively the same can be accomplished with a [systemd.timer](https://www.freedesktop.org/software/systemd/man/systemd.timer.html)
 
-### Usage
+#### Get Current IP:
+
+The script uses 2 methods - HTTP  and DNS - to get your IP address from a number of public services:
+  - `curl https://checkip.amazonaws.com`
+  - `dig TXT +short o-o.myaddr.l.google.com @ns1.google.com`
+
+There are a few more services defined for redundancy, the script will choose one at random.
+
+In case of issues try running the curl and dig command above manually.
+ - To list all services check the getIp array, e.g. `grep getIp freenom.sh`
+ - To disable IPv6: set `freenom_update_ipv="4"`
+ - To disable dns/dig: set `freenom_update_dig="0"`
+
+By default the script will retry 3 times to get ip.
+
+### Optional overrides:
+
+The following options can be changed in config, they are however OK to leave as-is.
+
+#### IP update:
 
 ```
-USAGE: ./freenom.sh [-l|-u|-r] [-d|-a] [domain] [-s <subdomain>]
+freenom_update_force="0"      # force ip update, even if unchanged
+freenom_update_ttl="3600"     # ttl changed from 14440 to 3600
+freenom_update_ip_retry="3"   # number of retries getting ip
+freenom_update_ip_logall="1"  # "0" skips 'ip unchanged' log msg
+```
 
-OPTIONS:  -l    List domains with id's
-                add [-d] to show renewal Details
-          -u    Update <domain> a-record with current ip
-                add [-s] to update <Subdomain>
-          -r    Renew domain(s), add [-a] for All domains
+#### Actions:
 
-EXAMPLE:  ./freenom.sh -u example.com -s mail
-          ./freenom.sh -r example.com
-          ./freenom.sh -r -a
+```
+freenom_update_ip="0"
+freenom_list="0"
+freenom_list_renewals="0"
+freenom_renew_domain="0"
+freenom_renew_all="0"
+```
 
-NOTE:     Using -u or -r and specifying "domain" as argument
-          overrides setting in "freenom.sh"
+### Usage:
+
+```
+  USAGE: /usr/local/bin/freenom.sh [-l|-u|-r][-e] [-d|-a] [domain] [-s <subdomain>]
+
+  OPTIONS:  -l    List domains with id's
+                  add [-d] to show renewal Details
+            -u    Update <domain> a-record with current ip
+                  add [-s] to update <Subdomain>
+            -r    Renew domain(s), add [-a] for All domains
+            -e    View error output from update
+
+  EXAMPLE:  ./freenom.sh -u example.com -s mail
+            ./freenom.sh -r example.com
+            ./freenom.sh -r -a
+
+  NOTE:     Using -u or -r and specifying "domain" as argument
+            overrides setting in "freenom.sh"
 ```
 
 ### Sources 
@@ -66,4 +106,6 @@ NOTE:     Using -u or -r and specifying "domain" as argument
 - made updating ip optional
 - added domain renewals
 - added logging
+- handling of existing dns records (ip update)
+- retry getting current ip
 
