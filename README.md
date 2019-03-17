@@ -108,4 +108,6 @@ freenom_renew_all="0"
 - added logging
 - handling of existing dns records (ip update)
 - retry getting current ip
+- preparations for seperate .conf (next version)
+
 
