@@ -15,7 +15,6 @@
 #           - made updating ip optional                                       #
 #           - added domain renewals                                           #
 #           - handling of existing dns records (ip update)                    #
-#           - retry getting current ip                                        #
 #                                                               v2019-03-10   #
 ###############################################################################
 
