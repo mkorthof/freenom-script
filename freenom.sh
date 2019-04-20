@@ -1,157 +1,124 @@
 #!/bin/bash
 
 ###############################################################################
+# Domain Renewal and Dynamic DNS shell script for freenom.com                 #
+###############################################################################
 #                                                                             #
-# Domain Renewal and Dynamic DNS support shell script for freenom.com         #
 # Updates IP address and/or auto renews domain(s) so they do not expire       #
-#                                                                             #
-# Sources:  https://github.com/dabendan2/freenom-dns                          #
-#           https://gist.github.com/a-c-t-i-n-i-u-m/bc4b1ff265b277dbf195      #
-#           https://gist.github.com/pgaulon/3a844a626458f56903d88c5bb1463cc6  #
-#           https://github.com/patrikx3/freenom                               #
-#                                                                             #
-# Changes:  - added referer url to curl to fix login                          #
-#           - fixed token                                                     #
-#           - made updating ip optional                                       #
-#           - added domain renewals                                           #
-#           - handling of existing dns records (ip update)                    #
-#                                                               v2019-03-10   #
+# See README.md for more information                                          #
+#                                                               v2019-04-20   #
 ###############################################################################
-
-############
-# SETTINGS #
-############
-
-# Login data, set variables for email/password -OR- source a "secrets" file
-# Examples:
-#   freenom_email="main@address"
-#   freenom_passwd="pswd"
-#   source "/home/${LOGNAME}/.secret/.freenom"
-
-#freenom_email="you@example.com"
-#freenom_passwd="yourpassword"
-
-
-###############################################################################
-#
-# The following is not needed anymore and can be skipped as we get domain_id's automatically now
-# [!] There is a "hidden" option to specify domain_id's as 3rd argument if you need it
-#
-# Open DNS management page in your browser, URL vs settings:
-# https://my.freenom.com/clientarea.php?managedns={freenom_domain_name}&domainid={freenom_domain_id}
-#   freenom_domain_name="example.cf"
-#   freenom_domain_id="1234567890"
-#
-###############################################################################
-
-freenom_domain_name="example.cf"
-freenom_subdomain_name=""
-freenom_domain_id="1234567890"
-
-# Get current IP
-freenom_update_ipv="4"    # use ipv4 or ipv6: [4/6]
-freenom_update_dig="1"    # set to "1" to also use 'dig' or "0" for curl only
-
-# Output files
-# Set path, 'basename' can be used for same filename as current script
-# Set freenom_update_ip_logall="0" to disable "ip unchanged" log messages
-# Path and files:
-#   - /dir/to/freenom.log
-#   - /dir/to/freenom.ip
-#   - /dir/to/freenom.errorUpdateResult.html
-# Examples:
-#   - /tmp or 'current' dir:
-#     out_path="/tmp/$(basename $0)"
-#     out_path="$(basename -s '.sh' "$0")"
-
-out_path="/var/log/$(basename -s '.sh' "$0")"
-
-# Optional overrides (ok to leave these as-is)
-freenom_update_force="0"      # force ip update, even if unchanged
-freenom_update_ttl="3600"     # ttl changed from 14440 to 3600
-freenom_update_ip_retry="3"   # number of retries getting ip
-freenom_update_ip_logall="1"  # "0" skips 'ip unchanged' log msg
-freenom_update_ip="0"
-freenom_list="0"
-freenom_list_renewals="0"
-freenom_renew_domain="0"
-freenom_renew_all="0"
-debug="0"
-
-###################
-# END OF SETTINGS #
-###################
 
 
 ########
 # Main # 
 ########
 
+scriptName="$(basename "$0")"
+
 # Check if freenom.conf file exist, source if it does
 if [ -z $scriptConf ]; then
   scriptConf="$(dirname "$0")/$(basename -s '.sh' "$0").conf"
 fi
 if [ -s "$scriptConf" ]; then
-  if [ "$debug" -eq 1 ]; then echo "DEBUG: Using scriptConf=$scriptConf"; fi
   source "$scriptConf" || { echo "Error: could not load $scriptConf"; exit 1; }
+else
+  scriptConf="$scriptName"
 fi
+if [ "$debug" -eq 1 ]; then echo "DEBUG: conf scriptConf=$scriptConf"; fi
 
 # Function help
 func_help () {
-  scriptName="$(basename "$0")"
   cat <<-_EOF_
 
-  USAGE: $0 [-l|-u|-r][-e] [-d|-a] [domain] [-s <subdomain>]
+USAGE:
 
-  OPTIONS:  -l    List domains with id's
+$scriptName [-l][-r][-u|-z <domain>][-s <subdomain>] [-d|-a] [-c <file>][-e][-o]
+
+OPTIONS:    -l    List domains with id's
                   add [-d] to show renewal Details 
+            -r    Renew domain
+                  add [-a] to renew All domains
             -u    Update <domain> a-record with current ip
                   add [-s] to update <Subdomain>
-            -r    Renew domain(s), add [-a] for All domains
-            -e    View error output from update
+            -z    Zone output listing dns records
 
-  EXAMPLE:  ./$scriptName -u example.com -s mail
+            -c    Config <file> location
+            -e    Error output from update result
+            -o    Output from renewal result
+
+EXAMPLES:   ./$scriptName -l -d
             ./$scriptName -r example.com
             ./$scriptName -r -a
+            ./$scriptName -u example.com -s mail
 
-  NOTE:     Using -u or -r and specifying "domain" as argument
-            overrides setting in "${scriptName}"
+NOTES:      Using [-u] or [-r] and specifying <domain> as argument
+            overrides any settings in script or config file
 
 _EOF_
   exit 0
 }
 
-# Function showErr: format error html and output as text
-func_showErr () {
-  if [ -s "${out_path}.errorUpdateResult.html" ]; then
-    for i in lynx links links2 wb3m elinks curl cat; do
-      if which $i >/dev/null 2>&1; then
-        break
-      fi
-    done
-    case $i in
-      lynx|links|links2|w3m|elinks)
-        [ $i = "lynx" ] && args="-nolist"
-        [ $i = "elinks" ] && args="-no-numbering -no-references"
-        $i -dump $args "${out_path}.errorUpdateResult.html" | sed '/ \([*+□•] \?.\+\|\[.*\]\)/d'
-      ;;
-      curl|cat)
-        [ $i = "curl" ] && args="-s file:///"
-        $i ${args}"${out_path}.errorUpdateResult.html" | \
-          sed -e '/<a href.*>/d' -e '/<style type="text\/css">/,/</d' -e '/class="lang-/d' \
-              -e 's/<[^>]\+>//g' -e '/[;}{):,>]$/d' -e '//d' -e 's/\t//g' -e '/^ \{2,\}$/d' -e '/^$/d'
-      ;;
-      *)
-        echo "ERROR: Cannot display \"${out_path}.errorUpdateResult.html\""
-        exit 1
-      ;;
-    esac
+# Function getDomArgs: get domain name, id (digits only) and subdomain
+func_getDomArgs () {
+  if [[ "$freenom_list_records" -eq 1 || "$freenom_renew_domain" -eq 1 ]]; then
+    if [ "$2" != "" ]; then freenom_domain_name="$2"; fi
+  fi
+  if [ "$freenom_renew_domain" -eq 1 ]; then
+    if echo "$3" | grep "^[0-9]\+$"; then
+      freenom_domain_id="$3"
+    else
+      freenom_domain_id=""
+    fi
   else
-    echo "File \"${out_path}.errorUpdateResult.html\" not found"
+    if echo "$4" | grep -q "^[0-9]\+$"; then
+      freenom_domain_id="$4"
+      if echo -- "$@" | grep -qi -- '\-s'; then freenom_subdomain_name="$6"; fi
+    elif echo "$3" | grep -q "^[0-9]\+$"; then
+      freenom_domain_id="$3"
+      if echo -- "$@" | grep -qi -- '\-s'; then freenom_subdomain_name="$5"; fi
+    else
+      if [ "$freenom_list_records" -eq 1 ]; then
+        freenom_subdomain_name="$4"
+      else
+        #freenom_domain_id=""
+        if echo -- "$@" | grep -qi -- '\-s'; then freenom_subdomain_name="$4"; fi
+      fi
+    fi
   fi
 }
 
+# Function showResult: format html and output as text
+func_showResult () {
+  lsFile="$( ls -l "$1" | cut -d' ' -f 6- )"
+  printf "\n%s :\n\n" "$lsFile"
+  for i in lynx links links2 wb3m elinks curl cat; do
+    if which $i >/dev/null 2>&1; then
+      break
+    fi
+  done
+  case $i in
+    lynx|links|links2|w3m|elinks)
+      [ $i = "lynx" ] && args="-nolist"
+      [ $i = "elinks" ] && args="-no-numbering -no-references"
+      $i -dump $args "$1" | sed '/ \([*+□•] \?.\+\|\[.*\]\)/d'
+    ;;
+    curl|cat)
+      [ $i = "curl" ] && args="-s file:///"
+      $i ${args}"${1}" | \
+        sed -e '/<a href.*>/d' -e '/<style type="text\/css">/,/</d' -e '/class="lang-/d' \
+            -e 's/<[^>]\+>//g' -e '/[;}{):,>]$/d' -e '//d' -e 's/\t//g' -e '/^ \{2,\}$/d' -e '/^$/d'
+    ;;
+    *)
+      echo "Error: Cannot display \"$1\""
+      exit 1
+    ;;
+  esac
+}
+
 # handle arguments
+
+# set config file
 if echo "$@" | grep -qi '\-c'; then
   if [ -s $2 ]; then
     scriptConf="$1"
@@ -160,53 +127,79 @@ if echo "$@" | grep -qi '\-c'; then
     echo "Error: invalid config specified"
   fi
 fi
-if echo "$@" | grep -qi '\-h'; then
+
+# help
+if echo -- "$@" | grep -qi '\-h'; then
   func_help
-elif echo -- "$@" | grep -qi -- '\-l'; then
+  exit 0
+fi
+if ! echo -- "$1" | grep -qi '\-'; then
+  func_help
+  exit 1
+fi
+
+# list domains and id's, exit (unless list_records is set)
+if echo -- "$@" | grep -qi -- '\-l'; then
   freenom_list="1"
-  echo
-  echo -n "Listing Domains and ID's"
+  lMsg=""
+  # list domains with details
   if echo -- "$@" | grep -Eqi -- '\-d|\-n'; then
-    echo -n " with renewal details, this might take a while"
     freenom_list_renewals="1"
+    lMsg=" with renewal details, this might take a while"
   fi
-  echo "..."; echo
+  printf "\nListing Domains and ID's%s...\n" "$lMsg"
+  echo
+# list dns records
+elif echo -- "$@" | grep -qi -- '\-z'; then
+  freenom_list_records="1"
+  func_getDomArgs "$@"
+# update ip
 elif echo -- "$@" | grep -qi -- '\-u'; then
   freenom_update_ip="1"
-  echo -e "[$(date)] Start - Update IP" >> "${out_path}.log"
-  if [ "$2" != "" ]; then
-    freenom_domain_name="$2"
-    if echo "$3" | grep "^[0-9]\+$"; then freenom_domain_id="$3"
-      if echo -- "$@" | grep -qi -- '\-s'; then freenom_subdomain_name="$5"; fi
-    else
-      #freenom_domain_id=""
-      if echo -- "$@" | grep -qi -- '\-s'; then freenom_subdomain_name="$4"; fi
-    fi
-  fi
+  func_getDomArgs "$@"
+  echo -e "[$(date)] Start - Update ip" >> "${out_path}.log"
+# renew domains
 elif echo -- "$@" | grep -qi -- '\-r'; then
   freenom_renew_domain="1"
-  echo -e "[$(date)] Start - Domain renewal" >> "${out_path}.log"
   if echo -- "$@" | grep -qi -- '\-a'; then
     freenom_renew_all="1"
-  else
-    if [ "$2" != "" ]; then freenom_domain_name="$2"
-      if echo "$3" | grep "^[0-9]\+$"; then freenom_domain_id="$3"; else freenom_domain_id=""; fi
-    fi
   fi
+  echo -e "[$(date)] Start - Domain renewal" >> "${out_path}.log"
+# error output update result
 elif echo -- "$@" | grep -qi -- '\-e'; then
-  func_showErr
+  if [ -s "${out_path}.errorUpdateResult.html" ]; then
+    func_showResult "${out_path}.errorUpdateResult.html"
+  else
+    echo "File \"${out_path}.errorUpdateResult.html\" not found"
+  fi
   exit 0
+# output renewal result
+elif echo -- "$@" | grep -qi -- '\-o'; then
+    i=0
+    for r in ${out_path}.renewalResult_*.html; do
+      if [ -s "$r" ]; then
+        func_showResult "$r"
+        i=$((i+1))
+      fi
+    done
+    if [ "$i" -eq 0 ]; then
+      echo "Renewal result file not found"
+    fi
+    exit 0
 else
   func_help
 fi
 
 if [ "$debug" -eq 1 ]; then
-  echo "DEBUG: 1: $1 2: $2 3: $3 4: $4 5: $5"
-  echo "DEBUG: freenom_domain_name=$freenom_domain_name freenom_domain_id=$freenom_domain_id freenom_subdomain_name=$freenom_subdomain_name"
-  echo "DEBUG: freenom_update_ip=$freenom_update_ip freenom_update_force=$freenom_update_force"
-  echo "DEBUG: freenom_list=$freenom_list freenom_list_renewals=$freenom_list_renewals"
-  echo "DEBUG: freenom_renew_domain=$freenom_renew_domain freenom_renew_all=$freenom_renew_all"
+  echo "DEBUG: args 1=$1 2=$2 3=$3 4=$4 5=$5  6=$6"
+  echo "DEBUG: args freenom_domain_name=$freenom_domain_name freenom_domain_id=$freenom_domain_id freenom_subdomain_name=$freenom_subdomain_name"
+  echo "DEBUG: action freenom_update_ip=$freenom_update_ip freenom_update_force=$freenom_update_force freenom_list_records=$freenom_list_records"
+  echo "DEBUG: action freenom_list=$freenom_list freenom_list_renewals=$freenom_list_renewals"
+  echo "DEBUG: action freenom_renew_domain=$freenom_renew_domain freenom_renew_all=$freenom_renew_all"
 fi
+
+#echo DEBUG: args exit
+#exit
 
 # generate "random" useragent string
 agentStr[0]="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36"
@@ -224,14 +217,14 @@ agent="${agentStr[$((RANDOM%${#agentStr[@]}))]}"
 args="-s"
 #args="-s -I -L -v -o /dev/null"
 
-exitCode="0"
+warnCount="0"; errCount="0"
 
 # get current ip using dig or curl
-if [ "$freenom_update_ip" -eq "1" ]; then
+if [ "$freenom_update_ip" -eq 1 ]; then
   getIp[0]="curl -A $agent -${freenom_update_ipv} -m 10 -s https://checkip.amazonaws.com"
   getIp[1]="curl -A $agent -${freenom_update_ipv} -m 10 -s https://diagnostic.opendns.com/myip"
   getIp[2]="curl -A $agent -${freenom_update_ipv} -m 10 -s https://www.ripe.net/@@ipaddress"
-    if [ "$freenom_update_dig" -eq "1" ]; then
+    if [ "$freenom_update_dig" -eq 1 ]; then
     getIp[3]="dig -${freenom_update_ipv} TXT +short o-o.myaddr.l.google.com @ns1.google.com"
       if [ "${freenom_update_ipv}" -eq 4 ]; then
         getIp[4]="dig -4 +short myip.opendns.com @resolver1.opendns.com"
@@ -244,21 +237,22 @@ if [ "$freenom_update_ip" -eq "1" ]; then
   i=0
   while [[ "$current_ip" == "" && $i -lt "$freenom_update_ip_retry" ]]; do
     current_ip="$(${getIp[$((RANDOM%${#getIp[@]}))]} 2>/dev/null | tr -d '"')"
-    if [ "$debug" -eq 1 ]; then echo "DEBUG: i=$i current_ip=$current_ip"; fi
+    if [ "$debug" -eq 1 ]; then echo "DEBUG: getip i=$i current_ip=$current_ip"; fi
     i=$((i+1))
   done
   if [ "$current_ip" == "" ]; then
-    m="Could not get current global ip address"
-    echo "ERROR: $m"; echo "[$(date)] $m" >> "${out_path}.log"
-    #exitCode="$(( exitCode+1 ))"
+    eMsg="Could not get current local ip address"
+    echo "Error: $eMsg"; echo "[$(date)] $eMsg" >> "${out_path}.log"
     exit 1
   fi
   if [ "$freenom_update_force" -eq 0 ]; then
     if [ "$(cat "${out_path}.ip" 2>/dev/null)" == "$current_ip" ]; then
-        if [ "$freenom_update_ip_logall" -eq "1" ]; then
-          echo "[$(date)] Done - Update not needed, ip unchanged" >> "${out_path}.log"
-        fi
-        exit 0
+      if [ "$freenom_update_ip_log" -eq 1 ]; then
+        echo "[$(date)] Done - Update skipped, same ip" >> "${out_path}.log"
+      else
+        echo "[$(date)] Done" >> "${out_path}.log"
+      fi
+      exit 0
     fi
   fi
 fi
@@ -277,11 +271,12 @@ loginResult="$(curl $args -A "$agent" -e 'https://my.freenom.com/clientarea.php'
 if [ "$(echo -e "$loginResult" | grep "Location: /clientarea.php?incorrect=true")" != "" ]; then
     echo "[$(date)] Login failed" >> "${out_path}.log"
     rm -f "$cookie_file"
-    exitCode="$(( exitCode+1 ))"
+    errCount="$(( errCount+1 ))"
 fi
 
-# get details for all domains
+# get details for all domains on update_ip or list_records and id or name is empty OR list OR renew_all
 if [ "$freenom_update_ip" -eq 1 ] && [[ "$freenom_domain_id" == "" || "$freenom_domain_name" == "" ]] ||
+   [ "$freenom_list_records" -eq 1 ] && [[ "$freenom_domain_id" == "" || "$freenom_domain_name" == "" ]] ||
    [[ "$freenom_list" -eq 1 || "$freenom_renew_all" -eq 1 ]];
 then
   myDomainsURL="https://my.freenom.com/clientarea.php?action=domains&itemlimit=all&token=$token"
@@ -289,7 +284,7 @@ then
   # DEBUG: myDomainsURL="file:///home/user/src/freenom/myDomainsPage"
   myDomainsPage="$(curl $args -A "$agent" --compressed -k -L -b "$cookie_file" "$myDomainsURL")"
   if [ "$myDomainsPage" ]; then
-  #  myDomainsResult="$( echo -e "$myDomainsPage" | sed -n '/href.*external-link/,/action=domaindetails/p' | sed -ne 's/.*id=\([0-9]\+\).*/\1/p;g' )"
+    # myDomainsResult="$( echo -e "$myDomainsPage" | sed -n '/href.*external-link/,/action=domaindetails/p' | sed -ne 's/.*id=\([0-9]\+\).*/\1/p;g' )"
     myDomainsResult="$( echo -e "$myDomainsPage" | sed -ne 's/.*"\(clientarea.php?action=domaindetails&id=[0-9]\+\)".*/\1/p;g' )"
     u=0; i=0
     for u in $myDomainsResult; do
@@ -300,10 +295,14 @@ then
       domainName[$i]="$( echo -e "$domainDetails" | sed -n 's/.*Domain:\(.*\)<[a-z].*/\1/p' | sed -e 's/<[^>]\+>//g' -e 's/  *//g' )"
       if [ "$debug" -eq 1 ]; then echo "DEBUG: myDomainsPage domainId=${domainId[$i]} domainName=${domainName[$i]}" ; fi
       
-      # on ip update we just need domain name
-      if [[ "$freenom_update_ip" -eq "1" && "${domainName[$i]}" == "$freenom_domain_name" ]]; then
-        if [ "$debug" -eq 1 ]; then echo "DEBUG: myDomainsPage - found ${domainName[$i]}=$freenom_domain_name"; fi
-        break
+      # on ip update or list_records we just need domain name
+      if [[ "$freenom_update_ip" -eq 1 || "$freenom_list_records" -eq 1 ]]; then 
+        if [ "${domainName[$i]}" == "$freenom_domain_name" ]; then
+          if [ "$debug" -eq 1 ]; then
+            echo "DEBUG: myDomainsPage - found ${domainName[$i]}=$freenom_domain_name"
+          fi
+          break
+        fi
       else
         domainRegDate[$i]="$( echo -e "$domainDetails" | sed -n 's/.*Registration Date:\(.*\)<.*/\1/p' | sed -e 's/<[^>]\+>//g' -e 's/  *//g' )"
         domainExpiryDate[$i]="$( echo -e "$domainDetails" | sed -n 's/.*Expiry date:\(.*\)<.*/\1/p' | sed 's/<[^>]\+>//g' )"
@@ -313,52 +312,127 @@ then
   fi
 fi
 
-# set domain_id if needed
-if [[ "$freenom_list" -eq 0 && "$freenom_renew_all" -eq 0 ]]; then
+# set domain_id if needed, exit if id or name is missing
+if [[ "$freenom_list" -eq 0 && "$freenom_renew_all" -eq 0 ]] || [ "$freenom_list_records" -eq 1 ]; then
   if [ "$freenom_domain_id" == "" ]; then
     for ((i=0; i < ${#domainName[@]}; i++)); do
+      if [ "$debug" -eq 1 ]; then echo "DEBUG: domainName $i ${domainName[$i]}"; fi
       if [ "$freenom_domain_name" == "${domainName[$i]}" ]; then
+        if [ "$debug" -eq 1 ]; then echo "DEBUG: domainName match: freenom_domain_name=$freenom_domain_name ${domainName[$i]}" ; fi
         freenom_domain_id="${domainId[$i]}"
       fi
     done
+    tMsg="Try setting \"freenom_domain_name\" in config"
+    uMsg="Or use: \"$scriptName [-u|-r|-z] [domain] [id]\""
+    sp="       "
     if [ "$freenom_domain_id" == "" ]; then
-      echo "ERROR: Could not find Domain ID for \"$freenom_domain_name\""
-      echo "       Try setting \"freenom_domain_id\" in script"
-      echo "       Or use: \"$0 [-u|-r] [domain] [id]\""
-      #exitCode="$(( exitCode+1 ))"
+      [ "$freenom_domain_name" != "" ] && fMsg=" for \"$freenom_domain_name\""
+      printf "Error: Could not find Domain ID%s\n%s%s\n%s%s\n" "$fMsg" "$sp" "$tMsg" "$sp" "$uMsg"
+      exit 1
+    fi
+    if [ "$freenom_domain_name" == "" ]; then
+      printf "Error: Domain Name missing\n%s\n%s\n" "$fMsg" "$sp" "$tMsg" "$sp" "$uMsg"
       exit 1
     fi
   fi
 fi
 
-# update ip: if record does not exist - add new record, else update record
-if [ "$freenom_update_ip" -eq "1" ]; then
+# get dnsManagementPage on update_ip or list_records
+if [[ "$freenom_update_ip" -eq 1 || "$freenom_list_records" -eq 1 ]]; then
   dnsManagementURL="https://my.freenom.com/clientarea.php?managedns=$freenom_domain_name&domainid=$freenom_domain_id"
   dnsManagementPage="$(curl $args -A "$agent" --compressed -k -L -b "$cookie_file" "$dnsManagementURL")"
+fi
+
+# Function func_getRec: get domain records from dnsManagementPage
+#           $1 = 'raw': unformatted output, 'fmt': format output
+func_getRec() {
+  IFS_SAV=$IFS; IFS=$'\n'
+  foundRecs=0; j=0
+  for r in $( echo -e $dnsManagementPage | tr '<' '\n' | 
+              sed -r -n 's/.*records\[([0-9]+)\]\[(type|name|ttl|value)\]\" value=\"([0-9A-Z\.-]*)\".*/\1 \2 \3/p;g' ); do
+    foundRecs=1
+    IFS=" " read -r v1 v2 v3 <<< $r
+    if [[ $v2 = "name" && "$v3" = "" ]]; then
+      v3="$(echo $freenom_domain_name|tr '[:lower:]' '[:upper:]')"
+    fi
+    if [[ "$1" == "raw" && "$v2" = "name" ]]; then
+      echo $v1 $v3
+    elif [ "$1" == "fmt" ]; then
+      vars+="$v2: \"$v3\" ";
+      if [[ "$v1" != "" && $j -eq 3 ]]; then
+        recArray[$v1]="$v1 $vars"
+        vars=""; j=-1
+      fi
+      j="$((j+1))"
+    fi
+  done
+  IFS=$IFS_SAV
+}
+
+# call getRec function with arg "fmt" and list records only
+if [ "$freenom_list_records" -eq 1 ]; then
+  echo
+  echo "DNS Zone: \"$freenom_domain_name\" ($freenom_domain_id)"
+  echo
+  func_getRec fmt
+  if [ "$foundRecs" -eq 1 ]; then
+    if [ ! -z "$freenom_subdomain_name" ]; then
+      for ((i=0; i < ${#recArray[@]}; i++)); do
+        recName="$(echo "${recArray[$i]}"|awk '{gsub(/"/,"",$5); print $5}')"
+        subDomain="$(echo "$freenom_subdomain_name"|tr '[:lower:]' '[:upper:]')"
+        if [ "$recName" == "$subDomain" ]; then
+          echo "Subdomain Record: ${recArray[$i]}"
+          break
+        fi
+      done
+    else
+      for ((i=0; i < ${#recArray[@]}; i++)); do
+        echo "Domain Record: ${recArray[$i]}"
+      done
+    fi
+    echo
+  else
+    echo "No records found"
+    echo
+  fi
+  exit 0
+fi
+
+# update ip: if record does not exist add new record else update record
+#      note: recName is not used in actual dns record
+
+if [ "$freenom_update_ip" -eq 1 ]; then
   if [ "$(echo "$dnsManagementPage" | grep -F "records[0]")" == "" ]; then
       recordKey="addrecord[0]"
       dnsAction="add"
   else
-    IFS=$'\n'; for i in $( echo -e $dnsManagementPage | tr '<' '\n' | \
-               sed -n 's/.*records\[\([0-9]\+\)\]\[name\]" value="\([A-Z0-9-]\{1,63\}\)\?".*/\1 \2/p;g' ); do
-      recNum="$(echo $i | cut -d' ' -f1)"
-      recName="$(echo $i | cut -d' ' -f2 | tr '[:upper:]' '[:lower:]')"
-      if [ "$debug" -eq 1 ]; then echo "DEBUG: dnsManagementPage i=$i recNum=$recNum recName=$recName"; fi
-      if [[ "$recNum" != "" && "$recName" == "$freenom_subdomain_name" ]]; then
+    IFS_SAV=$IFS; IFS=$'\n'; recMatch=0
+    for i in $( func_getRec raw ); do
+      recNum="$(echo $i|cut -d' ' -f1)"
+      recName="$(echo $i|cut -d' ' -f2)"
+      if [ "$debug" -eq 1 ]; then echo "DEBUG: func_getRec raw i=$i recNum=$recNum recName=$recName"; fi
+      sd="$(echo $freenom_subdomain_name|tr '[:lower:]' '[:upper:]')"
+      if [[ "$recNum" != "" && "$recName" == "$sd" ]]; then
         recordKey="records[$recNum]"
         dnsAction="modify"
+        recMatch=1
         break
       fi
     done
+    IFS=$IFS_SAV
   fi
   if [ "$dnsAction" != "modify" ]; then
-    recName=""
     recordKey="addrecord[$((recNum+1))]"
     dnsAction="add"
   fi
-  if [ "$debug" -eq 1 ]; then echo "DEBUG: update recNum=$recNum recName=$recName recordKey=$recordKey dnsAction=$dnsAction"; fi
+  if [ "$recMatch" -eq 0 ]; then recName=""; fi
+  if [ "$debug" -eq 1 ]; then
+    echo "DEBUG: update_ip recMatch=$recMatch recNum=$recNum recName=$recName recordKey=$recordKey dnsAction=$dnsAction"
+    echo "DEBUG: update_ip name=$freenom_subdomain_name ttyl=$freenom_update_ttl value=$current_ip"
+  fi
 
-  # request add/update DNS record
+  # add/update dns record
+  # if subdom is empty 'name' is also, which equals apex domain
   updateResult=$(curl $args -A "$agent" -e 'https://my.freenom.com/clientarea.php' --compressed -k -L -b "$cookie_file" \
       -F "dnsaction=$dnsAction" \
       -F "$recordKey[line]=" \
@@ -379,8 +453,8 @@ fi
 # freenom_domain_name -> domainName
  
 # list all domains and id's, list renewals
-if [ "$freenom_list" -eq "1" ]; then
-  if [ "$freenom_list_renewals" -eq "1" ]; then
+if [ "$freenom_list" -eq 1 ]; then
+  if [ "$freenom_list_renewals" -eq 1 ]; then
     domainRenewalsURL="https://my.freenom.com/domains.php?a=renewals&itemlimit=all&token=$token"
     domainRenewalsPage="$(curl $args -A "$agent" --compressed -k -L -b "$cookie_file" "$domainRenewalsURL")"
     if [ "$domainRenewalsPage" ]; then
@@ -392,7 +466,7 @@ if [ "$freenom_list" -eq "1" ]; then
     fi
   fi
   for ((i=0; i < ${#domainName[@]}; i++)); do
-    if [ "$freenom_list" -eq "1" ]; then
+    if [ "$freenom_list" -eq 1 ]; then
       if [ "$domainRenewalsResult" ]; then
         renewalMatch=$( echo "$domainRenewalsResult" | sed 's///g' | sed ':a;N;$!ba;s/\n //g' | grep "domain_id: ${domainId[$i]}" )
         if echo "$renewalMatch" | grep -q Minimum; then
@@ -402,13 +476,13 @@ if [ "$freenom_list" -eq "1" ]; then
         fi
       fi
     fi
-    #if [ "$freenom_list_renewals" -eq "0" ]; then
+    #if [ "$freenom_list_renewals" -eq 0 ]; then
     #  echo "$l"
     #else
     #  if [ ! "$renewalDetails" ]; then renewalDetails="N/A"; fi
     #  echo "$l | Renewal details: \"$renewalDetails\""
     #fi
-    if [ "$freenom_list_renewals" -eq "1" ]; then
+    if [ "$freenom_list_renewals" -eq 1 ]; then
       if [ ! "$renewalDetails" ]; then renewalDetails="N/A"; fi
       showRenewal="$( printf "\n%4s Renewal details: %s" " " "$renewalDetails" )"
     fi
@@ -419,20 +493,23 @@ if [ "$freenom_list" -eq "1" ]; then
   exit 0
 fi
 
-# Function renewDate: check date to make sure we can renew
-#
-# (1) Currently used method: call clientarea.php?action=domaindetails&id=$i
+###############################################################################
+# How to handle Renewals:
+# 1) Currently used method: call clientarea.php?action=domaindetails&id=$i
 # -OR-
-# (2) Only renew if Days < Minimum Advance Renewal Days 
-# Where Days is: "Days Until Expiry":
-#   <span class="textgreen">372 Days</span>
-#   <span class="textred">Minimum Advance Renewal is 14 Days for Free Domains</span>
+# 2) Only renew if "Days" < "Minimum Advance Renewal Days"
+#    where "Days" is "Days Until Expiry" :
+# <span class="textgreen">372 Days</span>
+# <span class="textred">Minimum Advance Renewal is 14 Days for Free Domains</span>
 # -OR-
-# (3) Use Current Date vs Expiry Date (https://my.freenom.com/clientarea.php?action=domains)
+# 3) Use "Current Date" vs "Expiry Date" :
+# https://my.freenom.com/clientarea.php?action=domains
 #   Domain      Registration Date  Expiry date
 #   domain.cf   01/02/2017         01/03/2018 
 #   foo.ga      01/02/2017         01/03/2018 
-#   curDate="$( date +%F )"; expiryEpoch="$( date -d "$expiryDate" +%s )"  
+# curDate="$( date +%F )"; expiryEpoch="$( date -d "$expiryDate" +%s )"  
+
+# Function renewDate: check date to make sure we can renew
 func_renewDate() {
   expiryDay=""; expiryMonth=""; expiryYear=""; renewDateOK=""
   # example: "01/03/2018"
@@ -441,43 +518,46 @@ func_renewDate() {
   renewDate="$( date -d "$expiryDate - 14Days" +%F )"
   curEpoch="$( date +%s )"
   renewEpoch="$( date -d "$renewDate" +%s )"
-  #echo "DEBUG: expiryDate=$expiryDate renewDate=$renewDate expiryEpoch=$expiryEpoch"
-  #echo "DEBUG: renewEpoch=$renewEpoch curEpoch=$curEpoch"
   if [ "$debug" -eq 1 ]; then
-    echo DEBUG: TESTING list full expiry date array: 
-    for ((j=0; j<${#a[@]}; j++)); do echo "DEBUG: $i: ${a[$j]}"; done
+    echo "DEBUG: func_renewDate expiryDate=$expiryDate renewDate=$renewDate" # expiryEpoch=$expiryEpoch
+    echo "DEBUG: func_renewDate renewEpoch=$renewEpoch curEpoch=$curEpoch"
   fi
-  # TEST: set a date after renewDate example: curEpoch="$( date -d "2018-03-18" +%s )"
+  if [ "$debug" -eq 2 ]; then
+    echo "DEBUG: func_renewDate Test - listing full expiry date array:"
+    for ((j=0; j<${#a[@]}; j++)); do echo "DEBUG: func_renewDate i=${i} ${a[$j]}"; done
+  fi
+  # TEST: set a date after renewDate example
+  #       curEpoch="$( date -d "2018-03-18" +%s )"
   if [ "$curEpoch" -ge "$renewEpoch" ]; then
     renewDateOK="1"
   else
-    exitCode="$(( exitCode+1 ))"
-    renewError="$renewError\nCannot renew ${domainName[$i]} (${domainId[$i]}) until $renewDate"
-    if [ "$debug" -eq 1 ]; then echo -e "DEBUG: $renewError"; fi
+    warnCount="$(( warnCount+1 ))"
+    renewWarn="$renewWarn\n  Cannot renew ${domainName[$i]} (${domainId[$i]}) until $renewDate"
+    if [ "$debug" -eq 1 ]; then
+      echo -e "DEBUG: func_renewDate cannot renew domain Name=${domainName[$i]} Id=${domainId[$i]} until Date=$renewDate"
+    fi
   fi
 }
 
 # Function renewDomain: if date is ok, submit actual renewal and get result
 func_renewDomain() {
   if [ "$renewDateOK" ]; then
-
-    # use id/name
+    # use domain_id domain_name
     freenom_domain_id="${domainId[$i]} $freenom_domain_id"
     freenom_domain_name="${domainName[$i]} $freenom_domain_name"
-    if [ "$debug" -eq 1 ]; then echo "DEBUG: renewDomain $freenom_domain_name - curdate greater-or-equal expirydate -> possible to renew"; fi
+    if [ "$debug" -eq 1 ]; then echo "DEBUG: func_renewDomain freenom_domain_name=$freenom_domain_name - curdate ge expirydate: possible to renew"; fi
     renewDomainURL="https://my.freenom.com/domains.php?a=renewdomain&domain=${domainId[$i]}&token=$token"
     renewDomainPage="$(curl $args -A "$agent" --compressed -k -L -b "$cookie_file" "$renewDomainURL")"
 
-    # EXAMPLE:
+    # EXAMPLE
     # url:       https://my.freenom.com/domains.php?submitrenewals=true
-    # form data: 7ad1a728a6d8a96d1a8d66e63e8a698ea278986e renewalid:1234567890 renewalperiod[1234567890]:12M paymentmethod:credit
+    # form data: 7ad1a728a6d8a96d1a8d66e63e8a698ea278986e renewalid:1000000000 renewalperiod[1000000000]:12M paymentmethod:credit
 
     if [ "$renewDomainPage" ]; then
-      #echo "$renewDomainPage"
       echo "$renewDomainPage" > "renewDomainPage_${domainId[$i]}.html"
       if [ "$debug" -eq 1 ]; then echo "DEBUG: renewDomainPage - OK renewDomainURL=$renewDomainURL"; fi
       renewalPeriod="$( echo "$renewDomainPage" | sed -n 's/.*option value="\(.*\)\".*FREE.*/\1/p' | sort -n | tail -1 )"
-      #if [ "$renewalPeriod" == "" ]; then renewalPeriod="12M"; fi
+      # if [ "$renewalPeriod" == "" ]; then renewalPeriod="12M"; fi
       if [ "$renewalPeriod" ]; then
         renewalURL="https://my.freenom.com/domains.php?submitrenewals=true"
         renewalResult="$(curl $args -A "$agent" --compressed -k -L -b "$cookie_file" \
@@ -488,33 +568,34 @@ func_renewDomain() {
         "$renewalURL" 2>&1)"
         if [ "$renewalResult" ] ; then
           echo -e "$renewalResult" > "${out_path}.renewalResult_${domainId[$i]}.html"
-          renewOK="$renewOK\nSuccessfully renewed domain ${domainName[$i]} (${domainId[$i]} ${renewalPeriod})"
+          renewOK="$renewOK\n  Successfully renewed domain ${domainName[$i]} (${domainId[$i]} ${renewalPeriod})"
         else
-          exitCode="$(( exitCode+1 ))"
-          renewError="$renewError\nRenewal failed for ${domainName[$i]} (${domainId[$i]})"
+          errCount="$(( errCount+1 ))"
+          renewError="$renewError\n  Renewal failed for ${domainName[$i]} (${domainId[$i]})"
         fi
       else
-        exitCode="$(( exitCode+1 ))"
-        renewError="$renewError\nCannot renew ${domainName[$i]} (${domainId[$i]}), renewal period not found"
+        errCount="$(( errCount+1 ))"
+        renewError="$renewError\n  Cannot renew ${domainName[$i]} (${domainId[$i]}), renewal period not found"
       fi
     else
-      exitCode="$(( exitCode+1 ))"
+      errCount="$(( errCount+1 ))"
     fi
   fi
-  #echo
 }
 
-# call renewal functions for all domains
+# call domain renewal functions for 1 or all domains
 if [ "$freenom_renew_domain" -eq 1 ]; then
   if [ "$freenom_renew_all" -eq 1 ]; then
     for ((i=0; i < ${#domainName[@]}; i++)); do
-      if [ "$debug" -eq 1 ]; then echo "DEBUG: renew $i ${#domainName[@]} domainId: ${domainId[$i]} domainName: ${domainName[$i]}"; fi
-      func_renewDate "${domainExpiryDate[$i]}"; func_renewDomain
+      if [ "$debug" -eq 1 ]; then echo "DEBUG: renew_all i=$i ${#domainName[@]} domainId=${domainId[$i]} domainName=${domainName[$i]}"; fi
+      func_renewDate "${domainExpiryDate[$i]}"
+      func_renewDomain
     done
   else
     for ((i=0; i < ${#domainName[@]}; i++)); do
       if [ "$freenom_domain_name" == "${domainName[$i]}" ]; then
-        func_renewDate "${domainExpiryDate[$i]}"; func_renewDomain
+        func_renewDate "${domainExpiryDate[$i]}"
+        func_renewDomain
       fi
     done
   fi
@@ -527,41 +608,58 @@ curl $args -A "$agent" --compressed -k -b "$cookie_file" "https://my.freenom.com
 rm -f "$cookie_file"
 
 # write html result on error
-if [ "$freenom_update_ip" -eq "1" ]; then
+if [ "$freenom_update_ip" -eq 1 ]; then
   if [ "$(echo -e "$updateResult" | grep "$current_ip")" == "" ]; then
       echo "[$(date)] Update failed (${freenom_domain_name} ${freenom_domain_id})" >> "${out_path}.log"
       echo -e "$updateResult" > "${out_path}.errorUpdateResult.html"
-      exitCode="$(( exitCode+1 ))"
+      errCount="$(( errCount+1 ))"
   else
-      # save ip address
+      # save ip address to file and log
+      sMsg="";
       echo -n "$current_ip" > "${out_path}.ip"
-      echo "[$(date)] Update successful (${freenom_domain_name} ${freenom_domain_id} ${current_ip})" >> "${out_path}.log"
+      if [ ! -z "$freenom_subdomain_name" ]; then sMsg="${freenom_subdomain_name}."; fi
+      echo "[$(date)] Update ip successful: ${sMsg}${freenom_domain_name} (${freenom_domain_id}) - ${current_ip}" >> "${out_path}.log"
   fi
 fi
 
-# write renewal results to logfile, exit with exitcode
-if [ "$freenom_renew_domain" -eq "1" ]; then
+# write renewal results to logfile
+if [ "$freenom_renew_domain" -eq 1 ]; then
   if [ "$renewOK" ]; then
-    echo -e "[$(date)] Renewal OK: $renewOK" >> "${out_path}.log"
+    echo -e "[$(date)] Domain renewal successful: $renewOK" >> "${out_path}.log"
   fi
-  if [ "$exitCode" -gt "0" ]; then
+  if [ "$freenom_renew_log" -eq 1 ]; then
+    if [ "$warnCount" -gt 0 ]; then
+      if [ ! -z "$renewWarn" ]; then
+        echo -e "[$(date)] These domain(s) were not renewed - reason: ${renewWarn}" >> "${out_path}.log"
+      fi
+    fi
+  fi
+  if [ "$errCount" -gt 0 ]; then
     if [ -z "$renewError" ]; then
       if [ "$(echo -e "$renewalResult" | grep "Minimum Advance Renewal is")" != "" ]; then
         renewError="$( echo -e "$renewalResult" | grep textred | \
             sed -e 's/<[^>]\+>//g' -e 's/\(  \|\t\|\)//g' | sed ':a;N;$!ba;s/\n/, /g')"
       fi
     fi
-    echo -e "[$(date)] Did not renew these domain(s), reason: ${renewError}" >> "${out_path}.log"
-  else
+    echo -e "[$(date)] These domain(s) failed to renew - reason: ${renewError}" >> "${out_path}.log"
+  fi
+  if [ "$warnCount" -gt 0 ] && [ "$errCount" -gt 0 ]; then
     echo "[$(date)] Successfully renewed domain $freenom_domain_name (${freenom_domain_id/% /})" >> "${out_path}.log"
   fi
 fi
 
+# log any warnings and/or errors and exit with exitcode
+addLogMsg=""
 echo -n "[$(date)] Done" >> "${out_path}.log"
-if [ "$exitCode" -gt "0" ]; then
-  echo "  - with errors" >> "${out_path}.log"
+if [ "$warnCount" -gt 0 ]; then
+  addLogMsg=" - $warnCount warnings"
+fi
+if [ "$errCount" -gt 0 ]; then
+  addLogMsg+=" - $errCount errors"
+fi
+echo "$addLogMsg" >> "${out_path}.log"
+if [ "$errCount" -gt 0 ]; then
   exit 1
 else
-  echo >> "${out_path}.log"
   exit 0
 fi
