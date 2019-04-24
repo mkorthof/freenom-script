@@ -551,7 +551,7 @@ func_renewDomain() {
 
     # EXAMPLE
     # url:       https://my.freenom.com/domains.php?submitrenewals=true
-    # form data: 7ad1a728a6d8a96d1a8d66e63e8a698ea278986e renewalid:1000000000 renewalperiod[1000000000]:12M paymentmethod:credit
+    # form data: 7ad1a728a6d8a96d1a8d66e63e8a698ea278986e renewalid:1234567890 renewalperiod[1234567890]:12M paymentmethod:credit
 
     if [ "$renewDomainPage" ]; then
       echo "$renewDomainPage" > "renewDomainPage_${domainId[$i]}.html"
