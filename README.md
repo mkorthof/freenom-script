@@ -70,7 +70,7 @@ freenom_renew_all="0"         # [0/1] args "-r -a"
 
 ## DynDNS
 
-To update A or AAAA records the nameservers for the domain must be set to the default Freenom NS.
+To update A or AAAA records the nameservers for the domain must be set to the default Freenom Name Server.
 
 - As value your current ip address will be used ("Target")
 - An record will be added if there is none or modified if the record already exists
