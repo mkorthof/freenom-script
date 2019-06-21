@@ -10,3 +10,5 @@ tmp/
 *.tmp
 *.txt
 freedns.sh
+git-freenom.sh
+typescript
