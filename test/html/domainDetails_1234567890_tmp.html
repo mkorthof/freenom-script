@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<!--Start of header.tpl from directory Freenom-->
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"></meta>
+    <title>Client Area - Freenom</title>
+
+    <base href="https://my.freenom.com/" /> 
+	<!-- Load script for CSS3 & HMTL5 for older browsers -->
+	<script src="/templates/freenom/js/modernizr.js"></script>
+
+    <script type="text/javascript" src="/external/jquery-2.1.3.min.js"></script>
+    <script src="/templates/freenom/js/whmcs.js"></script>
+    <!-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script> -->
+    <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="/templates/freenom/js/jquery-Custom.js"></script>
+    <!-- Load Freenom CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link href="templates/freenom/css/reset.css" rel="stylesheet">
+   	<link href="templates/freenom/css/style.css" rel="stylesheet">
+ 	<link href="templates/freenom/css/colors.css" rel="stylesheet">
+ 	<link href="templates/freenom/css/mobile.css" rel="stylesheet">
+
+    <!-- Load fonts from Google -->
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,300,700' rel='stylesheet' type='text/css'>
+
+    <!-- Load icons from FontAwesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	
+    <script type="text/javascript">
+
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-12345678-2']);
+_gaq.push(['_setDomainName', 'freenom.com']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+
+</script>
+
+
+
+</head>
+
+<body  class="Client Area loggedIn" >
+
+<div class="wrapper">
+
+
+
+
+
+<section class="main-header nav-down">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="menu-toggle visible-xs">
+				<div class="toggleContainer">
+					<div class="bar topBar"></div>
+					<div class="bar middleBar"></div>
+					<div class="bar bottomBar"></div>
+				</div>
+			</div>
+			<div class="tag-line">A Name for Everyone</div>
+			<a class="logo" href="/"><img src="templates/freenom/img/logo.png" /></a>
+	
+			<ul class="main-menu">
+				<li class="drop-down">
+					<span>Services <i class="fa fa-angle-down"></i></span>
+					<ul>
+												<li class="my-freenom"><a href="clientarea.php?action=products">My Subscriptions</a></li>
+						<li class="my-freenom"><a href="clientarea.php?action=domains">My Domains</a></li>
+						<li><a href="domains.php">Register a New Domain</a></li>
+						<li><a href="http://www.freenom.world" target="_blank">Freenom World</a></li>
+						<li class="my-freenom"><a href="domains.php?a=renewals">Renew Domains</a></li>
+						<li><a href="domains.php?a=transfers">Transfer Domains</a></li>												<li><a href="http://www.freenom.com/en/freeandpaiddomains.html">Free and Paid domains</a></li>
+						<li><a href="http://www.freenom.com/en/pricechart.html">Domain Price Chart</a></li>
+						<li><a href="http://whois.freenom.com" target="_blank">WHOIS</a></li>
+											</ul>
+				</li>
+				
+				<li class="drop-down">
+					<span>Partners <i class="fa fa-angle-down"></i></span>
+					<ul>
+						<li><a href="http://www.freenom.com/en/resellers.html">Resellers</a></li>
+					   	<li><a href="http://www.freenom.com/en/ipagencies.html">IP Agencies</a></li>
+					   	<li><a href="http://www.freenom.com/en/developers.html">Developers</a></li>
+					   	<li><a href="http://www.freenom.com/en/antiabuse_api.html">Anti-abuse API</a></li>
+					   	<li><a href="http://www.freenom.com/en/freenom-api.html">Freenom API</a></li>
+					</ul>
+				</li>	
+				<li class="drop-down">
+					<span>About Freenom <i class="fa fa-angle-down"></i></span>
+					<ul>
+					  	<li><a href="http://www.freenom.com/en/aboutfreenom.html">Company</a></li>
+					  	<li><a href="http://www.freenom.com/en/termsandconditions.html"></a></li>
+					   	<li><a href="http://www.freenom.com/en/press.html">Press</a></li>
+					   	<li><a href="http://www.freenom.com/en/jobs.html">Jobs</a></li>
+					   	<li><a href="http://www.freenom.com/en/contactus.html">Contact</a></li>
+					</ul>
+				</li>
+				<li class="drop-down">
+					<span>Support <i class="fa fa-angle-down"></i></span>
+					<ul>
+																	   						   						   	<li><a href="knowledgebase.php">Knowledgebase</a></li>
+					   						   	<li><a href="downloads.php">Downloads</a></li>
+					   						   	<li></li>
+					</ul>
+				</li>
+				<li class="hidden-xs divider">&nbsp;</li>
+				<li class="drop-down drop-right mobile-fixed account">
+											<span class="visible-sm-inline-block"><i class="fa fa-user" style="padding: 0 10px 0 0;"></i></span>
+						<span class="hidden-sm">Hello Jan <i class="fa fa-angle-down"></i></span>
+					<ul>
+						<li><a href="clientarea.php?action=details">Edit Account Details</a></li>
+						
+													<li><a href="clientarea.php?action=creditcard">Manage Credit Card</a></li>
+												
+													<li><a href="clientarea.php?action=addfunds">Add Funds</a></li>
+												
+						<li><a href="clientarea.php?action=invoices">My Invoices</a></li>
+						<li><a href="clientarea.php?action=emails">Email History</a></li>
+						<li><a href="clientarea.php?action=changepw">Change Password</a></li>
+						<li><a href="cart.php?a=view">View cart</a></li>
+						<li><a href="logout.php">Logout</a></li>
+					</ul>
+				</li>
+				
+								<li class="language-select drop-down drop-right">
+					<span>English <i class="fa fa-angle-down"></i></span>
+					<ul class="languagelist" id="language-list-1">
+				        <li><a class="lang-en" href="http://www.freenom.com/en/index.html">English</a></li>
+						<li><a class="lang-ru" href="http://www.freenom.com/ru/index.html">Русский</a></li>
+						<li><a class="lang-zh" href="http://www.freenom.com/zh/index.html">简体字</a></li>
+						<li><a class="lang-es" href="http://www.freenom.com/es/index.html">Español</a></li>
+				        <li><a class="lang-th" href="http://www.freenom.com/th/index.html">ไทย</a></li>
+						<li><a class="lang-id" href="http://www.freenom.com/id/index.html">Bahasa Indonesia</a></li>
+						<li><a class="lang-fr" href="http://www.freenom.com/fr/index.html">Français</a></li>
+						<li><a class="lang-vi" href="http://www.freenom.com/vi/index.html">Tiếng Việt</a></li>
+						<li><a class="lang-pt" href="http://www.freenom.com/pt/index.html">Português</a></li>
+						<li><a class="lang-tr" href="http://www.freenom.com/tr/index.html">Türkçe</a></li>
+						<li><a class="lang-de" href="http://www.freenom.com/de/index.html">Deutsch</a></li>
+						<li><a class="lang-ar" href="http://www.freenom.com/ar/index.html">ﺎﻠﻋﺮﺒﻳﺓ</a></li>
+						<li><a class="lang-zu" href="http://www.freenom.com/zu/index.html">繁體字</a></li>
+						<li><a class="lang-hi" href="http://www.freenom.com/hi/index.html">हिन्दू</a></li>
+						<li><a class="lang-ro" href="http://www.freenom.com/ro/index.html">Romana</a></li>
+						<li><a class="lang-nl" href="http://www.freenom.com/nl/index.html">Nederlands</a></li>
+						<li><a class="lang-it" href="http://www.freenom.com/it/index.html">Italiano</a></li>
+						<li><a class="lang-ja" href="http://www.freenom.com/ja/index.html">日本語</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+</section>
+
+<!--End of header.tpl from directory Freenom-->
+
+
+<section class="pageHeader">
+	<div class="row">
+		<div class="container">
+			<div class="col-md-12">
+	   			 <h1 class="primaryFontColor">Managing example.tk</h1>
+	   		</div>
+	   	</div>
+	</div>
+</section>
+
+    
+
+
+  
+
+<script type="text/javascript" src="/external/jquery.min.js"></script>
+
+<section class="domainTabs">
+	<div class="row centered margin">
+		<div class="container">
+			<div class="col-md-12" id="tabs">
+			    <ul class="nav nav-tabs">
+			        <li class="active" id="tab1nav"><a href="#tab1">Information</a></li>
+			        			        <li id="tab8nav" ><a href="clientarea.php?action=domaindetails&id=1234567890&modop=custom&a=upgradef2p">Upgrade</a></li>			        			        			        <li class="dropdown"><a data-toggle="dropdown" href="#" class="dropdown-toggle dropDown">Management Tools&nbsp;</a>
+			            <ul class="dropdown-menu borderRadius boxShadow">
+			                <li><a href="#tab3">Nameservers</a></li>			                <li><a href="clientarea.php?action=domaindetails&amp;id=1234567890&amp;modop=custom&amp;a=urlforwarding">URL Forwarding</a></li>
+					<li class="divider"></li>
+			                <li><a href="managegluerecords.php?action=domainregisterns&domainid=1234567890">Register glue records</a></li>			                			                			                			                			                			                					<li class="divider"></li>
+			                <li><a href="clientarea.php?action=domaindetails&amp;id=1234567890&amp;modop=custom&amp;a=canceldomain">Cancel domain</a></li>
+			                			            </ul>
+			        </li>			        <li><a href="/clientarea.php?managedns=example.tk&domainid=1234567890">Manage Freenom DNS</a></li>
+			    </ul>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<section class="domainTabcontent">
+			<div data-toggle="tab" id="tab1" class="tab-content active row centered margin padding">
+				<div class="container">
+					<div class="col-md-4 colInformation borderRadius">
+			            <div class="internalpadding">
+			                <div class="styled_title"><h2>Information</h2></div>
+			                <p>To the right you can find the details of your domain. You can manage your domain using the tabs above.</p>
+			                <br />
+			                <p><input type="button" value="&laquo; Back to Domains List" class="smallBtn primaryColor" onclick="window.location='clientarea.php?action=domains'" /></p>
+			            </div>
+			        </div>
+			        <div class="col-md-8">
+			            <div class="internalpadding">
+			            	<div class="row">
+			                <div class="col2half">
+			                	<h4><strong>Domain:</strong></h4> example.tk <span class="label active">Active</span>
+			                </div>
+			                			                </div>
+			            	<div class="row">
+			            	<div class="col2half">
+			                	<h4><strong>Registration Date:</strong></h4> <span>01/02/2017</span>
+			                </div>
+			                			                </div>
+			            	<div class="row">
+
+			
+			            	<div class="col2half">
+			                	<p><h4><strong>Expiry date:</strong></h4>01/03/2018</div>
+			
+			                </div>
+			                <div class="clear"></div>
+			                			                <br />
+			                <br />
+			                <br />
+			            </div>
+			        </div>
+			        </div>
+
+			</div>
+			<div data-toggle="tab" id="tab2" class="tab-content row centered margin padding">
+				<div class="container">
+			        <div class="col-md-4 colInformation borderRadius">
+			            <div class="internalpadding">
+			                <div class="styled_title"><h2>Auto Renew</h2></div>
+			                <p>Enable auto renew to have us automatically send you a renewal invoice before your domain expires.</p>
+			            </div>
+			        </div>
+			        <div class="col-md-8">
+			            <div class="internalpadding">
+			                <h4><strong>Auto Renewal Status:</strong></h4>
+			                <div class="internalpadding">
+			                	<p><strong>Enabled</strong></p>
+			                </div>
+			                <div class="internalpadding">
+			                    <form method="post" action="/clientarea.php?action=domaindetails" class="form-horizontal">
+<input type="hidden" name="token" value="8ac4a78f3d714beec003e4a6d5d2cee2ce88b76b" />
+			                    <input type="hidden" name="id" value="1234567890">
+			                    			                    <input type="hidden" name="autorenew" value="disable">
+			                    <p><input type="submit" class="smallBtn cautionColor pullLeft" value="Disable Auto Renew" /></p>
+			                    			                    </form>
+			                </div>
+			                <br />
+			                <br />
+			                <br />
+			                <br />
+			            </div>
+			        </div>
+
+				</div>
+			</div>
+			<div data-toggle="tab" id="tab3" class="tab-content row centered margin padding">
+				<div class="container">
+			        <div class="col-md-4 colInformation borderRadius">
+			            <div class="internalpadding">
+			                <div class="styled_title"><h2>Nameservers</h2></div>
+			                <p>You can change where your domain points to here. Please be aware changes can take up to 24 hours to propogate.</p>
+			            </div>
+			        </div>
+			        <div class="col-md-8">
+			            <div class="internalpadding">
+			                
+			                <form method="post" action="/clientarea.php?action=domaindetails" class="form-horizontal">
+<input type="hidden" name="token" value="8ac4a78f3d714beec003e4a6d5d2cee2ce88b76b" />
+			                <input type="hidden" name="id" value="1234567890" />
+			                <input type="hidden" name="sub" value="savens" />
+			                <p><label class="full control-label"><input type="radio" class="radio inline" name="nschoice" value="default" onclick="disableFields('domnsinputs',true)" /> Use default nameservers</label>
+			                <label class="full control-label"><input type="radio" class="radio inline" name="nschoice" value="custom" onclick="disableFields('domnsinputs','')" checked /> Use custom nameservers (enter below)</label></p>
+			                <p><br />&nbsp;<br /></p>
+			                <fieldset class="control-group">
+			                    <div class="control-group">
+			                        <label class="control-label" for="ns1">Nameserver 1</label>
+			                        <div class="controls">
+			                            <input class="input-xlarge domnsinputs" id="ns1" name="ns1" type="text" value="EMILY.NS.CLOUDFLARE.COM" />
+			                        </div>
+			                    </div>
+			                    <div class="control-group">
+			                        <label class="control-label" for="ns2">Nameserver 2</label>
+			                        <div class="controls">
+			                            <input class="input-xlarge domnsinputs" id="ns2" name="ns2" type="text" value="GERALD.NS.CLOUDFLARE.COM" />
+			                        </div>
+			                    </div>
+			                    <div class="control-group">
+			                        <label class="control-label" for="ns3">Nameserver 3</label>
+			                        <div class="controls">
+			                            <input class="input-xlarge domnsinputs" id="ns3" name="ns3" type="text" value="" />
+			                        </div>
+			                    </div>
+			                    <div class="control-group">
+			                        <label class="control-label" for="ns4">Nameserver 4</label>
+			                        <div class="controls">
+			                            <input class="input-xlarge domnsinputs" id="ns4" name="ns4" type="text" value="" />
+			                        </div>
+			                    </div>
+			                    <div class="control-group">
+			                        <label class="control-label" for="ns5">Nameserver 5</label>
+			                        <div class="controls">
+			                            <input class="input-xlarge domnsinputs" id="ns5" name="ns5" type="text" value="" />
+			                        </div>
+			                    </div>
+			                    <div class="internalpadding">
+			                        <p class="textcenter"><input type="submit" class="mediumBtn primaryColor" value="Change Nameservers" /></p>
+			                    </div>
+			                </fieldset>
+			                </form>
+
+			            </div>
+			        </div>
+				</div>
+			</div>
+			<div data-toggle="tab" id="tab4" class="tab-content row centered margin padding">
+ 				<div class="container">
+			        <div class="col-md-4 colInformation borderRadius">
+			            <div class="internalpadding">
+			                <div class="styled_title"><h2>Registrar Lock</h2></div>
+			                <p>Lock your domain to prevent it from being transferred away without your authorization.</p>
+			            </div>
+			        </div>
+			        <div class="col-md-8">
+			            <div class="internalpadding">
+			                <h4><strong>Registrar Lock Status:</strong></h4>
+			                <p><strong>Disabled</strong></p>
+			                <hr />
+			                <form method="post" action="/clientarea.php?action=domaindetails">
+<input type="hidden" name="token" value="8ac4a78f3d714beec003e4a6d5d2cee2ce88b76b" />
+			                <input type="hidden" name="id" value="1234567890" />
+			                <input type="hidden" name="sub" value="savereglock" />
+			                			                <p><input type="submit" class="btn btn-success" name="reglock" value="Enable Registrar Lock" /></p>
+			                			                </form>
+			            </div>
+			        </div>
+
+				</div>
+			</div>
+			<div data-toggle="tab" id="tab5" class="tab-content row centered margin padding">
+			<div class="container">
+			        <div class="col-md-4 colInformation borderRadius">
+			            <div class="internalpadding">
+			                <div class="styled_title"><h2>Release Domain</h2></div>
+			                <p>Enter a new TAG here to move your domain name to another registrar</p>
+			            </div>
+			        </div>
+			        <div class="col-md-8">
+			            <div class="internalpadding">
+			                			            </div>
+			        </div>
+
+				</div>
+			</div>
+			<div data-toggle="tab" id="tab6" class="tab-content row centered margin padding">
+<div class="container">
+
+			        <div class="col-md-4 colInformation borderRadius">
+			            <div class="internalpadding">
+			                <div class="styled_title"><h2>Addons</h2></div>
+			                <p>The following addons are available for your domain(s)...</p>
+			            </div>
+			        </div>
+			        <div class="col-md-8">
+			            <div class="internalpadding">
+			                			                <div class="row">
+			                    <div class="domaddonimg">
+			                        <img src="images/idprotect.png" />
+			                    </div>
+			                    <div class="col70">
+			                        <strong>ID Protection</strong><br />
+			                        Protect your personal information and reduce the amount of spam to your inbox by enabling ID Protection.<br />
+			                        			                        <a href="clientarea.php?action=domainaddons&id=1234567890&disable=idprotect&token=8ac4a78f3d714beec003e4a6d5d2cee2ce88b76b">Disable</a>
+			                        			                    </div>
+			                </div>
+			                <br />
+			                			                			                			            </div>
+			        </div>
+				</div>
+
+			</div>
+	</div>
+</section>
+
+
+
+<!--Start of footer.tpl-->
+<div class="push"></div>
+</div>
+
+<script src="/templates/freenom/js/freenom-world.js"></script>
+<section class="splash-world">
+	<div class="container">
+		<div class="row padding margin">
+			<div class="col-md-4">
+				<img class="flash" src="templates/freenom/img/new-flash.png"/>
+				<img class="logo" src="templates/freenom/img/logo-freenomworld.png"/>
+				<h2>Freenom World is a fast and anonymous Public DNS resolver</h2>
+			</div>		
+			<div class="col-md-4 lines">
+				<p class="text-center change">Change your DNS to</p>
+				<span class="input">80.80.80.80</span>
+				<span class="input">80.80.81.81</span>
+			</div>
+			<div class="col-md-4" id="tutorial_container">
+			</div>
+			<div class="col-md-12">
+				<ul>
+					<li>
+						Why Freenom World? <span id="yfn" class="click why-freenom" title="Why Freenom World?">Watch video <i class="fa fa-play-circle"></i></span>
+					</li>
+					<li>
+						Visit <a href="http://www.freenom.world" target="_blank" title="Freenom World">Freenom World</a>
+					</li>
+				</ul>
+			</div>									
+		</div>
+	</div>
+</section>	
+<section class="main-footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-20">
+				<ul>
+				   <h3>Services </h3>
+				   	<li class="my-freenom"><a href="clientarea.php?action=products">My Subscriptions</a></li>
+				   	<li class="my-freenom"><a href="clientarea.php?action=domains">My Domains</a></li>
+				   	<li><a href="domains.php">Register a New Domain</a></li>
+				   	<li><a href="http://www.freenom.world" target="_blank">Freenom World</a></li>
+				   	<li class="my-freenom"><a href="domains.php?a=renewals">Renew Domains</a></li>
+				   	<li><a href="domains.php?a=transfers">Transfer Domains</a></li>				   					   	<li><a href="http://www.freenom.com/en/index.html">Register a New Domain</a></li>
+			   		<li><a href="http://www.freenom.com/en/freeandpaiddomains.html">Free and Paid domains</a></li>
+			   		<li><a href="http://www.freenom.com/en/pricechart.html">Domain Price Chart</a></li>
+			   		<li><a href="http://whois.freenom.com" target="_blank">WHOIS</a></li>
+				   	
+			   </ul>
+	   		</div>
+	        <div class="col-md-20">
+	        	<ul>
+	        	   <h3>Partners </h3>
+	        	   <li><a href="http://www.freenom.com/en/resellers.html">Resellers</a></li>
+	        	   	<li><a href="http://www.freenom.com/en/ipagencies.html">IP Agencies</a></li>
+	        	   	<li><a href="http://www.freenom.com/en/developers.html">Developers</a></li>
+	        	   	<li><a href="http://www.freenom.com/en/antiabuse_api.html">Anti-abuse API</a></li>
+	        	   	<li><a href="http://www.freenom.com/en/freenom-api.html">Freenom API</a></li>
+	        	</ul>
+	        </div>
+	        <div class="col-md-20">
+	       		<ul>
+	       		   	<h3>About Freenom </h3>
+	       		  	<li><a href="http://www.freenom.com/en/aboutfreenom.html">Company</a></li>
+	       		   	<li><a href="http://www.freenom.com/en/termsandconditions.html"></a></li>
+	       		   	<li><a href="http://www.freenom.com/en/press.html">Press</a></li>
+	       		   	<li><a href="http://www.freenom.com/en/jobs.html">Jobs</a></li>
+	       		   	<li><a href="http://www.freenom.com/en/contactus.html">Contact</a></li>
+	       		</ul>
+	        </div>
+	        <div class="col-md-20">
+	        		<ul>
+	        		   	<h3>Support </h3>
+	        		   	<li><a href="knowledgebase.php">Knowledgebase</a></li>
+	        		   	<li><a href="downloads.php">Downloads</a></li>
+	        		   	<li><a href="http://www.freenom.com/en/reportabuse.html">Report Abuse</a></li>
+	        		</ul>
+	        </div>
+	        <div class="col-md-20">
+	        		<ul>
+	        		   	<h3>Contact</h3>
+	        		   	<address class="address">Freenom<br>
+   	                   Amsterdam-Netherlands<br>
+   	                   Tel. +31 20 531 57 26<br>
+   	                   Fax +31 20 531 57 21</address>
+	        		   	
+	        		</ul>
+	        </div>
+		</div>
+	</div>
+</section>
+
+<section class="sub-footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">	
+				<p class="copyright">
+				All rights reserved © 2018 Freenom - The Netherlands </p>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+
+
+
+<script type="text/javascript">
+   var _mfq = _mfq || [];
+   (function() {
+       var mf = document.createElement("script"); mf.type = "text/javascript"; mf.async = true;
+       mf.src = "//cdn.mouseflow.com/projects/070520d7-41e5-4d19-a2b7-821e92edeea1.js";
+       document.getElementsByTagName("head")[0].appendChild(mf);
+   })();
+</script>
+
+
+<div id="overlay">
+	<div class="wrapper">
+		<span class="close-overlay"><i class="fa fa-times fa-3x"></i></span>
+		<div class="video-container why-freenom">
+			<iframe id="video-why-freenom" width="853" height="480" src="" frameborder="0" allowfullscreen></iframe>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
+<!--End of footer.tpl-->
