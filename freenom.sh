@@ -6,7 +6,14 @@
 #                                                                             #
 # Updates IP address and/or auto renews domain(s) so they do not expire       #
 # See README.md for more information                                          #
-#                                                               v2019-06-07   #
+#                                                                             #
+# gpl-3.0-only                                                                #
+# freenom-script  Copyright (C) 2019  M. Korthof                              #
+# This program comes with ABSOLUTELY NO WARRANTY                              #
+# This is free software, and you are welcome to redistribute it               #
+# under certain conditions.                                                   #
+# See LICENSE file for more information                                       #
+#                                                               v2019-06-21   #
 ###############################################################################
 
 
