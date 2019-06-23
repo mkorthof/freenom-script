@@ -4,6 +4,7 @@ out/
 result/
 tmp/
 *.bak
+*.drawio
 *.html
 *.ip
 *.log
