@@ -30,15 +30,15 @@ setup() {
   assert_output --partial "USAGE:"
 }
 
-@test "freenom.sh -c freenom.conf" {
+@test "freenom.sh -c /usr/local/bin/freenom.conf" {
   run $script -c $config
   [ "$status" -eq 0 ]
 }
 
-@test "freenom.sh -c invalid.conf" {
-  run $script -c invalid.conf
+@test "freenom.sh -c /invalid/invalid.conf" {
+  run $script -c /invalid/invalid.conf
   [ "$status" -eq 1 ]
-  [ "$output" = 'Error: invalid config "invalid.conf" specified' ]
+  [ "$output" = 'Error: invalid config "/invalid/invalid.conf" specified' ]
 }
 
 @test "freenom.sh -i" {
