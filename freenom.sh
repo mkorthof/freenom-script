@@ -30,15 +30,14 @@ noticeCount="0"; warnCount="0"; errCount="0"
 ########
 
 # configuration file specfied in argument
-if echo -- "$@" | grep -qi '[^a-z]\-c'; then
-  # shellcheck source=./freenom.conf
-  #scriptConf="$( echo "$@" | sed 's/-c \?\([^ ]\+\)\(.*\|$\)/\1/' )"
-  scriptConf="$( printf -- "%s\n" "$*" | sed -En 's/.* ?-c ?([][a-zA-Z0-9 !"#$%&'\''()*+,-.:;<=>?@^_`{}~./]+)( -.*| |$)/\1/gp' )"
+if getopts "c:" arg; then
+  scriptConf="$OPTARG"
   if [ ! -s "$scriptConf" ]; then
     echo "Error: invalid config \"$scriptConf\" specified"
     exit 1
   fi
 fi
+
 # if scriptConf is empty, check for freenom.conf in same dir as script
 if [ -z "$scriptConf" ]; then
   scriptConf="$(dirname "$0")/$(basename -s '.sh' "$0").conf"
@@ -122,6 +121,26 @@ NOTES:
 
 _EOF_
   exit 0
+}
+
+
+# Function getDomIdName: use regex to set domain id or name
+func_getDomIdName() {
+  arg_domain_id=""
+  arg_domain_name=""
+
+  if echo -- "$@" | grep -Ei -- "^[0-9]{10}[0-9]*$"; then
+    arg_domain_id="$@"
+  else
+    arg_domain_name="$@"
+  fi
+
+  if [ -n "$arg_domain_name" ]; then
+    freenom_domain_name="$arg_domain_name"
+  fi
+  if [ -n "$arg_domain_id" ]; then
+    freenom_domain_id="$arg_domain_id"
+  fi
 }
 
 # Function getDomArgs: use regex to get domain name digits only domain_id and -s <subdomain>
@@ -269,96 +288,131 @@ func_debugMyDomainsResult () {
 # Options #
 ###########
 
-# show help
-if echo -- "$@" | grep -qi '[^a-z]\-h'; then
-  func_help
-  exit 0
-fi
+while getopts "hldr:s:au:z:46c:io" opt; do
+  case $opt in
+    h)
+      func_help
+      exit 0
+      ;;
+
+    l) 
+      freenom_list="1"
+      ;;
+
+    d)
+      freenom_list_renewals="1"
+      ;;
+
+    r)
+      freenom_renew_domain="1"
+      func_getDomIdName "$OPTARG"
+      ;;
+    
+    s)
+      freenom_subdomain_name="$OPTARG"
+      ;;
+
+    u)
+      freenom_update_ip="1"
+      func_getDomIdName "$OPTARG"
+      ;;
+
+    a)
+      freenom_renew_all="1"
+      ;;
+
+    z)
+      func_getDomIdName "$OPTARG"
+      freenom_list_records="1"
+      ;;
+
+    4)
+      freenom_update_ipv=4
+      if [ "$debug" -ge 1 ]; then echo "DEBUG: ipv freenom_update_ipv=$freenom_update_ipv"; fi
+      ;;
+
+    6)
+      freenom_update_ipv=6
+      if [ "$debug" -ge 1 ]; then echo "DEBUG: ipv freenom_update_ipv=$freenom_update_ipv"; fi
+      ;;
+
+    c);;
+
+    i)
+      if [ "$debug" -ge 1 ]; then echo "DEBUG: ipv freenom_update_ipv=$freenom_update_ipv"; fi
+      echo; echo "Listing all \"get ip\" commands..."; echo
+      for ((i=0; i < ${#ipCmd[@]}; i++)); do
+        printf "%2s: %s\n" "$i" "${ipCmd[$i]}"
+      done
+      printf "\nNOTES:\n"
+      printf "  %%ipv%% gets replaced by \$freenom_update_ipv\n"
+      printf "  %%agent%% gets replaced with useragent string\n\n"
+      exit 0
+      ;;
+
+    o)
+      # use regex if file is specfied
+      fget="$( printf -- "%s\n" "$OPTARG" | sed -En 's/.* ?-[eo] ?([][a-zA-Z0-9 !"#$%&'\''()*+,-.:;<=>?@^_`{}~.]+)[ -]?.*/\1/gp' )"
+      if [ -z "$fget" ]; then
+        for f in "${out_path}".errorUpdateResult_*.html "${out_path}".renewalResult_*.html; do
+          if [ -e "$f" ]; then fget+="$f "; fi
+        done
+        count="$( echo "$fget" | wc -w )"
+        if [ "$count" -eq 0 ]; then
+          echo "No result file(s) found"
+          exit 0
+        elif [ "$count" -gt 1 ]; then
+          printf "Multiple results found, listing %d html files:\n" "$count"
+          for r in $fget; do
+            find "$r" -printf '  (%TF %TH:%TM) %f\n'
+          done
+          printf "\nTo show a file use: \"%s -o <file.html>\"\n\n" "$scriptName"
+          exit 0
+        fi
+      fi
+      fdir="$(dirname "$out_path")"
+      if ! echo "$fget" | grep -q "$fdir"; then
+        ffile="$(dirname "$out_path")/$fget"
+      else 
+        ffile="$fget"
+      fi
+      if [ -s "$ffile" ]; then
+        func_showResult "$ffile"
+      else
+        echo "Result file not found"
+      fi
+      exit 0
+      ;;
+  esac
+done
+
 # handle all other arguments
 if ! echo -- "$@" | grep -qi -- '\-[46lruziceo]'; then
   echo "Error: invalid or unknown argument(s), try \"$scriptName -h\""
   exit 1
 fi
-if echo -- "$@" | grep -qi -- '[^a-z]\-4'; then
-  freenom_update_ipv=4
-  if [ "$debug" -ge 1 ]; then echo "DEBUG: ipv freenom_update_ipv=$freenom_update_ipv"; fi
-elif echo -- "$@" | grep -qi -- '[^a-z]\-6'; then
-  freenom_update_ipv=6
-  if [ "$debug" -ge 1 ]; then echo "DEBUG: ipv freenom_update_ipv=$freenom_update_ipv"; fi
-fi
 # list domains and id's and exit, unless list_records is set
-if echo -- "$@" | grep -qi -- '[^a-z]\-l'; then
-  freenom_list="1"
+if [ "$freenom_list" -ge 1 ]; then
   lMsg=""
   # list domains with details
-  if echo -- "$@" | grep -Eqi -- '[^a-z]\-[dn]'; then
-    freenom_list_renewals="1"
+  if [ "$freenom_list_renewals" -ge 1 ]; then
     lMsg=" with renewal details, this might take a while"
   fi
   printf "\nListing Domains and ID's%s...\n" "$lMsg"
   echo
-# list dns records
-elif echo -- "$@" | grep -qi -- '[^a-z]\-z'; then
-  func_getDomArgs "$@"
-  freenom_list_records="1"
-# output ipcmd list
-elif echo -- "$@" | grep -iq -- '[^a-z]\-i'; then
-  if [ "$debug" -ge 1 ]; then echo "DEBUG: ipv freenom_update_ipv=$freenom_update_ipv"; fi
-  echo; echo "Listing all \"get ip\" commands..."; echo
-  for ((i=0; i < ${#ipCmd[@]}; i++)); do
-    printf "%2s: %s\n" "$i" "${ipCmd[$i]}"
-  done
-  printf "\nNOTES:\n"
-  printf "  %%ipv%% gets replaced by \$freenom_update_ipv\n"
-  printf "  %%agent%% gets replaced with useragent string\n\n"
-  exit 0
-# update ip
-elif echo -- "$@" | grep -qi -- '[^a-z]\-u'; then
-  func_getDomArgs "$@"
-  freenom_update_ip="1"
-# renew domains
-elif echo -- "$@" | grep -qi -- '[^a-z]\-r'; then
-  freenom_renew_domain="1"
-  if echo -- "$@" | grep -qi -- '[^a-z]\-a'; then
-    freenom_renew_all="1"
-  else
-    func_getDomArgs "$@"
-  fi
-# show update and renewal result file(s)
-elif echo -- "$@" | grep -qi -- '[^a-z]\-[eo]'; then
-  # use regex if file is specfied
-  fget="$( printf -- "%s\n" "$*" | sed -En 's/.* ?-[eo] ?([][a-zA-Z0-9 !"#$%&'\''()*+,-.:;<=>?@^_`{}~.]+)[ -]?.*/\1/gp' )"
-  if [ -z "$fget" ]; then
-    for f in "${out_path}".errorUpdateResult_*.html "${out_path}".renewalResult_*.html; do
-      if [ -e "$f" ]; then fget+="$f "; fi
-    done
-    count="$( echo "$fget" | wc -w )"
-    if [ "$count" -eq 0 ]; then
-      echo "No result file(s) found"
-      exit 0
-    elif [ "$count" -gt 1 ]; then
-      printf "Multiple results found, listing %d html files:\n" "$count"
-      for r in $fget; do
-        find "$r" -printf '  (%TF %TH:%TM) %f\n'
-      done
-      printf "\nTo show a file use: \"%s -o <file.html>\"\n\n" "$scriptName"
-      exit 0
-    fi
-  fi
-  fdir="$(dirname "$out_path")"
-  if ! echo "$fget" | grep -q "$fdir"; then
-    ffile="$(dirname "$out_path")/$fget"
-  else 
-    ffile="$fget"
-  fi
-  if [ -s "$ffile" ]; then
-    func_showResult "$ffile"
-  else
-    echo "Result file not found"
-  fi
-  exit 0
-else
-  func_help
+fi
+
+# handle invalid domain settings
+if [[ ! "$freenom_domain_name" =~ ^[^.-][a-zA-Z0-9.-]+$ ]] || \
+   [[ "$freenom_domain_name" == "$freenom_domain_id" ]]; then
+  echo "Error: invalid domain name \"$freenom_domain_name\""
+  exit 1
+fi
+if [[ ! "$freenom_domain_id" =~ ^[0-9]{10}+$ ]]; then
+  freenom_domain_id=""
+fi
+if [[ ! "$freenom_subdomain_name" =~ ^[^-][a-zA-Z0-9-]+$ ]]; then
+  freenom_subdomain_name=""
 fi
 
 # config checks
