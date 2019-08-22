@@ -1,0 +1,9 @@
+[Unit]
+Description="Time freenom-script-update for %I repetitively"
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1u
+
+[Install]
+WantedBy=timers.target
