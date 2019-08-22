@@ -127,7 +127,7 @@ _EOF_
 # Function getDomArgs: use regex to get domain name digits only domain_id and -s <subdomain>
 func_getDomArgs () {
   # first remove -c arg and save other options to $d_args
-  d_args="$( echo "$@" | sed -E 's/ ?-c [][a-zA-Z0-9 !"#$%&'\''()*+,-.:;<=>?@^_`{}~.]+ ?//g' )"
+  d_args="$( echo "$@" | sed -E 's/ ?-c [][a-zA-Z0-9 !"#$%&'\''()*+,-.:;<=>?@^_`{}~/]+ ?//g' )"
   # to get domain_name: remove "-s" option, any other args e.g. "-[a-z]"
   #                     remove any 'digits only' options too (= domain id)
   arg_domain_name="$( echo "$d_args" | sed -E 's/( ?-s [^ ]+|( -[[:alnum:]]|-[[:alnum:]] )| [0-9]+|[0-9]+ | )|^-[[:alnum:]]$//g' )"
