@@ -3,6 +3,8 @@
 load 'bats-support/load'
 load 'bats-assert-1/load'
 
+# variables
+
 script="/usr/local/bin/freenom.sh"
 config="/usr/local/bin/freenom.conf"
 
@@ -30,6 +32,25 @@ get_func() {
   export debug=$debug
   sed -n '/^'"$1"'/,/^}$/p' $script | sed '/^}$/q'
 }
+
+get_dns() {
+  #source $config
+  export freenom_update=ipv="$1"
+  export freenom_domain_name="example.tk"
+  export freenom_domain_id="1234567890"
+  export dnsManagementPage="$( cat $BATS_TEST_DIRNAME/$2 )"
+  echo "# stub: $BATS_TEST_DIRNAME/$2" >&3
+  fn="$(get_func func_getRec)"
+  if [ "$debug" -eq 0 ]; then
+    output=$( echo "$( bash -c "source $config; $fn; export current_ip="$3"; func_getRec; declare -p recType recName recTTL recValue" )" )
+  else
+    echo "# DEBUG: $( bash -cvx "source $config; $fn; export current_ip="$3"; func_getRec; declare -p recType recName recTTL recValue")" >&3
+    assert_output x
+  fi
+}
+
+@test "script: $script" {}
+@test "config: $config" {}
 
 @test "func_help" {
   fn="$(get_func func_help)"
@@ -67,34 +88,14 @@ get_func() {
   assert_output --regexp "$regex_ip"
 }
 
+
 @test "func_getRec ipv4" { 
-  #source $config
-  export freenom_domain_name="example.tk"
-  export freenom_domain_id="1234567890"
-  export dnsManagementPage="$( cat html/dnsManagement.html )"
-  fn="$(get_func func_getRec)"
-  if [ "$debug" -eq 0 ]; then
-    output=$( echo "$( bash -c "source $config; $fn; export current_ip="1.2.3.4"; func_getRec; declare -p recType recName recTTL recValue" )" )
-  else
-    echo "# DEBUG: $( bash -cvx "source $config; $fn; export current_ip="1.2.3.4"; func_getRec; declare -p recType recName recTTL recValue")" >&3
-    assert_output x
-  fi
+  get_dns "4" "html/dnsManagement.html" "1.2.3.4"
   assert_output --regexp "=\"A\".*=\"EXAMPLE.TK\".*=\"[0-9]+.*=\"1\.2\.3\.4\""
 }
 
 @test "func_getRec ipv6" { 
-  #source $config
-  export freenom_update=ipv="6"
-  export freenom_domain_name="example.tk"
-  export freenom_domain_id="1234567890"
-  export dnsManagementPage="$( cat html/dnsManagement_6.html )"
-  fn="$(get_func func_getRec)"
-  if [ "$debug" -eq 0 ]; then
-    output=$( echo "$( bash -c "source $config; $fn; export current_ip="2001:123:0:1:2:3:4:0"; func_getRec; declare -p recType recName recTTL recValue" )" )
-  else
-    echo "# DEBUG: $( bash -cvx "source $config; $fn; export current_ip="2001:123:0:1:2:3:4:0"; func_getRec; declare -p recType recName recTTL recValue")" >&3
-    assert_output x
-  fi
+  get_dns "6" "html/dnsManagement_6.html" "2001:123:0:1:2:3:4:0"
   assert_output --regexp "=\"AAAA\".*=\"EXAMPLE.TK\".*=\"[0-9]+.*=\"2001:123:0:1:2:3:4:0\""
 }
 

@@ -9,6 +9,11 @@ Bash Automated Testing System
 * freenom-args.bats
 * freenom-funcs.bats
 
+## Variables
+
+* script="/usr/local/bin/freenom.sh"
+* config="/usr/local/bin/freenom.conf"
+
 ## Run
 
 `bats freenom-args.bats`
