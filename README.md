@@ -44,7 +44,7 @@ The second line updates the A record of `example.tk` with the current client ip 
 
 Alternatively the same can be accomplished with a [systemd.timer](https://www.freedesktop.org/software/systemd/man/systemd.timer.html)
 
-Thanks to [@sdcloudt](https://github.com/sdcloudt) you can use these templates from the [systemd](systemd) dir. Copy the files to e.g. `/etc/systemd/user` or `~/.config/systemd/user`. Then reload systemd and either manually add symlinks or enable the unit to create service instance for your domain.
+Thanks to [@sdcloudt](https://github.com/sdcloudt) you can use the templates from the [systemd](systemd) dir. Copy the files to e.g. `/etc/systemd/user` or `~/.config/systemd/user`. Then reload systemd and either manually add symlinks or enable the unit to create service instance for your domain.
 
 Example:
 
