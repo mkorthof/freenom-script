@@ -1,0 +1,6 @@
+[Unit]
+Description="Renew the freenom domain %I"
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/freenom.sh -c /etc/freenom.conf -r %I
