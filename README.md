@@ -44,6 +44,32 @@ The second line updates the A record of `example.tk` with the current client ip 
 
 Alternatively the same can be accomplished with a [systemd.timer](https://www.freedesktop.org/software/systemd/man/systemd.timer.html)
 
+Thanks to [@sdcloudt](https://github.com/sdcloudt) you can use the templates from the [systemd](systemd) dir. Copy the files to e.g. `/etc/systemd/user` or `~/.config/systemd/user`. Then reload systemd and either manually add symlinks or enable the unit to create service instance for your domain.
+
+Example:
+
+``` bash
+# manually
+mkdir /etc/systemd/user/timers.target.wants
+ln -s /etc/systemd/user/freenom-script-renew@.service /etc/systemd/user/timers.target.wants/freenom-script-renew@example.com.service
+# or, renew all domains
+ln -s /etc/systemd/user/freenom-script-renew-all@.service /etc/systemd/user/timers.target.wants/freenom-script-renew-all@.service
+ln -s /etc/systemd/user/freenom-script-update@.service /etc/systemd/user/timers.target.wants/freenom-script-update@example.com.service
+````
+
+``` bash
+# always reload systemd first
+systemctl daemon-reload 
+```
+
+``` bash
+# this will create symlinks automatically
+systemd enable --now freenom-script-renew@example.com.service
+# or, renew all domains
+systemd enable --now freenom-script-renew-all@.service
+systemd enable --now freenom-script-update@example.com.service
+```
+
 ### Optional Overrides:
 
 The following options can be changed in config, they are however OK to leave as-is.
