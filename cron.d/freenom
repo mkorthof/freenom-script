@@ -1,0 +1,4 @@
+# Replace 'example.tk' with your domain and uncomment line(s)
+
+#0 9 * * 0 root bash -c 'sleep $((RANDOM \% 60))m; /usr/local/bin/freenom.sh -r -a'
+#0 * * * * root bash -c 'sleep $((RANDOM \% 15))m; /usr/local/bin/freenom.sh -u example.tk'
