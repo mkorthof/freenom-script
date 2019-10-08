@@ -159,12 +159,6 @@ Usually you can just replace "freenom.sh" with the new version (unless you're no
 
 An exeption is when config options were added/changed which you may need to compare and merge. Such config changes are listed [below](#Changes).
 
-## Uninstall
-
-Run `make uninstall`.
-
-You can also manually reverse the steps under Installation above (remove .sh, .conf and scheduler files).
-
 ## Usage
 
 ```shell
@@ -202,6 +196,11 @@ NOTES:
             Using "-u" or "-r" and specifying <domain> as argument
             will override any settings in script or config file
 ```
+## Uninstall
+
+Run `make uninstall`.
+
+You can also manually reverse the steps under Installation above (remove .sh, .conf and scheduler files).
 
 ## Sources
 
