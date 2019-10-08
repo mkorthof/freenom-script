@@ -6,7 +6,7 @@ load 'bats-assert-1/load'
 # variables
 
 script="/usr/local/bin/freenom.sh"
-config="/usr/local/bin/freenom.conf"
+config="/etc/freenom.conf"
 
 setup() {
   source $config
@@ -39,11 +39,11 @@ get_dns() {
   export freenom_domain_name="example.tk"
   export freenom_domain_id="1234567890"
   export dnsManagementPage="$( cat $BATS_TEST_DIRNAME/$2 )"
-  echo "# stub: $BATS_TEST_DIRNAME/$2" >&3
   fn="$(get_func func_getRec)"
   if [ "$debug" -eq 0 ]; then
     output=$( echo "$( bash -c "source $config; $fn; export current_ip="$3"; func_getRec; declare -p recType recName recTTL recValue" )" )
   else
+    echo "# DEBUG: stub=$BATS_TEST_DIRNAME/$2" >&3
     echo "# DEBUG: $( bash -cvx "source $config; $fn; export current_ip="$3"; func_getRec; declare -p recType recName recTTL recValue")" >&3
     assert_output x
   fi
@@ -73,7 +73,7 @@ get_dns() {
 }
 
 @test "func_trimIpCmd func_randIp" {
-  export RE_IP="$regex_ip"
+  export ipRE="$regex_ip"
   if [ -z "$freenom_update_ip_retry" ]; then freenom_update_ip_retry="3"; fi
   fn="$(get_func func_trimIpCmd; get_func func_randIp)"
   while [[ "$output" == "" && "$i" -lt "$freenom_update_ip_retry" ]]; do
