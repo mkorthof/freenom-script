@@ -12,7 +12,7 @@ Bash Automated Testing System
 ## Variables
 
 * script="/usr/local/bin/freenom.sh"
-* config="/usr/local/bin/freenom.conf"
+* config="/etc/freenom.conf"
 
 ## Run
 

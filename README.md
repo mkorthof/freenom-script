@@ -1,38 +1,51 @@
 # Domain Renewal and DynDNS for Freenom.com
 
+***Latest version: v2019-10-04 ([Changes](#Changes))***
+
 This shell script makes sure your Freenom domains don't expire by auto renewing them.
 It's original functionality of updating an A record with the clients ip address is also retained.
 
-You'll need to have already registered an account at Freenom.com first with at least one (free) domain added before you can run the script.
+You'll need to have already registered an account at Freenom.com with at least one (free) domain added before you can run the script.
 
 ## Installation
 
-Note that this shell script requires a recent version of "Bash"
+_Note that this shell script requires a recent version of "Bash"_
 
-1) Suggested installation path: "/usr/local/bin"
+### Installer
+
+Run `make install` from git clone directory to automatically install the script, conf file and to configure scheduler.
+
+### Manually
+
+1) Suggested installation path: "/usr/local/bin" and "/etc" for the config file
 2) Edit config and set your email and password which you use to sign-in to freenom.com
-3) Test the script by running `freenom.sh -l`, make sure your domains are listed
-4) To update A record or Renew domains, see Usage below or `freenom.sh -h`  
 
-### Configuration
+### Testing
+Test the script by running `freenom.sh -l` and make sure your domains are listed. To update A record or Renew domains, see Usage below or `freenom.sh -h`  
+
+## Configuration
 
 Settings can be changed in the script itself or set in a seperate config file (default). Every setting has comments with possible options and examples.
 
-- The default filename is "freenom.conf" in the same location as the script
+- The default filename is "freenom.conf" in the same location as the script or "/etc/freenom.conf"
 - You can also use `freename.sh -c /path/to/file.conf`
-- To optionally use the script itself instead copy settings from conf into `freenom.sh` (put them before "Main")
+- To optionally put config in the script itself instead: copy settings from conf into `freenom.sh` (before "Main")
 
-### Scheduling
+## Scheduling
 
-To run the script automatically you can use cron or systemd.
+The installer creates "/etc/cron.d/freenom" or systemd timers so the script runs automatically at certain intervals. You just have to set your domain(s), the installer will tell you how. You can also have a look at the Examples and manual steps below.
 
-#### Cron
+### Cron
 
-- Follow Installation steps above e.g. copy "freenom.sh" to "/usr/local/bin"
-- Create a new file "/etc/cron.d/freenom" and add the following line(s):
+To manually configure cron:
+
+- Copy script and conf files (see [Installation](#Installation))
+- Copy [cron.d/freenom](cron.d/freenom) to "/etc/cron.d/freenom" and edit it, or create the file yourself with these line(s)
+
+Example:
 
 ``` bash
-0 9 * * 0 root bash -c 'sleep $((RANDOM \% 60))m; /usr/local/bin/freenom.sh -r -a' 
+0 9 * * 0 root bash -c 'sleep $((RANDOM \% 60))m; /usr/local/bin/freenom.sh -r -a'
 0 * * * * root bash -c 'sleep $((RANDOM \% 15))m; /usr/local/bin/freenom.sh -u example.tk'
 ```
 
@@ -40,34 +53,36 @@ This first line in this example will run the script with "renew all domains" opt
 
 The second line updates the A record of `example.tk` with the current client ip address, at hourly intervals
 
-#### Systemd
+### Systemd
 
-Alternatively the same can be accomplished with a [systemd.timer](https://www.freedesktop.org/software/systemd/man/systemd.timer.html)
+Alternatively the same can be accomplished by manually adding a [systemd.timer](https://www.freedesktop.org/software/systemd/man/systemd.timer.html)
 
-Thanks to [@sdcloudt](https://github.com/sdcloudt) you can use the templates from the [systemd](systemd) dir. Copy the files to e.g. `/etc/systemd/user` or `~/.config/systemd/user`. Then reload systemd and either manually add symlinks or enable the unit to create service instance for your domain.
+Thanks to [@sdcloudt](https://github.com/sdcloudt) you can use the templates from the [systemd](systemd) dir.
+
+Copy the files to e.g. `/etc/systemd/user` or `~/.config/systemd/user`. Then reload systemd and either manually add symlinks or enable the unit to create a service instance for your domain.
 
 Example:
 
 ``` bash
-# manually
+# manually:
 mkdir /etc/systemd/user/timers.target.wants
-ln -s /etc/systemd/user/freenom-script-renew@.service /etc/systemd/user/timers.target.wants/freenom-script-renew@example.com.service
-# or, renew all domains
-ln -s /etc/systemd/user/freenom-script-renew-all@.service /etc/systemd/user/timers.target.wants/freenom-script-renew-all@.service
-ln -s /etc/systemd/user/freenom-script-update@.service /etc/systemd/user/timers.target.wants/freenom-script-update@example.com.service
+ln -s /etc/systemd/user/freenom-renew@.service /etc/systemd/user/timers.target.wants/freenom-renew@example.com.service
+# or, renew all domains:
+ln -s /etc/systemd/user/freenom-renew-all@.service /etc/systemd/user/timers.target.wants/freenom-renew-all@.service
+ln -s /etc/systemd/user/freenom-update@.service /etc/systemd/user/timers.target.wants/freenom-update@example.com.service
 ````
 
 ``` bash
-# always reload systemd first
-systemctl daemon-reload 
+# always reload systemd first:
+systemctl daemon-reload
 ```
 
 ``` bash
-# this will create symlinks automatically
-systemd enable --now freenom-script-renew@example.com.service
-# or, renew all domains
-systemd enable --now freenom-script-renew-all@.service
-systemd enable --now freenom-script-update@example.com.service
+# this will create symlinks automatically:
+systemd enable --now freenom-renew@example.com.service
+# or, renew all domains:
+systemd enable --now freenom-renew-all@.service
+systemd enable --now freenom-update@example.com.service
 ```
 
 ### Optional Overrides
@@ -75,6 +90,7 @@ systemd enable --now freenom-script-update@example.com.service
 The following options can be changed in config, they are however OK to leave as-is.
 
 ``` bash
+freenom_http_retry="3"        # number of curl retries
 freenom_update_force="0"      # [0/1] force ip update, even if unchanged
 freenom_update_ttl="3600"     # ttl in sec (changed from 14440 to 3600)
 freenom_update_ip_retry="3"   # number of retries to get ip
@@ -83,7 +99,7 @@ freenom_renew_log="1"         # [0/1] log renew warnings details
 freenom_list_bind="0"         # [0/1] output isc bind zone format
 ```
 
-#### Actions
+### Actions
 
 ``` bash
 freenom_update_ip="0"         # [0/1] arg "-u"
@@ -123,29 +139,42 @@ In case of issues try running the curl and dig command above manually.
 
 ## Used Files
 
-### Script
+- **Installer:**
+  - `Makefile`
+- **Script:**
+  - `freenom.sh`
+  - `freenom.conf`
+- **Output:**
+  - Default path: `"/var/log/freenom/"`
+  - `freenom.log`
+  - `freenom_\<domain\>.ip{4,6}`
+  - `freenom_renewalResult-\<id\>.html`
+- **More info:**
+  - See "Output files" and "freenom_out_dir" variable in config
+  - Use `freenom.sh -o` to view Result html files
 
-- `freenom.sh`
-- `freenom.conf`
+## Updates
 
-### Output
+Usually you can just replace "freenom.sh" with the new version (unless you're not using a seperate config file).
 
-Default path: `"/var/log/freenom*"`
+An exeption is when config options were added/changed which you may need to compare and merge. Such config changes are listed [below](#Changes).
 
-- freenom.log
-- freenom.ip{4,6}_\<domain\>.lock
-- freenom.renewalResult_\<domain_id\>.html
-- freenom.errorUpdateResultt_\<domain_id\>.html
-- More info: see "Output files" and "freenom_out_dir" variable in config
-- Use `freenom.sh -o` to view Result html files
+## Uninstall
+
+Run `make uninstall`.
+
+You can also manually reverse the steps under Installation above (remove .sh, .conf and scheduler files).
 
 ## Usage
 
-``` shell
+```shell
+FREENOM.COM DOMAIN RENEWAL AND DYNDNS
+=====================================
+
 USAGE:
             freenom.sh -l [-d]
             freenom.sh -r <domain> [-s <subdomain>] | [-a]
-            freenom.sh -u <domain> [-s <subdomain>]
+            freenom.sh -u <domain> [-s <subdomain>] [-f]
             freenom.sh -z <domain>
 
 OPTIONS:
@@ -155,17 +184,18 @@ OPTIONS:
                   add [-a] to renew All domains
             -u    Update <domain> A record with current ip
                   add [-s] to update <Subdomain>
+                  add [-f] to force update on unchanged ip
             -z    Zone listing of dns records for <domain>
 
             -4    Use ipv4 and modify A record on "-u" (default)
             -6    Use ipv6 and modify AAAA record on "-u"
             -c    Config <file> to be used instead freenom.conf
             -i    Ip commands list used to get current ip
-            -o    Output html result file(s) for update and renewal
+            -o    Output html result file(s) for renewals
 
 EXAMPLES:
             ./freenom.sh -r example.com
-            ./freenom.sh -c /etc/my.conf -r -a
+            ./freenom.sh -c /etc/myfn.conf -r -a
             ./freenom.sh -u example.com -s mail
 
 NOTES:
@@ -175,35 +205,31 @@ NOTES:
 
 ## Sources
 
-- Original script: https://gist.github.com/a-c-t-i-n-i-u-m/bc4b1ff265b277dbf195
-- Updated script: https://gist.github.com/pgaulon/3a844a626458f56903d88c5bb1463cc6
-- Reference: https://github.com/dabendan2/freenom-dns (npm)
-- Reference: https://github.com/patrikx3/freenom (npm)
-
-## Updates
-
-Usually you can just replace freenom.sh with the new version.
-
-Unless:
-
-- you're not using a seperate config file
-- config options were added/changed
-
-So make sure you check "Changes" below and compare/merge config if needed.
+- Original script: [gist.github.com/a-c-t-i-n-i-u-m/bc4b1ff265b277dbf195](https://gist.github.com/a-c-t-i-n-i-u-m/bc4b1ff265b277dbf195)
+- Updated script: [gist.github.com/pgaulon/3a844a626458f56903d88c5bb1463cc6](https://gist.github.com/pgaulon/3a844a626458f56903d88c5bb1463cc6)
+- Reference: [github.com/dabendan2/freenom-dns](https://github.com/dabendan2/freenom-dns) (npm)
+- Reference: [github.com/patrikx3/freenom](https://github.com/patrikx3/freenom) (npm)
 
 ## Changes
 
-- added referer url to curl to fix login
-- fixed token
-- made updating ip optional
-- added domain renewals
-- added logging
-- handling of existing dns records (ip update)
-- retry getting current ip
-- option to use seperate .conf file
-- option to list existing dns records
-- option to skip renewal notice details in log
-- added tests (BATS)
-- changed 'cannot renew until' warnings to notices
-- added recType check (A or AAAA) for dyndns
+- [20190000] added referer url to curl to fix login
+- [20190000] fixed token
+- [20190000] made updating ip optional
+- [20190000] added domain renewals
+- [20190000] added logging
+- [20190317] handling of existing dns records (ip update)
+- [20190317] retry getting current ip
+- [20190420] option to use seperate .conf file
+- [20190420] option to list existing dns records
+- [20190420] option to skip renewal notice details in log
+- [20190621] added tests (BATS)
+- [20190621] changed 'cannot renew until' warnings to notices
+- [20190621] added recType check (A or AAAA) for dyndns
+- [20190920] changed out dir, **config change:** `freenom_out_dir="/var/log/freenom"`
+- [20190920] added curl retries, **config change:** `freenom_http_retry="3"`
+- [20190922] fixed issue #12 (sdcloudt)
+- [20190931] added systemd templates (PR #15 from sdcloudt)
+- [20190927] added installer
+- [20191005] errorUpdateResult is no longer saved to html file
 
+More details: `git log --pretty=short --name-only`

@@ -1,0 +1,11 @@
+#!/bin/sh
+if [ "$1" = "list-unit-files" ]; then
+  echo freenom-renew-all@.service static
+  echo freenom-renew-all@.timer   enabled
+  echo freenom-renew@.service     masked
+  echo freenom-renew@.timer       static
+  echo freenom-update@.service    static
+  echo freenom-update@.timer      staitic
+else
+  echo systemctl stub (1=$1, 2=$2, 3=$3)
+fi
