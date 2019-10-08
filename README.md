@@ -153,12 +153,6 @@ In case of issues try running the curl and dig command above manually.
   - See "Output files" and "freenom_out_dir" variable in config
   - Use `freenom.sh -o` to view Result html files
 
-## Updates
-
-Usually you can just replace "freenom.sh" with the new version (unless you're not using a seperate config file).
-
-An exeption is when config options were added/changed which you may need to compare and merge. Such config changes are listed [below](#Changes).
-
 ## Usage
 
 ```shell
@@ -196,6 +190,13 @@ NOTES:
             Using "-u" or "-r" and specifying <domain> as argument
             will override any settings in script or config file
 ```
+
+## Updates
+
+Usually you can just replace "freenom.sh" with the new version (unless you're not using a seperate config file).
+
+An exeption is when config options were added/changed which you may need to compare and merge. Such config changes are listed [below](#Changes).
+
 ## Uninstall
 
 Run `make uninstall`.
