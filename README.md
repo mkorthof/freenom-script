@@ -147,8 +147,8 @@ In case of issues try running the curl and dig command above manually.
 - **Output:**
   - Default path: `"/var/log/freenom/"`
   - `freenom.log`
-  - `freenom_\<domain\>.ip{4,6}`
-  - `freenom_renewalResult-\<id\>.html`
+  - `freenom_<domain>.ip{4,6}`
+  - `freenom_renewalResult-<id>.html`
 - **More info:**
   - See "Output files" and "freenom_out_dir" variable in config
   - Use `freenom.sh -o` to view Result html files
