@@ -1,6 +1,6 @@
 # Domain Renewal and DynDNS for Freenom.com
 
-***Latest version: v2019-10-04 ([Changes](#Changes))***
+***Latest version: v2019-10-05 ([Changes](#Changes))***
 
 This shell script makes sure your Freenom domains don't expire by auto renewing them.
 It's original functionality of updating an A record with the clients ip address is also retained.
