@@ -17,7 +17,7 @@ Run `make install` from git clone directory to automatically install the script,
 
 ### Manually
 
-1) Suggested installation path: "/usr/local/bin" and "/etc" for the config file
+1) Suggested installation path: "/usr/local/bin" and "/usr/local/etc" for the config file
 2) Edit config and set your email and password which you use to sign-in to freenom.com
 
 ### Testing
@@ -27,7 +27,7 @@ Test the script by running `freenom.sh -l` and make sure your domains are listed
 
 Settings can be changed in the script itself or set in a seperate config file (default). Every setting has comments with possible options and examples.
 
-- The default filename is "freenom.conf" in the same location as the script or "/etc/freenom.conf"
+- The default filename is "freenom.conf" in the same location as the script or "/usr/local/etc/freenom.conf"
 - You can also use `freename.sh -c /path/to/file.conf`
 - To optionally put config in the script itself instead: copy settings from conf into `freenom.sh` (before "Main")
 
@@ -231,5 +231,5 @@ You can also manually reverse the steps under Installation above (remove .sh, .c
 - [20190931] added systemd templates (PR #15 from sdcloudt)
 - [20190927] added installer
 - [20191005] errorUpdateResult is no longer saved to html file
-
+- [20191017] changed default conf path to /usr/local/etc
 More details: `git log --pretty=short --name-only`

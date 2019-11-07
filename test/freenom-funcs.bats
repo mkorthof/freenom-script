@@ -6,7 +6,7 @@ load 'bats-assert-1/load'
 # variables
 
 script="/usr/local/bin/freenom.sh"
-config="/etc/freenom.conf"
+config="/usr/local/etc/freenom.conf"
 
 setup() {
   source $config
