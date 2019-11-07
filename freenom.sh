@@ -48,9 +48,11 @@ for i in "$@"; do
 done
 IFS="$SAVIFS"
 
-# if scriptConf is empty, check for /etc/freenom.conf and in same dir as script
+# if scriptConf is empty, check for {/usr/local,}/etc/freenom.conf and in same dir as script
 if [ -z "$scriptConf" ]; then
-  if [ -e "/etc/freenom.conf" ]; then
+  if [ -e "/usr/local/etc/freenom.conf" ]; then
+    scriptConf="/usr/local/etc/freenom.conf"
+  elif [ -e "/etc/freenom.conf" ]; then
     scriptConf="/etc/freenom.conf"
   else
     scriptConf="$(dirname "$0")/$(basename -s '.sh' "$0").conf"
@@ -126,7 +128,7 @@ USAGE:
             $scriptName -z <domain>
 
 OPTIONS:
-            -l    List all domains and id's for account
+            -l    List all domains with id's in account
                   add [-d] to show renewal Details
             -r    Renew domain(s)
                   add [-a] to renew All domains
@@ -332,6 +334,9 @@ func_debugMyDomainsResult () {
 # Options #
 ###########
 
+if echo -- "$@" | grep -qi '[^a-z]\-debug'; then
+  debug="$( echo $@ | sed -E 's/.*-debug ([0-9]) ?.*/\1/' )"
+fi
 # show help
 if echo -- "$@" | grep -qi '[^a-z]\-h'; then
   func_help
@@ -362,12 +367,14 @@ if echo -- "$@" | grep -qi -- '[^a-z]\-l'; then
   echo
 # list dns records
 elif echo -- "$@" | grep -qi -- '[^a-z]\-z'; then
+  printf "\nListing Domain Record(s)%s...\n" "$lMsg"
+  echo
   func_getDomArgs "$@"
   freenom_list_records="1"
 # output ipcmd list
 elif echo -- "$@" | grep -iq -- '[^a-z]\-i'; then
   if [ "$debug" -ge 1 ]; then echo "DEBUG: ipv freenom_update_ipv=$freenom_update_ipv"; fi
-  echo; echo "Listing all \"get ip\" commands..."; echo
+  printf "\nListing all \"get ip\" commands..."; echo
   for ((i=0; i < ${#ipCmd[@]}; i++)); do
     printf "%2s: %s\n" "$i" "${ipCmd[$i]}"
   done
@@ -716,10 +723,7 @@ func_getRec() {
   IFS_SAV=$IFS; IFS=$'\n'
   dnUC="$( echo "$freenom_domain_name" | tr '[:lower:]' '[:upper:]' )"
   sdUC="$(echo "$freenom_subdomain_name" | tr '[:lower:]' '[:upper:]')"
-  local r
-  local v1 
-  local v2
-  local v3 
+  local r; local v1; local v2; local v3 
   for r in $( echo -e "$dnsManagementPage" | tr '<' '\n' |
               sed -r -n 's/.*records\[([0-9]+)\]\[(type|name|ttl|value)\]\" value=\"([0-9a-zA-Z:\.-]*)\".*/\1 \2 \3/p;g' ); do
     IFS=" " read -r v1 v2 v3 <<< "$r"
@@ -745,11 +749,11 @@ func_getRec() {
 # call getRec function to list records
 if [ "$freenom_list_records" -eq 1 ]; then
   func_getRec
-  printf "\nDNS Zone: \"%s\" (%s)\n\n" "$freenom_domain_name" "$freenom_domain_id"
+  printf "DNS Zone: \"%s\" (%s)\n\n" "$freenom_domain_name" "$freenom_domain_id"
   if [ "${#recType[@]}" -gt 0 ]; then
     for ((i=0; i < ${#recType[@]}; i++)); do
       if [ "$debug" -ge 3 ]; then
-        echo "DEBUG: list_records func_getRec i=$i recType=${recType[$i]} recName=${recName[$i]} recTTL=${recTTL[$i]} recValue=${recValue[$i]}"
+        echo "DEBUG: list_records func_getRec i=$i recTypeArray=${#recType[@]} recType=${recType[$i]} recName=${recName[$i]} recTTL=${recTTL[$i]} recValue=${recValue[$i]}"
       fi
       # subdomains
       if [ -n "$freenom_subdomain_name" ]; then
@@ -781,22 +785,24 @@ fi
 # update ip: if record does not exist add new record else update record
 #      note: recName is not used in actual dns record
 if [ "$freenom_update_ip" -eq 1 ]; then
-  recMatch="0"; freenom_update_type="A"
+  recEmpty="0"; recMatch="0"; freenom_update_type="A"
   # make sure it's a ipv4 or ipv6 address
   if [[ -n "$freenom_update_ipv" && "$freenom_update_ipv" -eq 4 ]]; then freenom_update_type="A"
-    elif [[ -n "$freenom_update_ipv" && "$freenom_update_ipv" -eq 6 ]]; then freenom_update_type="AAAA"
-    elif [[ "$currentIp" =~ ^(([0-9]{1,3}\.){1}([0-9]{1,3}\.){2}[0-9]{1,3})$ ]]; then freenom_update_type="A"
-    elif [[ "$currentIp" =~ ^[0-9a-fA-F]{1,4}: ]]; then freenom_update_type="AAAA"
+  elif [[ -n "$freenom_update_ipv" && "$freenom_update_ipv" -eq 6 ]]; then freenom_update_type="AAAA"
+  elif [[ "$currentIp" =~ ^(([0-9]{1,3}\.){1}([0-9]{1,3}\.){2}[0-9]{1,3})$ ]]; then freenom_update_type="A"
+  elif [[ "$currentIp" =~ ^[0-9a-fA-F]{1,4}: ]]; then freenom_update_type="AAAA"
   fi
   # if theres no record at all: 'add'
   if [ "$(echo "$dnsManagementPage" | grep -F "records[0]")" == "" ]; then
     recordKey="addrecord[0]"
     dnsAction="add"
+    recEmpty=1
   else
+    # find matching record
     func_getRec
     for ((i=0; i < ${#recType[@]}; i++)); do
       if [ "$debug" -ge 1 ]; then
-        echo "DEBUG: update_ip func_getRec i=$i recType=${recType[$i]} recName=${recName[$i]} recTTL=${recTTL[$i]} recValue=${recValue[$i]}"
+        echo "DEBUG: update_ip func_getRec i=$i recTypeArray=${#recType[@]} recType=${recType[$i]} recName=${recName[$i]} recTTL=${recTTL[$i]} recValue=${recValue[$i]}"
       fi
       # make sure its the same recType (ipv4 or 6)
       if [ "${recType[$i]}" == "$freenom_update_type" ]; then
@@ -817,13 +823,14 @@ if [ "$freenom_update_ip" -eq 1 ]; then
       fi
     done
   fi
-  if [ "$dnsAction" != "modify" ]; then
+  # there are existing records, but none match: 'add' 
+  if [[ "$recEmpty" -eq 0 && "$recMatch" -eq 0 ]]; then
     recordKey="addrecord[${#recType[@]}]"
     dnsAction="add"
   fi
-  if [ "$recMatch" -eq 0 ]; then recName=(); fi
+  [ "$recMatch" -eq 0 ] && recName=()
   if [ "$debug" -ge 1 ]; then
-    echo "DEBUG: update_ip vars - i=$i recMatch=$recMatch recordKey=$recordKey dnsAction=$dnsAction"
+    echo "DEBUG: update_ip vars - i=$i recEmtpy=$recEmpty recMatch=$recMatch recordKey=$recordKey dnsAction=$dnsAction"
     echo "DEBUG: update_ip vars - recType=${recType[$i]} recName=${recName[$i]} recTTL=${recTTL[$i]} recValue=${recValue[$i]} (empty on add action)"
     echo "DEBUG: update_ip vars - freenom_update_type=$freenom_update_type name=$freenom_subdomain_name ttyl=$freenom_update_ttl value=$currentIp"
   fi
@@ -1062,7 +1069,9 @@ if [ "$freenom_renew_domain" -eq 1 ]; then
       fi
     fi
     if [ "$freenom_renew_all" -eq 1 ]; then
-      echo "DEBUG: renew_all i=$i domainName=${domainName[$i]}"
+      if [ "$debug" -ge 1 ]; then
+        echo "DEBUG: renew_all i=$i domainName=${domainName[$i]}"
+      fi
       func_renewDate "$i"
       func_renewDomain "$i"
     else

@@ -3,6 +3,7 @@ SCRIPT = freenom.sh
 SYSDDIR = /etc/systemd/user
 CRONDIR = /etc/cron.d
 INSTDIR = /usr/local/bin
+CONFDIR = /usr/local/etc
 
 LISTUNITS := $(shell systemctl list-unit-files --no-legend --no-page "freenom-*" 2>/dev/null|cut -d" " -f1)
 ifneq ("$(shell grep ^staff: /etc/group)", "")
@@ -17,6 +18,10 @@ else ifneq ("$(wildcard $(CRONDIR))", "")
 endif
 EXISTCONF = 0
 ifneq ("$(wildcard /etc/$(CONF))", "")
+  CONFDIR = /etc
+  EXISTCONF = 1
+endif
+ifneq ("$(wildcard $(CONFDIR)/$(CONF))", "")
   EXISTCONF = 1
 endif
 
@@ -31,17 +36,17 @@ ifeq ("$(wildcard $(SCRIPT))","")
 	$(error ERROR: Installation File \"$(SCRIPT)\" not found)
 endif
 ifeq ("$(EXISTCONF)", "0")
-	install -C -m 644 -o root -g root $(CONF) /etc
-	$(info )
-	$(info Edit "/etc/$(CONF)" to set your email and password)
+	install -C -m 644 -o root -g root $(CONF) $(CONFDIR)
+	$(info Edit "$(CONFDIR)/$(CONF)" to set your email and password)
 else
-	$(info File "/etc/$(CONF)" already exists)
+	$(info File "$(CONFDIR)/$(CONF)" already exists)
 endif
 ifeq ("$(wildcard $(INSTDIR)/$(SCRIPT))","")
-	install -C -m 755 -o root -g $(GROUP) $(SCRIPT) $(INSTDIR)
+	echo install -C -m 755 -o root -g $(GROUP) $(SCRIPT) $(INSTDIR)
 else
 	$(info File "$(INSTDIR)/$(SCRIPT)" already exists)
 endif
+exit:
 ifeq ("$(SCHED)", "systemd")
 	$(info )
   ifeq ("$(wildcard systemd/*)","")
@@ -72,7 +77,7 @@ endif
 
 uninstall:
 ifeq ("$(EXISTCONF)","1")
-	rm /etc/$(CONF)
+	rm $(CONFDIR)/$(CONF)
 endif
 ifneq ("$(wildcard $(INSTDIR)/$(SCRIPT))","")
 	rm $(INSTDIR)/$(SCRIPT)
