@@ -1,6 +1,6 @@
 # Domain Renewal and DynDNS for Freenom.com
 
-***Latest version: v2019-10-05 ([Changes](#Changes))***
+***Latest version: v2019-11-17 ([Changes](#Changes))***
 
 This shell script makes sure your Freenom domains don't expire by auto renewing them.
 It's original functionality of updating an A record with the clients ip address is also retained.
@@ -129,6 +129,8 @@ There are a few more services defined for redundancy, the script will choose one
 Once your ip is found it's written to "freenom.ip4.domain.lock" (or ip6) to prevent unnecessary updates in case the ip is unchanged.
 To force an update you can remove this file which is located in the default output path "/var/log".
 
+To manually update using a (static) ip set `freenom_static_ip` and `freenom_update_manual="0"` or use "-m" option.
+
 ### Issues
 
 In case of issues try running the curl and dig command above manually.
@@ -162,16 +164,17 @@ FREENOM.COM DOMAIN RENEWAL AND DYNDNS
 USAGE:
             freenom.sh -l [-d]
             freenom.sh -r <domain> [-s <subdomain>] | [-a]
-            freenom.sh -u <domain> [-s <subdomain>] [-f]
+            freenom.sh -u <domain> [-s <subdomain>] [-m <ip>] [-f]
             freenom.sh -z <domain>
 
 OPTIONS:
-            -l    List all domains and id's for account
+            -l    List all domains with id's in account
                   add [-d] to show renewal Details
             -r    Renew domain(s)
                   add [-a] to renew All domains
             -u    Update <domain> A record with current ip
                   add [-s] to update <Subdomain>
+                  add [-m <ip>] to manually update static <ip>
                   add [-f] to force update on unchanged ip
             -z    Zone listing of dns records for <domain>
 
@@ -232,4 +235,7 @@ You can also manually reverse the steps under Installation above (remove .sh, .c
 - [20190927] added installer
 - [20191005] errorUpdateResult is no longer saved to html file
 - [20191017] changed default conf path to /usr/local/etc
+- [20191108] manual ip update, ** config change:** `freenom_static_ip=""` freenom_update_manual="0"
+
 More details: `git log --pretty=short --name-only`
+

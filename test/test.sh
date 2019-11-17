@@ -13,6 +13,6 @@
               exit 1
             fi
             ;;
-    *)      echo "bats.sh <args|funcs|all>"; exit 0 ;;
+    *)      echo "$(basename "$0") <args|funcs|all>"; exit 0 ;;
   esac
   exit 0
