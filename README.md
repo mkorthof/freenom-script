@@ -235,7 +235,7 @@ You can also manually reverse the steps under Installation above (remove .sh, .c
 - [20190927] added installer
 - [20191005] errorUpdateResult is no longer saved to html file
 - [20191017] changed default conf path to /usr/local/etc
-- [20191108] manual ip update, ** config change:** `freenom_static_ip=""` freenom_update_manual="0"
+- [20191108] manual ip update, **config change:** `freenom_static_ip=""` freenom_update_manual="0"
 
 More details: `git log --pretty=short --name-only`
 
