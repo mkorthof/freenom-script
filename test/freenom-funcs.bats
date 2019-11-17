@@ -16,7 +16,7 @@ setup() {
 }
 
 regex_ip='((((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])))|(((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?))'
-debug=0
+# debug=1
 
 # get_func: extract function $1 from $script
 #   debug and/or test functions:
@@ -35,16 +35,16 @@ get_func() {
 
 get_dns() {
   #source $config
-  export freenom_update=ipv="$1"
+  export freenom_update_ipv="$1"
   export freenom_domain_name="example.tk"
   export freenom_domain_id="1234567890"
   export dnsManagementPage="$( cat $BATS_TEST_DIRNAME/$2 )"
   fn="$(get_func func_getRec)"
   if [ "$debug" -eq 0 ]; then
-    output=$( echo "$( bash -c "source $config; $fn; export current_ip="$3"; func_getRec; declare -p recType recName recTTL recValue" )" )
+    output=$( echo "$( bash -c "source $config; $fn; export currentIp="$3"; func_getRec $freenom_domain_name; declare -p recType recName recTTL recValue" )" )
   else
     echo "# DEBUG: stub=$BATS_TEST_DIRNAME/$2" >&3
-    echo "# DEBUG: $( bash -cvx "source $config; $fn; export current_ip="$3"; func_getRec; declare -p recType recName recTTL recValue")" >&3
+    echo "# DEBUG: $( bash -cvx "source $config; $fn; export currentIp="$3"; func_getRec $freenom_domain_name; declare -p recType recName recTTL recValue")" >&3
     assert_output x
   fi
 }
@@ -87,7 +87,6 @@ get_dns() {
   done
   assert_output --regexp "$regex_ip"
 }
-
 
 @test "func_getRec ipv4" { 
   get_dns "4" "html/dnsManagement.html" "1.2.3.4"
