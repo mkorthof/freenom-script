@@ -2,6 +2,8 @@
 
 ***Latest version: v2019-11-17 ([Changes](#Changes))***
 
+**NOTE: Make sure to update config when updating**
+
 This shell script makes sure your Freenom domains don't expire by auto renewing them.
 It's original functionality of updating an A record with the clients ip address is also retained.
 
@@ -235,7 +237,11 @@ You can also manually reverse the steps under Installation above (remove .sh, .c
 - [20190927] added installer
 - [20191005] errorUpdateResult is no longer saved to html file
 - [20191017] changed default conf path to /usr/local/etc
-- [20191108] manual ip update, **config change:** `freenom_static_ip=""` freenom_update_manual="0"
+- [20191108] static ip update (#18), **config change:**
+  - `freenom_manual_ip=""`
+  - `freenom_update_manual="0"`
+- [20191125] update all domains (#19), not working yet **config change only:**
+  - `freenom_update_all="0"`
 
 More details: `git log --pretty=short --name-only`
 
