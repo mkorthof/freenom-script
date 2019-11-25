@@ -2,7 +2,7 @@
 
 ***Latest version: v2019-11-17 ([Changes](#Changes))***
 
-**NOTE: Make sure to update config when updating**
+**NOTE: Make sure to add new config options when updating script**
 
 This shell script makes sure your Freenom domains don't expire by auto renewing them.
 It's original functionality of updating an A record with the clients ip address is also retained.
