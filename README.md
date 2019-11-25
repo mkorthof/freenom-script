@@ -4,6 +4,8 @@
 
 **NOTE: Make sure to add new config options when updating script**
 
+---
+
 This shell script makes sure your Freenom domains don't expire by auto renewing them.
 It's original functionality of updating an A record with the clients ip address is also retained.
 
@@ -105,6 +107,8 @@ freenom_list_bind="0"         # [0/1] output isc bind zone format
 
 ``` bash
 freenom_update_ip="0"         # [0/1] arg "-u"
+freenom_update_manual="0"     # [0/1] arg "-m"
+freenom_update_all="0"        # [0/1] arg "-a" (future update, not working yet)
 freenom_list="0"              # [0/1] arg "-l"
 freenom_list_renewals="0"     # [0/1] args "-l -d"
 freenom_list_records="0"      # [0/1] arg "-z"
@@ -121,17 +125,18 @@ To update A or AAAA records the nameservers for the domain must be set to the de
 
 ### IP Address
 
-To get  your current ip address from a number of public services the script uses 2 methods, HTTP and DNS:
+To get your current ip address from a number of public services the script uses 2 methods, HTTP and DNS:
 
 - HTTP method: `curl https://checkip.amazonaws.com`
 - DNS method: `dig TXT +short o-o.myaddr.l.google.com @ns1.google.com`
+- Or, manually: updates static ip address instead of auto detect
 
 There are a few more services defined for redundancy, the script will choose one at random. By default it will retry 3 times to get ip.
 
 Once your ip is found it's written to "freenom.ip4.domain.lock" (or ip6) to prevent unnecessary updates in case the ip is unchanged.
 To force an update you can remove this file which is located in the default output path "/var/log".
 
-To manually update using a (static) ip set `freenom_static_ip` and `freenom_update_manual="0"` or use "-m" option.
+To manually update using set `freenom_static_ip` and `freenom_update_manual="0"` or use "-m" option.
 
 ### Issues
 
@@ -238,10 +243,9 @@ You can also manually reverse the steps under Installation above (remove .sh, .c
 - [20191005] errorUpdateResult is no longer saved to html file
 - [20191017] changed default conf path to /usr/local/etc
 - [20191108] static ip update (#18), **config change:**
-  - `freenom_manual_ip=""`
+  - `freenom_static_ip=""`
   - `freenom_update_manual="0"`
-- [20191125] update all domains (#19), not working yet **config change only:**
+- [20191125] update all domains (#19), **config change only:** (_not working yet_)
   - `freenom_update_all="0"`
 
 More details: `git log --pretty=short --name-only`
-
