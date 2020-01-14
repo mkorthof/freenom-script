@@ -1246,7 +1246,7 @@ if [ "$freenom_renew_domain" -eq 1 ]; then
 fi
 
 # logout
-r=1
+r=0
 while [ "$r" -le "$freenom_http_retry" ]; do
   # DEBUG: comment line below for debugging
   logoutPage="$(curl $c_args -A "$agent" --compressed -L -b "$cookie_file" -w $http_code "https://my.freenom.com/logout.php" 2>&1)"
