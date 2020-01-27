@@ -126,6 +126,20 @@ debug=0
   fi
 }
 
+@test "args freenom.sh -u invalid-example-123.tk"
+  debug=0
+  export debug=0
+  run $script -u invalid-example-123.tk
+  if [ "$debug" -eq 0 ]; then
+    [ "$status" -eq 1 ]
+    #assert_output --partial 'Error: Could not find Domain ID for "invalid-example-123.tk"'
+  else
+    echo "# DEBUG: status=$status" >&3
+    echo "# DEBUG: output=$output" >&3
+    #assert_output x
+  fi
+}
+
 @test "args freenom.sh -z invalid-example-123.tk" {
 #  skip
   debug=0
@@ -141,3 +155,4 @@ debug=0
     #assert_output x
   fi
 }
+

@@ -16,16 +16,19 @@ setup() {
 }
 
 regex_ip='((((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])))|(((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?))'
+
 # debug=1
 
-# get_func: extract function $1 from $script
+# get_fn: extract function $1 from $script
 #   debug and/or test functions:
-#     - var   : fn="$(get_func fname)"
+#     - var   : fn="$(get_fn fname)"
 #     - shell : bash -cvx "source $config; $fn; declare -f | nl'
 #     - out   : output=$( echo "$( bash -c "..." )" )
 #     - bats  : assert_output x
 
-get_func() {
+# TODO: 'update_all', getdnsPage getRec, setRec
+
+get_fn() {
   if [ "$debug" -eq 1 ]; then
     echo "# DEBUG: script=$script config=$config \$*=$*" >&3
   fi
@@ -39,7 +42,7 @@ get_dns() {
   export freenom_domain_name="example.tk"
   export freenom_domain_id="1234567890"
   export dnsManagementPage="$( cat $BATS_TEST_DIRNAME/$2 )"
-  fn="$(get_func func_getRec)"
+  fn="$(get_fn func_getRec)"
   if [ "$debug" -eq 0 ]; then
     output=$( echo "$( bash -c "source $config; $fn; export currentIp="$3"; func_getRec $freenom_domain_name; declare -p recType recName recTTL recValue" )" )
   else
@@ -53,29 +56,29 @@ get_dns() {
 @test "config: $config" {}
 
 @test "func_help" {
-  fn="$(get_func func_help)"
+  fn="$(get_fn func_help)"
   bash -c "$fn; func_help"
 }
 
 @test "func_getDomArgs example.tk" { 
-  fn="$(get_func func_getDomArgs)"
+  fn="$(get_fn func_getDomArgs)"
   bash -c "$fn; func_getDomArgs example.com"
 }
 
 @test "func_showResult" { 
-  fn="$(get_func func_showResult)"
+  fn="$(get_fn func_showResult)"
   bash -c "$fn; func_showResult"
 }
 
 @test "func_trimIpCmd" {
-  fn="$(get_func func_trimIpCmd; get_func func_randIp)"
+  fn="$(get_fn func_trimIpCmd; get_fn func_randIp)"
   bash -c "source $config; $fn; func_trimIpCmd"
 }
 
 @test "func_trimIpCmd func_randIp" {
   export ipRE="$regex_ip"
   if [ -z "$freenom_update_ip_retry" ]; then freenom_update_ip_retry="3"; fi
-  fn="$(get_func func_trimIpCmd; get_func func_randIp)"
+  fn="$(get_fn func_trimIpCmd; get_fn func_randIp)"
   while [[ "$output" == "" && "$i" -lt "$freenom_update_ip_retry" ]]; do
     if [ "$debug" -eq 0 ]; then
       output=$( echo "$( bash -c "source $config; $fn; func_trimIpCmd; func_randIp" )" )
@@ -99,11 +102,11 @@ get_dns() {
 }
 
 @test "func_renewDate" { 
-  fn="$(get_func func_renewDate)"
+  fn="$(get_fn func_renewDate)"
   bash -c "$fn; func_renewDate 0"
 }
 
 @test "func_renewDomain" { 
-  fn="$(get_func func_renewDomain)"
+  fn="$(get_fn func_renewDomain)"
   bash -c "$fn; func_renewDomain 0"
 }
