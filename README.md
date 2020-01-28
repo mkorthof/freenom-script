@@ -1,21 +1,10 @@
 # Domain Renewal and DynDNS for Freenom.com
 
-## Issue 2020-01
+## Update ##
 
-**PLEASE NOTE:** 
+Some versions of the script older than january 2020 _will never actually renew any domains_, as mentioned in [#23](https://github.com/mkorthof/freenom-script/issues/23). So make sure you update to the latest version.
 
-The Current version of the script _will never actually renew any domains_, as mentioned in [#23](https://github.com/mkorthof/freenom-script/issues/23)
-
-To fix use this work around for now:
-
-- edit [freenom.sh, line 1091](https://github.com/mkorthof/freenom-script/blob/102e2d5170b7c5cbf2e8216c3969585b85765cd6/freenom.sh#L1091)
-- remove 'local' so it reads `renewDateOkay=""`
-
-I'll push an updated version this week
-
----
-
-***Latest version: v2019-11-17 ([Changes](#Changes))***
+***Latest version: v2020-01-28 ([Changes](#Changes))***
 
 **NOTE: Make sure to add new config options when updating script**
 
@@ -262,6 +251,8 @@ You can also manually reverse the steps under Installation above (remove .sh, .c
   - `freenom_update_manual="0"`
 - [20191125] update all domains (#19), **config change only:** (_not working yet_)
   - `freenom_update_all="0"`
-- [20191125] always cleanup cookie file
+- [20191127] always cleanup cookie file
+- [20200127] fixed domain renewals (#23)
+- [20200128] fixed escaping special chars in password (#21)
 
 More details: `git log --pretty=short --name-only`

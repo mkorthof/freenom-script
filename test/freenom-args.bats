@@ -126,7 +126,7 @@ debug=0
   fi
 }
 
-@test "args freenom.sh -u invalid-example-123.tk"
+@test "args freenom.sh -u invalid-example-123.tk" {
   debug=0
   export debug=0
   run $script -u invalid-example-123.tk

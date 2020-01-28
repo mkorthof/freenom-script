@@ -47,7 +47,7 @@ get_dns() {
     output=$( echo "$( bash -c "source $config; $fn; export currentIp="$3"; func_getRec $freenom_domain_name; declare -p recType recName recTTL recValue" )" )
   else
     echo "# DEBUG: stub=$BATS_TEST_DIRNAME/$2" >&3
-    echo "# DEBUG: $( bash -cvx "source $config; $fn; export currentIp="$3"; func_getRec $freenom_domain_name; declare -p recType recName recTTL recValue")" >&3
+    echo "# DEBUG: $( bash -cvx "source $config; $fn; export currentIp="$3"; func_getRec $freenom_domain_name; declare -p recType recName recTTL recValue" )" >&3
     assert_output x
   fi
 }
