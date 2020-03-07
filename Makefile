@@ -42,7 +42,7 @@ else
 	$(info File "$(CONFDIR)/$(CONF)" already exists)
 endif
 ifeq ("$(wildcard $(INSTDIR)/$(SCRIPT))","")
-	echo install -C -m 755 -o root -g $(GROUP) $(SCRIPT) $(INSTDIR)
+	install -C -m 755 -o root -g $(GROUP) $(SCRIPT) $(INSTDIR)
 else
 	$(info File "$(INSTDIR)/$(SCRIPT)" already exists)
 endif
