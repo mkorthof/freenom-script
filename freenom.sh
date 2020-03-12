@@ -21,7 +21,7 @@
 ########
 
 set -eo pipefail
-for i in curl grep date basenamex; do
+for i in curl grep date basename; do
   if ! command -v $i >/dev/null 2>&1; then
     echo "Error: could not find \"$i\", exiting..."
     exit 1
