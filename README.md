@@ -4,7 +4,7 @@
 
 Some versions of the script older than january 2020 _will never actually renew any domains_, as mentioned in [#23](https://github.com/mkorthof/freenom-script/issues/23). So make sure you update to the latest version.
 
-***Latest version: v2020-01-28 ([Changes](#Changes))***
+***Latest version: v2020-03-12 ([Changes](#Changes))***
 
 **NOTE: Make sure to add new config options when updating script**
 
