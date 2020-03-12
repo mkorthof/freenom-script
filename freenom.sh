@@ -21,6 +21,12 @@
 ########
 
 set -eo pipefail
+for i in curl grep date basenamex; do
+  if ! command -v $i >/dev/null 2>&1; then
+    echo "Error: could not find \"$i\", exiting..."
+    exit 1
+  fi
+done
 scriptName="$(basename "$0")"
 noticeCount="0"
 warnCount="0"
@@ -1176,7 +1182,7 @@ func_renewDate() {
       fi
     else
       noticeCount="$((noticeCount+1))"
-      renewNotice="${renewNotice}\n  Cannot renew ${domainName[$1]} (${domainId[$1]}) until $renewDate"
+      renewNotice="${renewNotice}\n  Cannot renew \"${domainName[$1]}\" (${domainId[$1]}) until $renewDate"
       if [ "$debug" -ge 1 ]; then
         echo -e "DEBUG: renew_domain func_renewDate domainName=${domainName[$1]} (Id=${domainId[$1]}) - cannot renew until Date=$renewDate"
       fi
