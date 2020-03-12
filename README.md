@@ -17,7 +17,7 @@ You'll need to have already registered an account at Freenom.com with at least o
 
 ## Installation
 
-_Note that this shell script requires a recent version of "Bash"_
+_Note that this shell script requires a recent version of "Bash", (and cURL)_
 
 ### Installer
 
@@ -254,5 +254,7 @@ You can also manually reverse the steps under Installation above (remove .sh, .c
 - [20191127] always cleanup cookie file
 - [20200127] fixed domain renewals (#23)
 - [20200128] fixed escaping special chars in password (#21)
+- [20200307] fixed Makefile, installing freenom.sh was disabled
+- [20200312] added checks for required bins
 
 More details: `git log --pretty=short --name-only`
