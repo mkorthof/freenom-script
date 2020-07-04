@@ -36,7 +36,7 @@ Test the script by running `freenom.sh -l` and make sure your domains are listed
 Settings can be changed in the script itself or set in a seperate config file (default). Every setting has comments with possible options and examples.
 
 - The default filename is "freenom.conf" in the same location as the script or "/usr/local/etc/freenom.conf"
-- You can also use `freename.sh -c /path/to/file.conf`
+- You can also use `freenom.sh -c /path/to/file.conf`
 - To optionally put config in the script itself instead: copy settings from conf into `freenom.sh` (before "Main")
 
 ## Scheduling
