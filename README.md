@@ -17,7 +17,7 @@ You'll need to have already registered an account at Freenom.com with at least o
 
 ## Installation
 
-_Note that this shell script requires recent versions of "Bash" and "cURL"
+Note that this shell script requires recent versions of "Bash" and "cURL"
 
 ### Installer
 
@@ -29,6 +29,7 @@ Run `make install` from git clone directory to automatically install the script,
 2) Edit config and set your email and password which you use to sign-in to freenom.com
 
 ### Testing
+
 Test the script by running `freenom.sh -l` and make sure your domains are listed. To update A record or Renew domains, see Usage below or `freenom.sh -h`  
 
 ## Configuration
@@ -105,6 +106,8 @@ freenom_update_ip_retry="3"   # number of retries to get ip
 freenom_update_ip_log="1"     # [0/1**] log 'skipped same ip' msg
 freenom_renew_log="1"         # [0/1**] log renew warnings details
 freenom_list_bind="0"         # [0/1**] output isc bind zone format
+freenom_http_sleep="3 3"      # wait n to n+n secs between http requests
+freenom_oldcurl_force="0"     # [0/1] force older curl version support
 ```
 
 ### Actions
