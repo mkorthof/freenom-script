@@ -44,6 +44,8 @@ Settings can be changed in the script itself or set in a seperate config file (d
 
 The installer creates "/etc/cron.d/freenom" or systemd timers so the script runs automatically at certain intervals. You just have to set your domain(s), the installer will tell you how. You can also have a look at the Examples and manual steps below.
 
+**NOTE: The 'correct' systemd dir for 'local' unit files seems to differ per distro (see also [#28](https://github.com/mkorthof/freenom-script/issues/28)) and the installer currently skips setting up systemd timers as well as cron currently**
+
 ### Cron
 
 To manually configure cron:
@@ -69,8 +71,6 @@ Alternatively the same can be accomplished by manually adding a [systemd.timer](
 Thanks to [@sdcloudt](https://github.com/sdcloudt) you can use the templates from the [systemd](systemd) dir.
 
 Copy the files to e.g. `/etc/systemd/user` or `~/.config/systemd/user`. Then reload systemd and either manually add symlinks or enable the unit to create a service instance for your domain.
-
-**NOTE: The 'correct' systemd dir for 'local' unit files seems to differ per distro (see e.g. #28)**
 
 Example:
 
