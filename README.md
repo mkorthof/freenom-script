@@ -70,15 +70,18 @@ Thanks to [@sdcloudt](https://github.com/sdcloudt) you can use the templates fro
 
 Copy the files to e.g. `/etc/systemd/user` or `~/.config/systemd/user`. Then reload systemd and either manually add symlinks or enable the unit to create a service instance for your domain.
 
+**NOTE: The 'correct' systemd dir for 'local' unit files seems to differ per distro (see e.g. #28)**
+
 Example:
 
 ``` bash
 # manually:
 mkdir /etc/systemd/user/timers.target.wants
-ln -s /etc/systemd/user/freenom-renew@.service /etc/systemd/user/timers.target.wants/freenom-renew@example.com.service
+ln -s /etc/systemd/user/freenom-renew@.service /etc/systemd/user/timers.target.wants/freenom-renew@example.tk.service
 # or, renew all domains:
 ln -s /etc/systemd/user/freenom-renew-all@.service /etc/systemd/user/timers.target.wants/freenom-renew-all@.service
-ln -s /etc/systemd/user/freenom-update@.service /etc/systemd/user/timers.target.wants/freenom-update@example.com.service
+# to update a domain:
+ln -s /etc/systemd/user/freenom-update@.service /etc/systemd/user/timers.target.wants/freenom-update@example.tk.service
 ````
 
 ``` bash
@@ -88,10 +91,11 @@ systemctl daemon-reload
 
 ``` bash
 # this will create symlinks automatically:
-systemd enable --now freenom-renew@example.com.service
+systemctl enable --now freenom-renew@example.tk.service
 # or, renew all domains:
-systemd enable --now freenom-renew-all@.service
-systemd enable --now freenom-update@example.com.service
+systemctl enable --now freenom-renew-all@.service
+# to update a domain:
+systemctl enable --now freenom-update@example.tk.service
 ```
 
 ### Optional Overrides
