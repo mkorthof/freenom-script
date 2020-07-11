@@ -44,7 +44,7 @@ Settings can be changed in the script itself or set in a seperate config file (d
 
 The installer creates "/etc/cron.d/freenom" or systemd timers so the script runs automatically at certain intervals. You just have to set your domain(s), the installer will tell you how. You can also have a look at the Examples and manual steps below.
 
-**NOTE: The 'correct' systemd dir for 'local' unit files seems to differ per distro (see also [#28](https://github.com/mkorthof/freenom-script/issues/28)) and the installer currently skips setting up systemd timers as well as cron currently**
+**NOTE: The 'correct' systemd dir for 'local' unit files seems to differ per distro (see also [#28](https://github.com/mkorthof/freenom-script/issues/28)) and the installer currently skips setting up systemd timers as well as cron**
 
 ### Cron
 
