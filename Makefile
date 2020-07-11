@@ -1,6 +1,8 @@
 CONF = freenom.conf
 SCRIPT = freenom.sh
-SYSDDIR = /etc/systemd/user
+#SYSDDIR = /usr/lib/systemd/user
+# ubuntu
+SYSDDIR = /lib/systemd/system
 CRONDIR = /etc/cron.d
 INSTDIR = /usr/local/bin
 CONFDIR = /usr/local/etc
@@ -11,7 +13,7 @@ ifneq ("$(shell grep ^staff: /etc/group)", "")
 else
   GROUP = root
 endif
-ifneq ("$(LISTUNITS)", "")
+ifneq ("$(wildcard /run/systemd/system)", "")
   SCHED = systemd
 else ifneq ("$(wildcard $(CRONDIR))", "")
   SCHED = cron
@@ -46,33 +48,44 @@ ifeq ("$(wildcard $(INSTDIR)/$(SCRIPT))","")
 else
 	$(info File "$(INSTDIR)/$(SCRIPT)" already exists)
 endif
+
 exit:
+
+###############################################################################
+# DISABLED
+###############################################################################
 ifeq ("$(SCHED)", "systemd")
 	$(info )
   ifeq ("$(wildcard systemd/*)","")
 	$(error ERROR: Installation directory and files \"systemd/*\" not found)
+	exit 1
   endif
+  ifeq ("$(LISTUNITS)", "")
 	install -C -D -m 644 -o root -g root systemd/* $(SYSDDIR)
 	systemctl daemon-reload
 	$(info To schedule domain renewals and updates, use these commands:)
-	$(info * systemd enable --now freenom-renew@example.tk.service)
-	$(info * systemd enable --now freenom-renew-all@.service)
-	$(info * systemd enable --now freenom-update@example.tk.service)
+	$(info - systemctl enable --now freenom-renew@example.tk.service)
+	$(info - systemctl enable --now freenom-renew-all@.service)
+	$(info - systemctl enable --now freenom-update@example.tk.service)
 	$(info )
-	$(info + replace example.tk with your domain)
+	$(info * replace example.tk with your domain)
 	$(info )
+  else
+	$(info Systemd unit files already installed)
+  endif
 else ifeq ("$(SCHED)", "cron")
   ifeq ("$(wildcard cron.d/freenom)","")
 	$(error ERROR: Installation File "cron.d/freenom/*" not found)
+	exit 1
   else
 	install -C -m 644 -o root -g root cron.d/freenom $(CRONDIR)/freenom
 	$(info )
 	$(info Edit "$(CRONDIR)/freenom" to schedule domain renewals and updates)
 	$(info * replace example.tk with your domain and uncomment line(s))
-  endif
 	$(info )
 	$(info See README.md for details)
 	$(info )
+  endif
 endif
 
 uninstall:
