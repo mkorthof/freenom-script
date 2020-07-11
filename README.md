@@ -2,9 +2,9 @@
 
 ## Update ##
 
-Some versions of the script older than january 2020 _will never actually renew any domains_, as mentioned in [#23](https://github.com/mkorthof/freenom-script/issues/23). So make sure you update to the latest version.
+***Latest version: v2020-07-11 ([Changes](#Changes))***
 
-***Latest version: v2020-03-12 ([Changes](#Changes))***
+Some versions of the script older than january 2020 _will never actually renew any domains_, as mentioned in [#23](https://github.com/mkorthof/freenom-script/issues/23). So make sure you update to the latest version.
 
 **NOTE: Make sure to add new config options when updating script**
 
@@ -17,7 +17,7 @@ You'll need to have already registered an account at Freenom.com with at least o
 
 ## Installation
 
-_Note that this shell script requires a recent version of "Bash", (and cURL)_
+_Note that this shell script requires recent versions of "Bash" and "cURL"
 
 ### Installer
 
@@ -99,25 +99,25 @@ The following options can be changed in config, they are however OK to leave as-
 
 ``` bash
 freenom_http_retry="3"        # number of curl retries
-freenom_update_force="0"      # [0/1] force ip update, even if unchanged
+freenom_update_force="0"      # [0/1**] force ip update, even if unchanged
 freenom_update_ttl="3600"     # ttl in sec (changed from 14440 to 3600)
 freenom_update_ip_retry="3"   # number of retries to get ip
-freenom_update_ip_log="1"     # [0/1] log 'skipped same ip' msg
-freenom_renew_log="1"         # [0/1] log renew warnings details
-freenom_list_bind="0"         # [0/1] output isc bind zone format
+freenom_update_ip_log="1"     # [0/1**] log 'skipped same ip' msg
+freenom_renew_log="1"         # [0/1**] log renew warnings details
+freenom_list_bind="0"         # [0/1**] output isc bind zone format
 ```
 
 ### Actions
 
 ``` bash
-freenom_update_ip="0"         # [0/1] arg "-u"
-freenom_update_manual="0"     # [0/1] arg "-m"
-freenom_update_all="0"        # [0/1] arg "-a" (future update, not working yet)
-freenom_list="0"              # [0/1] arg "-l"
-freenom_list_renewals="0"     # [0/1] args "-l -d"
-freenom_list_records="0"      # [0/1] arg "-z"
-freenom_renew_domain="0"      # [0/1] arg "-r"
-freenom_renew_all="0"         # [0/1] args "-r -a"
+freenom_update_ip="0"         # [0/1**] arg "-u"
+freenom_update_manual="0"     # [0/1**] arg "-m"
+freenom_update_all="0"        # [0/1**] arg "-a" (future update, not working yet)
+freenom_list="0"              # [0/1**] arg "-l"
+freenom_list_renewals="0"     # [0/1**] args "-l -d"
+freenom_list_records="0"      # [0/1**] arg "-z"
+freenom_renew_domain="0"      # [0/1**] arg "-r"
+freenom_renew_all="0"         # [0/1**] args "-r -a"
 ```
 
 ## DynDNS
@@ -143,6 +143,8 @@ To force an update you can remove this file which is located in the default outp
 To manually update using set `freenom_static_ip` and `freenom_update_manual="0"` or use "-m" option.
 
 ### Issues
+
+Make sure 'curl' and/or 'dig' is installed (from e.g. dnsutils or bind-utils)
 
 In case of issues try running the curl and dig command above manually.
 
@@ -226,35 +228,48 @@ You can also manually reverse the steps under Installation above (remove .sh, .c
 
 ## Changes
 
-- [20190000] added referer url to curl to fix login
-- [20190000] fixed token
-- [20190000] made updating ip optional
-- [20190000] added domain renewals
-- [20190000] added logging
-- [20190317] handling of existing dns records (ip update)
-- [20190317] retry getting current ip
-- [20190420] option to use seperate .conf file
-- [20190420] option to list existing dns records
-- [20190420] option to skip renewal notice details in log
-- [20190621] added tests (BATS)
-- [20190621] changed 'cannot renew until' warnings to notices
-- [20190621] added recType check (A or AAAA) for dyndns
-- [20190920] changed out dir, **config change:** `freenom_out_dir="/var/log/freenom"`
-- [20190920] added curl retries, **config change:** `freenom_http_retry="3"`
-- [20190922] fixed issue #12 (sdcloudt)
-- [20190931] added systemd templates (PR #15 from sdcloudt)
-- [20190927] added installer
-- [20191005] errorUpdateResult is no longer saved to html file
-- [20191017] changed default conf path to /usr/local/etc
-- [20191108] static ip update (#18), **config change:**
+_order is latest/newest on top_
+
+- [**20200705**] mainly fixes:
+  - fixed ip update on apex record
+  - fixed conf path detection
+  - fixed (older) curl failing login (#25)
+  - fixed missing expirydate (#28)
+  - fixed dot in subdomain aka "sub subdomain" (#29)
+  - added (test) option: update all domains/records '-a' (#19)
+  - improved logging update errors
+  - **config changes:**
+    - `freenom_http_sleep="3 3"`
+    - `freenom_oldcurl_force="0"`
+- [**20200312**] added checks for required bins
+- [**20200307**] fixed Makefile, installing freenom.sh was disabled
+- [**20200128**] fixed escaping special chars in password (#21)
+- [**20200127**] fixed domain renewals (#23)
+- [**20191127**] always cleanup cookie file
+- [**20191125**] update all domains (#19), **config change only:** (_not working yet_)
+  - `freenom_update_all="0"`
+- [**20191108**] static ip update (#18), **config change:**
   - `freenom_static_ip=""`
   - `freenom_update_manual="0"`
-- [20191125] update all domains (#19), **config change only:** (_not working yet_)
-  - `freenom_update_all="0"`
-- [20191127] always cleanup cookie file
-- [20200127] fixed domain renewals (#23)
-- [20200128] fixed escaping special chars in password (#21)
-- [20200307] fixed Makefile, installing freenom.sh was disabled
-- [20200312] added checks for required bins
+- [**20191017**] changed default conf path to /usr/local/etc
+- [**20191005**] errorUpdateResult is no longer saved to html file
+- [**20190931**] added systemd templates (PR #15 from sdcloudt)
+- [**20190927**] added installer
+- [**20190922**] fixed issue #12 (sdcloudt)
+- [**20190920**] changed out dir, **config change:** `freenom_out_dir="/var/log/freenom"`
+- [**20190920**] added curl retries, **config change:** `freenom_http_retry="3"`
+- [**20190621**] changed 'cannot renew until' warnings to notices
+- [**20190621**] added tests (BATS)
+- [**20190621**] added recType check (A or AAAA) for dyndns
+- [**20190420**] option to use seperate .conf file
+- [**20190420**] option to skip renewal notice details in log
+- [**20190420**] option to list existing dns records
+- [**20190317**] retry getting current ip
+- [**20190317**] handling of existing dns records (ip update)
+- [**20190000**] made updating ip optional
+- [**20190000**] fixed token
+- [**20190000**] added referer url to curl to fix login
+- [**20190000**] added logging
+- [**20190000**] added domain renewals
 
 More details: `git log --pretty=short --name-only`

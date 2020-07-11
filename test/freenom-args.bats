@@ -20,30 +20,30 @@ debug=0
 @test "script: $script" {}
 @test "config: $config" {} 
 
-@test "args freenom.sh (no opts)" {
+@test "$(date '+%F %H:%M:%S') args freenom.sh (no opts)" {
   run $script
   [ "$status" -eq 1 ]
   assert_output --partial 'Error: invalid or unknown argument(s), try "freenom.sh -h"'
 }
 
-@test "args freenom.sh -XXX" {
-  run $script -xxx
+@test "$(date '+%F %H:%M:%S') args freenom.sh -XXX" {
+  run $script -XXX
   [ "$status" -eq 1 ]
   assert_output --partial 'Error: invalid or unknown argument(s), try "freenom.sh -h"'
 }
 
-@test "args freenom.sh -h" {
+@test "$(date '+%F %H:%M:%S') args freenom.sh -h" {
   run $script -h
   [ "$status" -eq 0 ]
   assert_output --partial "USAGE:"
 }
 
-@test "args freenom.sh -c $config" {
+@test "$(date '+%F %H:%M:%S') args freenom.sh -c $config" {
   run $script -c $config
   [ "$status" -eq 0 ]
 }
 
-@test "args freenom.sh -c \"/tmp/spa ces/free nom.conf\"" {
+@test "$(date '+%F %H:%M:%S') args freenom.sh -c \"/tmp/spa ces/free nom.conf\"" {
   #skip
   tmpdir="/tmp/spa ces"
   tmpcfg="${tmpdir}/free nom.conf"
@@ -61,32 +61,38 @@ debug=0
   [ -d "$tmpdir" ] && rmdir "$tmpdir"
 }
 
-@test "args freenom.sh -c /invalid/invalid.conf" {
-  debug=1
-  export debug=1
+@test "$(date '+%F %H:%M:%S') args freenom.sh -c /invalid/invalid.conf" {
+  #debug=0
+  #export debug=1
   run $script -c /invalid/invalid.conf
   [ "$status" -eq 1 ]
-  [ "$output" = 'Error: invalid config "/invalid/invalid.conf" specified' ]
+  [ "$output" = 'Error: invalid config file "/invalid/invalid.conf" specified' ]
 }
 
-@test "args freenom.sh -c \"/spa ces/in valid.conf\"" {
+@test "$(date '+%F %H:%M:%S') args freenom.sh -c \"/spa ces/in valid.conf\"" {
   debug=0
   run $script -c "/spa ces/in valid.conf"
   if [ "$debug" -eq 0 ]; then
     [ "$status" -eq 1 ]
-    [ "$output" = 'Error: invalid config "/spa ces/in valid.conf" specified' ]
+    [ "$output" = 'Error: invalid config file "/spa ces/in valid.conf" specified' ]
   else
     echo "# DEBUG: output=$output" >&3
   fi
 }
 
-@test "args freenom.sh -i" {
+@test "$(date '+%F %H:%M:%S') args freenom.sh -i" {
   run $script -i
   [ "$status" -eq 0 ]
   assert_output --regexp "((curl|dig) -(%ipv%|4|6))+"
 }
 
-@test "args freenom.sh -l (example.tk)" {
+@test "$(date '+%F %H:%M:%S') args freenom.sh -u example.tk -s invalid#subdom" {
+  run $script -u example.tk -s invalid#subdom
+  [ "$status" -eq 1 ]
+  assert_output --partial 'Error: invalid or missing subdomain'
+}
+
+@test "$(date '+%F %H:%M:%S') args freenom.sh -l (example.tk)" {
   debug=0
   export debug=0
   export freenom_domain_name="example.tk"
@@ -105,7 +111,7 @@ debug=0
   fi
 }
 
-@test "args freenom.sh -l -d (example.tk)" {
+@test "$(date '+%F %H:%M:%S') args freenom.sh -l -d (example.tk)" {
 #  skip
   debug=0
   export debug=0
@@ -126,7 +132,7 @@ debug=0
   fi
 }
 
-@test "args freenom.sh -u invalid-example-123.tk" {
+@test "$(date '+%F %H:%M:%S') args freenom.sh -u invalid-example-123.tk" {
   debug=0
   export debug=0
   run $script -u invalid-example-123.tk
@@ -140,7 +146,19 @@ debug=0
   fi
 }
 
-@test "args freenom.sh -z invalid-example-123.tk" {
+@test "$(date '+%F %H:%M:%S') args freenom.sh -u example.tk -s subdom -m 1.2.3.4" {
+  tmpip4="/var/log/freenom_subdom.example.tk.ip4"
+  if [ "$( id -u )" -ne 0 ]; then
+    tmpip4="/tmp/freenom_subdom.example.tk.ip4"
+  fi
+  echo "1.2.3.4" > "$tmpip4"
+  run $script -u example.tk -s subdom -m 1.2.3.4
+  [ "$status" -eq 0 ]
+  assert_output --partial 'Update: Skipping "subdom.example.tk" - found same ip ("1.2.3.4")'
+  [ -e "$tmpip4" ] && rm "$tmpip4"
+}
+
+@test "$(date '+%F %H:%M:%S') args freenom.sh -z invalid-example-123.tk" {
 #  skip
   debug=0
   export debug=0
@@ -155,4 +173,3 @@ debug=0
     #assert_output x
   fi
 }
-

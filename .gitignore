@@ -6,6 +6,7 @@ out/
 result/
 tmp/
 *.bak
+*.debug
 *.drawio
 *.html
 *.ip
