@@ -20,13 +20,13 @@ regex_ip='((((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9]
 # debug=1
 
 # get_fn: extract function $1 from $script
-#   debug and/or test functions:
-#     - var   : fn="$(get_fn fname)"
-#     - shell : bash -cvx "source $config; $fn; declare -f | nl'
-#     - out   : output=$( echo "$( bash -c "..." )" )
-#     - bats  : assert_output x
+# to debug and/or test functions:
+#   - var   : fn="$(get_fn fname)"
+#   - shell : bash -cvx "source $config; $fn; declare -f | nl'
+#   - out   : output=$( echo "$( bash -c "..." )" )
+#   - bats  : assert_output x
 
-# TODO: 'update_all', getdnsPage getRec, setRec
+# TODO: 'update_all', setRec
 
 get_fn() {
   if [ "$debug" -eq 1 ]; then
@@ -55,35 +55,35 @@ get_dns() {
 @test "script: $script" {}
 @test "config: $config" {}
 
-@test "func_help" {
+@test "$(date '+%F %H:%M:%S') func_help" {
   fn="$(get_fn func_help)"
   bash -c "$fn; func_help"
 }
 
-@test "func_getDomArgs example.tk" { 
-  fn="$(get_fn func_getDomArgs)"
-  bash -c "$fn; func_getDomArgs example.com"
+@test "$(date '+%F %H:%M:%S') func_getDomainArgs example.tk" { 
+  fn="$(get_fn func_getDomainArgs)"
+  bash -c "$fn; func_getDomainArgs example.com"
 }
 
-@test "func_showResult" { 
+@test "$(date '+%F %H:%M:%S') func_showResult" { 
   fn="$(get_fn func_showResult)"
   bash -c "$fn; func_showResult"
 }
 
-@test "func_trimIpCmd" {
-  fn="$(get_fn func_trimIpCmd; get_fn func_randIp)"
-  bash -c "source $config; $fn; func_trimIpCmd"
+@test "$(date '+%F %H:%M:%S') func_sortIpCmd" {
+  fn="$(get_fn func_sortIpCmd; get_fn func_randIp)"
+  bash -c "source $config; $fn; func_sortIpCmd"
 }
 
-@test "func_trimIpCmd func_randIp" {
+@test "$(date '+%F %H:%M:%S') func_sortIpCmd func_randIp" {
   export ipRE="$regex_ip"
   if [ -z "$freenom_update_ip_retry" ]; then freenom_update_ip_retry="3"; fi
-  fn="$(get_fn func_trimIpCmd; get_fn func_randIp)"
+  fn="$(get_fn func_sortIpCmd; get_fn func_randIp)"
   while [[ "$output" == "" && "$i" -lt "$freenom_update_ip_retry" ]]; do
     if [ "$debug" -eq 0 ]; then
-      output=$( echo "$( bash -c "source $config; $fn; func_trimIpCmd; func_randIp" )" )
+      output=$( echo "$( bash -c "source $config; $fn; func_sortIpCmd; func_randIp" )" )
     else
-      echo "# DEBUG: $( bash -cvx "source $config; $fn; func_trimIpCmd; func_randIp ")" >&3
+      echo "# DEBUG: $( bash -cvx "source $config; $fn; func_sortIpCmd; func_randIp ")" >&3
       assert_output x
     fi
     i=$((i+1))
@@ -91,22 +91,22 @@ get_dns() {
   assert_output --regexp "$regex_ip"
 }
 
-@test "func_getRec ipv4" { 
+@test "$(date '+%F %H:%M:%S') func_getRec ipv4" { 
   get_dns "4" "html/dnsManagement.html" "1.2.3.4"
-  assert_output --regexp "=\"A\".*=\"EXAMPLE.TK\".*=\"[0-9]+.*=\"1\.2\.3\.4\""
+  assert_output --regexp "=\"A\".*=\"TEST\".*=\"[0-9]+.*=\"1\.2\.3\.4\""
 }
 
-@test "func_getRec ipv6" { 
+@test "$(date '+%F %H:%M:%S') func_getRec ipv6" { 
   get_dns "6" "html/dnsManagement_6.html" "2001:123:0:1:2:3:4:0"
-  assert_output --regexp "=\"AAAA\".*=\"EXAMPLE.TK\".*=\"[0-9]+.*=\"2001:123:0:1:2:3:4:0\""
+  assert_output --regexp "=\"AAAA\".*=\"TEST\".*=\"[0-9]+.*=\"2001:123:0:1:2:3:4:0\""
 }
 
-@test "func_renewDate" { 
+@test "$(date '+%F %H:%M:%S') func_renewDate" { 
   fn="$(get_fn func_renewDate)"
   bash -c "$fn; func_renewDate 0"
 }
 
-@test "func_renewDomain" { 
+@test "$(date '+%F %H:%M:%S') func_renewDomain" { 
   fn="$(get_fn func_renewDomain)"
   bash -c "$fn; func_renewDomain 0"
 }

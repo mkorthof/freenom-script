@@ -26,6 +26,8 @@ filter (e.g. run one test only)
 
 recursive (TAP)
 
+`bats -r . -t`
+
 `bats -r ./test/freenom* -t`
 
 ## Libaries
