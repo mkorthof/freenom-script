@@ -36,11 +36,6 @@ oldCurl="0"
 if curl --version | grep -Eiq "^curl (7\.[0-5]|[0-6]\.)"; then
     oldCurl=1
 fi
-if [[ -n "$freenom_oldcurl_force" && "$freenom_oldcurl_force" -eq 1 ]]; then
-    oldCurl=1
-else
-    oldCurl=0
-fi
 
 ########
 # Conf #
@@ -656,6 +651,10 @@ if [ -z "$freenom_update_force" ]; then freenom_update_force=0; fi
 if [ -z "$freenom_update_ipv" ]; then freenom_update_ipv=4; fi
 if [ -z "$freenom_update_ttl" ]; then freenom_update_ttl="3600"; fi
 if [ -z "$freenom_update_ip_retry" ]; then freenom_update_ip_retry="3"; fi
+
+if [[ -n "$freenom_oldcurl_force" && "$freenom_oldcurl_force" -eq 1 ]]; then
+    oldCurl=1
+fi
 
 if [ "$debug" -ge 1 ]; then
   func_debugVars "$@"
