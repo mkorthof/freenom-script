@@ -3,7 +3,7 @@ Description="Time freenom-script-update for %I repetitively"
 
 [Timer]
 OnBootSec=2min
-OnUnitActiveSec=1u
+OnUnitActiveSec=1hour
 
 [Install]
 WantedBy=timers.target
