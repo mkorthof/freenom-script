@@ -2,7 +2,7 @@
 Description="Time freenom-script-renew for %I repetitively"
 
 [Timer]
-OnCalender=weekly
+OnCalendar=weekly
 
 [Install]
 WantedBy=timers.target
