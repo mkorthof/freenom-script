@@ -4,9 +4,7 @@
 
 ***Latest version: v2020-07-13 ([CHANGES.md](CHANGES.md))***
 
-Some versions of the script older than january 2020 _will never actually renew any domains_, as mentioned in [#23](https://github.com/mkorthof/freenom-script/issues/23). So make sure you update to the latest version.
-
-**NOTE: Make sure to add new config options when updating script**
+**Make sure to add new config options when updating script**
 
 ---
 
@@ -139,7 +137,7 @@ systemctl daemon-reload
 
 In case of any errors make sure you're using the correct paths and "freenom.conf" is setup. Check `systemctl status <unit>` and the logs.
 
-##### NOTE: to use 'user mode' instead of system mode replace "/system" by "/user"
+##### NOTE: to use 'user mode' instead of system mode replace "/system" by "/user" and use `freenomctl --user`
 
 ### Optional Overrides
 

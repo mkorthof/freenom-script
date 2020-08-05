@@ -51,7 +51,7 @@ ifeq ("$(wildcard $(SCRIPT))","")
 endif
 ifeq ("$(EXISTCONF)", "0")
 	$(shell install -C -m 644 -o root -g root $(CONF) $(CONFDIR))
-	$(info Edit "$(CONF)" to set your email and password)
+	$(info Remember to edit "$(CONF)" and set your email and password)
 else
 	$(info File "$(CONFDIR)/$(CONF)" already exists)
 endif
@@ -70,11 +70,13 @@ ifeq ("$(SCHED)", "systemd")
   else
 	$(shell install -C -D -m 644 -o root -g root systemd/* $(SYSDDIR))
 	$(shell systemctl daemon-reload)
+    ifeq ("$(wildcard $(SYSDDIR)/freenom-*)","")
 	$(info To schedule domain renewals and updates, use these commands:)
 	$(info - systemctl enable --now freenom-renew@example.tk.timer)
 	$(info - systemctl enable --now freenom-renew-all@.timer)
 	$(info - systemctl enable --now freenom-update@example.tk.timer)
 	$(info $() $() * replace 'example.tk' with your domain)
+    endif
   endif
 else ifeq ("$(SCHED)", "cron")
   ifeq ("$(wildcard cron.d/freenom)","")
