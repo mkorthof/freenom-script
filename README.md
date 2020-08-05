@@ -177,11 +177,11 @@ To update A or AAAA records the nameservers for the domain must be set to the de
 
 ### IP Address
 
-To get your current ip address from a number of public services the script uses 2 methods, HTTP and DNS:
+To get your current ip address from a number of public services the script uses 3 methods, HTTP, DNS or manually:
 
 - HTTP method: `curl https://checkip.amazonaws.com`
 - DNS method: `dig TXT +short o-o.myaddr.l.google.com @ns1.google.com`
-- Or, manually: updates static ip address instead of auto detect
+- Manually: you can set a static ip address instead of auto detect
 
 There are a few more services defined for redundancy, the script will choose one at random. By default it will retry 3 times to get ip.
 
