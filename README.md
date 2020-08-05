@@ -190,15 +190,13 @@ To force an update you can remove this file which is located in the default outp
 
 To manually update using set `freenom_static_ip` and `freenom_update_manual="0"` or use "-m" option.
 
-To list all 'get ip' commands run `freenom.sh -i`.
-
 ### Issues
 
 Make sure 'curl' and/or 'dig' is installed (from e.g. dnsutils or bind-utils)
 
 In case of issues try running the curl and dig command above manually.
 
-- To list all services check the getIp array e.g. run `grep getIp freenom.sh`
+- To list all 'get ip' commands run `freenom.sh -i` (or `grep getIp freenom.sh`)
 - To disable IPv6: set `freenom_update_ipv="4"`
 - To disable dig: set `freenom_update_dig="0"`
 
