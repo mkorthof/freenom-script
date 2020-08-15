@@ -7,6 +7,6 @@ jobs:
         steps:
             - uses: actions/checkout@v1
             - name: Set conf
-              run: sed 's|/usr/local/etc/freenom.conf|freenom.sh|g' freenom.sh
+              run: sed -i 's|/usr/local/etc/freenom.conf|freenom.sh|g' freenom.sh
             - name: Run shellcheck
               run: shellcheck -x freenom.sh
