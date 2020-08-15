@@ -3,7 +3,7 @@ name: Shellcheck
 on: [push, pull_request, workflow_dispatch]
 jobs:
     build:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-20.04
         steps:
             - uses: actions/checkout@v1
             - name: Run shellcheck
