@@ -6,5 +6,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v1
+            - name: Copy Prepare conf
+              run: cp freenom.conf /usr/local/etc
             - name: Run shellcheck
               run: shellcheck -x freenom.sh
