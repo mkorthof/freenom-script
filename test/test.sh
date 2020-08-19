@@ -16,11 +16,15 @@ case $1 in
           func_msg "START"
           bats freenom-funcs.bats
           ;;
+  sc)  trap 'func_msg "END"; exit' EXIT HUP INT TERM
+          func_msg "START"
+          bats freenom-sc.bats
+          ;;
   all)    func_msg "START"
           trap 'func_msg "END"; exit' EXIT HUP INT TERM
           if [ -d ./test ]; then
             ( bats -r ./test/freenom* -t )
-          elif [ -f "freenom-args.bats" ] && [ -f "freenom-funcs.bats" ]; then
+          elif [ -f "freenom-args.bats" ] && [ -f "freenom-funcs.bats" ] && [ -f "freenom-sc.bats" ]; then
             ( cd .. && bats -r ./test/freenom* -t )
           else
             echo "ERROR: bats files not found"
