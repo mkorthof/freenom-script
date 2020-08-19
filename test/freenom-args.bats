@@ -154,7 +154,7 @@ debug=0
   echo "1.2.3.4" > "$tmpip4"
   run $script -u example.tk -s subdom -m 1.2.3.4
   [ "$status" -eq 0 ]
-  assert_output --partial 'Update: Skipping "subdom.example.tk" - found same ip ("1.2.3.4")'
+  assert_output --partial 'Update: Skipping "subdom.example.tk" - found same ip "1.2.3.4"'
   [ -e "$tmpip4" ] && rm "$tmpip4"
 }
 

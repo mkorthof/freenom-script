@@ -12,7 +12,7 @@
 # This is free software, and you are welcome to redistribute it               #
 # under certain conditions.                                                   #
 # See LICENSE file for more information                                       #
-# gpl-3.0-only                                                  v2020-07-11   #
+# gpl-3.0-only                                                  v2020-08-18   #
 ###############################################################################
 
 ########
