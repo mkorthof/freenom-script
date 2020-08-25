@@ -12,7 +12,7 @@
 # This is free software, and you are welcome to redistribute it               #
 # under certain conditions.                                                   #
 # See LICENSE file for more information                                       #
-# gpl-3.0-only                                                  v2020-08-18   #
+# gpl-3.0-only                                                  v2020-08-19   #
 ###############################################################################
 
 ########
@@ -35,6 +35,11 @@ errCount="0"
 oldCurl="0"
 if curl --version | grep -Eiq "^curl (7\.[0-5]|[0-6]\.)"; then
     oldCurl=1
+fi
+if [[ -n "$freenom_oldcurl_force" && "$freenom_oldcurl_force" -eq 1 ]]; then
+    oldCurl=1
+else
+    oldCurl=0
 fi
 
 ########
@@ -133,6 +138,19 @@ fi
 if [ ! -w "${out_path}.log" ]; then
   echo "Error: logfile \"${out_path}.log\" not writable, using \"/tmp/$(basename -s '.sh' "$0").log\""
   out_path="/tmp/$(basename -s '.sh' "$0")"
+fi
+
+if [ -z "$RCPTTO" ]; then
+  RCPTTO="$freenom_email"
+fi
+
+if [ ! -x "$MTA" ]; then
+  if [ -x "/usr/sbin/sendmail" ]; then
+    MTA="/usr/sbin/sendmail"
+  else
+    MTA=""
+    echo "Warning: no MTA found, cant send email"
+  fi
 fi
 
 # set a few general variables
@@ -333,10 +351,10 @@ func_showResult () {
 #                  regex: https://www.regexpal.com/?fam=104038
 #                  returns: ipv4/6 address
 func_randIp() {
-  [ "$debug" -ge 3 ] && set -x
-  ${ipCmdSorted[$((RANDOM%${#ipCmdSorted[@]}))]/\%agent\%/$agent} 2>/dev/null | \
-    grep -Pow "^${ipRE}$"
-  [ "$debug" -ge 3 ] && set +x
+    [ "$debug" -ge 3 ] && set -x
+    ${ipCmdSorted[$((RANDOM%${#ipCmdSorted[@]}))]/\%agent\%/$agent} 2>/dev/null | \
+      grep -Pow "${ipRE}" | head -1
+    [ "$debug" -ge 3 ] && set +x
 }
 
 # Function sortIpCimd: trim ipCmd array from conf for update_ipv=4|6 and whether we want dig or not
@@ -344,28 +362,34 @@ func_randIp() {
 #                      creates new array: $ipCmdSorted
 func_sortIpCmd () {
   local i
+  ipCmdSorted=()
   for ((i=0; i < ${#ipCmd[@]}; i++)); do
     local skip=0;
-    ipCmdSorted=()
     # if update_ipv is set to '6', skip ipCmd's that do not not contain '-6'
     if [[ -n "$freenom_update_ipv" && "$freenom_update_ipv" -eq 6 ]]; then
       if [[ "${ipCmd[$i]}" =~ '-4' ]]; then
         skip=1
       fi
-      echo "DEBUG: $(date '+%H:%M:%S') sortIpCmd skip=$skip i=$i ipCmd=${ipCmd[$i]}"
+      if [ "$debug" -ge 2 ]; then
+        echo "DEBUG: $(date '+%H:%M:%S') sortIpCmd skip=$skip i=$i ipCmd=${ipCmd[$i]}"
+      fi
     fi
     # if update_dig is disabled, skip if ipCmd is 'dig'
     if [[ -n "$freenom_update_dig" && "$freenom_update_dig" -eq 0 ]]; then
       if [[ "${ipCmd[$i]}" =~ ^dig ]]; then skip=1; fi
     fi
     if [ $skip -eq 0 ]; then
-      ipCmdSorted+=("${ipCmd[$i]/\%ipv\%/$freenom_update_ipv}")
+      ipCmdSorted+=("${ipCmd[$i]//\%ipv\%/$freenom_update_ipv}")
     else
       i=$((i+1))
     fi
   done
   if [ "$debug" -ge 2 ]; then
     for ((i=0; i < ${#ipCmdSorted[@]}; i++)); do echo "DEBUG: $(date '+%H:%M:%S') sortIpCmd    i=$i ipCmdSorted: ${ipCmdSorted[$i]}"; done
+  fi
+  if [ ! "${#ipCmdSorted[@]}" -gt 0 ]; then
+    echo "Error: no \"get ip\" command found"
+    exit 1
   fi
 }
 
@@ -432,6 +456,27 @@ func_sleep () {
       printf "DEBUG: %-*s sleep %s (min=%s max=%s)\n" "21" " " "$rnd" "$min" "$(( min + max))"
     fi
     sleep $rnd
+  fi
+}
+
+# Function mailEvent: send mail
+#         parameters: $1: event 2: $messages
+mailEvent() {
+  if [ "$MTA" != "" ] && [ "$RCPTTO" != "" ]; then
+    if [ "$debug" -ge 1 ]; then
+      echo "DEBUG: $(date '+%H:%M:%S') email $pad4   HOSTNAME=$HOSTNAME MTA=$MTA RCPTTO=$RCPTTO 1=$1 2=$2"
+    fi
+    [ "$debug" -ge 3 ] && set -x
+    HEADER="To: <$RCPTTO>\n";
+    if [ "$MAILFROM" ]; then
+      HEADER+="From: $MAILFROM\n"
+    fi
+    echo -e "${HEADER}Subject: freenom.sh: \"$1\" on \"$HOSTNAME\"\n\nDate: $( date +%F\ %T )\n\n$2" | "$MTA" "$RCPTTO"
+    EXITCODE="$?"
+    if [ "$EXITCODE" -ne 0 ]; then
+      echo "Error: exit code \"$EXITCODE\" while running $MTA"
+    fi
+    [ "$debug" -ge 3 ] && set +x
   fi
 }
 
@@ -515,6 +560,8 @@ func_updateDomVars () {
 ###########
 # Options #
 ###########
+
+unset -f "$a"
 
 # handle debug
 if printf -- "%s" "$*" | grep -Eiq '(^|[^a-z])\-debug'; then
@@ -652,10 +699,6 @@ if [ -z "$freenom_update_ipv" ]; then freenom_update_ipv=4; fi
 if [ -z "$freenom_update_ttl" ]; then freenom_update_ttl="3600"; fi
 if [ -z "$freenom_update_ip_retry" ]; then freenom_update_ip_retry="3"; fi
 
-if [[ -n "$freenom_oldcurl_force" && "$freenom_oldcurl_force" -eq 1 ]]; then
-    oldCurl=1
-fi
-
 if [ "$debug" -ge 1 ]; then
   func_debugVars "$@"
 fi
@@ -697,7 +740,7 @@ if [ "$freenom_update_ip" -eq 1 ]; then
   fi
   if [ "$currentIp" == "" ]; then
     # shellcheck disable=SC2059
-    printf "Error: ${eMsg}${uMsg}"
+    printf "Error: ${eMsg}${uMsg}\n"
     echo "[$(date)] $eMsg" >> "${out_path}.log"
     exit 1
   fi
@@ -706,7 +749,7 @@ if [ "$freenom_update_ip" -eq 1 ]; then
     func_updateDomVars
     if ! func_ipCheck "$updateDomain"; then
       if [[ -n "$freenom_update_ip_log" && "$freenom_update_ip_log" -eq 1 ]]; then
-        uMsg="Update: Skipping \"${updateDomain}\" - found same ip (\"$currentIp\")"
+        uMsg="Update: Skipping \"${updateDomain}\" - found same ip \"$currentIp\""
         echo "$uMsg"
         echo "[$(date)] $uMsg" >> "${out_path}.log"
         echo "[$(date)] Done" >> "${out_path}.log"
@@ -852,7 +895,7 @@ if [ "$freenom_domain_id" == "" ]; then
           fi
           break
         else
-          func_httpError "$myDomainsDetails" "Domain details"
+          func_httpError "$domainDetails" "Domain details"
           retry="$((retry+1))"
         fi
       done
@@ -1061,21 +1104,21 @@ func_setRec() {
     _max="${#recType[@]}"
   fi
   for ((r=0; r < _max; r++)); do
+    func_updateDomVars
     if [ "$(echo -e "$updateResult" | grep '"dnssuccess"')" != "" ] && [ "$(echo -e "$updateResult" | grep "$currentIp")" != "" ]; then
-      func_updateDomVars
       if [[ "$freenom_update_ip" -eq 1 && "$freenom_update_all" -eq 0 ]]; then
         updateOk="\"${updateDomain}\" (${domId})"
       elif [[ -n "$freenom_update_all" && "$freenom_update_all" -eq 1 ]]; then
         updateOk="$updateOk\n  OK: \"${updateDomain}\" (${domId})"
       fi
+      # write current ip to file 'freedom_example.cf.ip4'
       echo -n "$currentIp" > "${out_path}_${updateDomain}.ip${freenom_update_ipv}"
     else
+      updateError="$updateError\n  Could not update record \"${updateDomain}\" ($domId)"
       updateErrMsg="$(echo -e "$updateResult" | grep '"dnserror"')"
-      if [ "$updateErrMsg" == "" ]; then
-        updateError="$updateError\n  Could not update record \"${updateDomain}\" ($domId)"
-      else
+      if [ "$updateErrMsg" != "" ]; then
         errMsg="$( echo "$updateErrMsg" | sed -e 's/<[^>]\+>//g' -e 's/\(  \|\t\|^M\)//g' | sed ':a;N;$!ba;s/\n/, /g' )"
-        updateError="$updateError\n  Could not update record - \"${errMsg}\" \"${updateDomain}\" ($domId)"
+        updateError+=" - \"${errMsg}\""
       fi
       errCount="$((errCount+1))"
       if [ "$debug"  -ge 1 ]; then
@@ -1443,7 +1486,7 @@ func_renewDomain() {
             # write renewal result html file, count errors and set ok/error messages per domain
             if [ -n "$renewalResult" ] ; then
               echo -e "$renewalResult" > "${out_path}_renewalResult-${domainId[$1]}.html"
-              renewOk="$renewOk\n  Successfully renewed domain \"${domainName[$1]}\" (${domainId[$1]}) - ${renewalPeriod}"
+              renewOk="$renewOk\n  Successfully renewed domain \"${domainName[$1]}\" (${domainId[$1]}) for ${renewalPeriod}"
             else
               errCount="$((errCount+1))"
               renewError="$renewError\n  Renewal failed for \"${domainName[$1]}\" (${domainId[$1]})"
@@ -1539,10 +1582,12 @@ fi
 # log update results for single and multiple records
 if [ "$freenom_update_ip" -eq 1 ]; then
   if [ -n "$updateOk" ]; then
-    echo -e "[$(date)] Update record(s) to \"${currentIp}\" successful: $updateOk " >> "${out_path}.log"
+    echo -e "[$(date)] Update(s) using \"${currentIp}\" successful - $updateOk " >> "${out_path}.log"
   fi
   if [ "$errCount" -gt 0 ] && [ -n "${updateError}" ]; then
-    echo -e "[$(date)] These record update(s) to \"${currentIp}\" failed: ${updateError}" >> "${out_path}.log"
+    eMsg="Update(s) using \"${currentIp}\" failed: ${updateError}"
+    echo -e "[$(date)] $eMsg" >> "${out_path}.log"
+    mailEvent UpdateError "$eMsg"
   fi
 fi
 
@@ -1565,7 +1610,9 @@ if [ "$freenom_renew_domain" -eq 1 ]; then
             sed -e 's/<[^>]\+>//g' -e 's/\(  \|\t\|\)//g' | sed ':a;N;$!ba;s/\n/, /g')"
       fi
     fi
-    echo -e "[$(date)] These domain(s) failed to renew: ${renewError}" >> "${out_path}.log"
+    eMsg="These domain(s) failed to renew: ${renewError}"
+    echo -e "[$(date)] $eMsg" >> "${out_path}.log"
+    mailEvent RenewError "$eMsg"
   fi
 fi
 
