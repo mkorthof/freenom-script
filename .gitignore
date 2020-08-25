@@ -7,6 +7,7 @@ result/
 tmp/
 *.bak
 *.debug
+*.debug.gz
 *.drawio
 *.html
 *.ip
