@@ -6,7 +6,7 @@ _order: latest/newest on top_
   - **config changes:**
     - `MTA="/usr/sbin/sendmail"`
     - `RCPTTO="admin@example.tk"`
-    - `MAILFROM="Freenom Script \<freenom-script@example.com\>"`
+    - `MAILFROM="Freenom Script <freenom-script@example.com>"`
 - [**20200713**] fixed systemd in installer and mistakes in readme (and #31)
 - [**20200705**] mainly fixes:
   - fixed ip update on apex record
