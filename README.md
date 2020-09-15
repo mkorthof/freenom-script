@@ -76,7 +76,7 @@ First edit config and **set your email and password** which you use to sign-in t
 
 ### Testing
 
-Test the script by running `freenom.sh -l` and make sure your domains are listed. To update A record or Renew domains, see Usage below or `freenom.sh -h`  
+Test the script by running `freenom.sh -l` and make sure your domains are listed. To update A record or Renew domains, see [Usage](#usage) or `freenom.sh -h`  
 
 ## Scheduling
 
