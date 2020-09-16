@@ -50,7 +50,7 @@ ifeq ("$(wildcard $(SCRIPT))","")
 	$(error ERROR: Installation File "$(SCRIPT)" not found)
 endif
 ifeq ("$(EXISTCONF)", "0")
-	$(shell install -C -m 644 -o root -g root $(CONF) $(CONFDIR))
+	$(shell install -C -m 644 -o root -g $(GROUP) $(CONF) $(CONFDIR))
 	$(info Remember to edit "$(CONF)" and set your email and password)
 else
 	$(info File "$(CONFDIR)/$(CONF)" already exists)
