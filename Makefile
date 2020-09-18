@@ -50,13 +50,13 @@ ifeq ("$(wildcard $(SCRIPT))","")
 	$(error ERROR: Installation File "$(SCRIPT)" not found)
 endif
 ifeq ("$(EXISTCONF)", "0")
-	$(shell install -C -m 644 -o root -g $(GROUP) $(CONF) $(CONFDIR))
+	$(shell install --backup=numbered -C -D -m 644 -o root -g $(GROUP) -t $(CONFDIR) $(CONF))
 	$(info Remember to edit "$(CONF)" and set your email and password)
 else
 	$(info File "$(CONFDIR)/$(CONF)" already exists)
 endif
 ifeq ("$(wildcard $(INSTDIR)/$(SCRIPT))","")
-	$(shell install -C -m 755 -o root -g $(GROUP) $(SCRIPT) $(INSTDIR))
+	$(shell install --backup=numbered -C -D -m 755 -o root -g $(GROUP) -t $(INSTDIR) $(SCRIPT))
 else
 	$(info File "$(INSTDIR)/$(SCRIPT)" already exists)
 endif
@@ -68,7 +68,7 @@ ifeq ("$(SCHED)", "systemd")
   ifneq ("$(LISTUNITS)", "")
 	$(info Systemd unit files already installed)
   else
-	$(shell install -C -D -m 644 -o root -g root systemd/* $(SYSDDIR))
+	$(shell install --backup=numbered -C -D -m 644 -o root -g root -t $(SYSDDIR) systemd/*) 
 	$(shell systemctl daemon-reload)
     ifeq ("$(wildcard $(SYSDDIR)/freenom-*)","")
 	$(info To schedule domain renewals and updates, use these commands:)
@@ -82,7 +82,7 @@ else ifeq ("$(SCHED)", "cron")
   ifeq ("$(wildcard cron.d/freenom)","")
 	$(error ERROR: Installation path "cron.d/freenom/*" not found)
   else
-	$(shell install -C -m 644 -o root -g root cron.d/freenom $(CRONDIR)/freenom)
+	$(shell install --backup=numbered -C -D -m 644 -o root -g root -t $(CRONDIR)/freenom cron.d/freenom)
 	$(info Edit "$(CRONDIR)/freenom" to schedule domain renewals and updates)
 	$(info $() $() * replace example.tk with your domain and uncomment line(s))
 	$(info See README.md for details)
