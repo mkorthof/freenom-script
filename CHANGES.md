@@ -2,6 +2,7 @@
 
 _order: latest/newest on top_
 
+- [**20200918**] fixed installer conf path issue #33
 - [**20200815**] fixed ip6 issue #32 and an ipv6check, added email alerts
   - **config changes:**
     - `MTA="/usr/sbin/sendmail"`
