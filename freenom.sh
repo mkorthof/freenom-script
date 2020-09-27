@@ -12,7 +12,7 @@
 # This is free software, and you are welcome to redistribute it               #
 # under certain conditions.                                                   #
 # See LICENSE file for more information                                       #
-# gpl-3.0-only                                                  v2020-08-20   #
+# gpl-3.0-only                                                  v2020-09-27   #
 ###############################################################################
 
 ########
@@ -338,8 +338,7 @@ func_showResult () {
       # shellcheck disable=SC2086
       "$i" ${s_args}"${1}" | \
         sed -e '/<a href.*>/d' -e '/<style type="text\/css">/,/</d' -e '/class="lang-/d' \
-            -e 's/<[^>]\+>//g' -e '/[;}{):,>]$/d' -e '/
-/d' -e 's/\t//g' -e '/^ \{2,\}$/d' -e '/^$/d'
+            -e 's/<[^>]\+>//g' -e '/[;}{):,>]$/d' -e '//d' -e 's/\t//g' -e '/^ \{2,\}$/d' -e '/^$/d'
     ;;
     *)
       echo "Error: cannot display \"$1\""
@@ -562,7 +561,7 @@ func_updateDomVars () {
 # Options #
 ###########
 
-unset -v "$a"
+unset -v a
 
 # handle debug
 if printf -- "%s" "$*" | grep -Eiq '(^|[^a-z])\-debug'; then
@@ -1329,8 +1328,7 @@ if [ "$freenom_list" -eq 1 ]; then
             sed -n '/<table/,/<\/table>/{//d;p;}' | \
             sed '/Domain/,/<\/thead>/{//d;}' | \
             sed 's/<.*domain=\([0-9]\+\)".*>/ domain_id: \1\n/g' | \
-            sed -e 's/<[^>]\+>/ /g' -e 's/\(  \|\t\)\+/ /g' -e '/^[ \t]\+
-/d' )"
+            sed -e 's/<[^>]\+>/ /g' -e 's/\(  \|\t\)\+/ /g' -e '/^[ \t]\+/d' )"
         fi
         break
       else
@@ -1342,8 +1340,7 @@ if [ "$freenom_list" -eq 1 ]; then
   for ((i=0; i < ${#domainName[@]}; i++)); do
     if [ "$freenom_list_renewals" -eq 1 ]; then
       if [ -n "$domainRenewalsResult" ]; then
-        renewalMatch=$( echo "$domainRenewalsResult" | sed 's/
-//g' | sed ':a;N;$!ba;s/\n //g' | grep "domain_id: ${domainId[$i]}" )
+        renewalMatch=$( echo "$domainRenewalsResult" | sed 's///g' | sed ':a;N;$!ba;s/\n //g' | grep "domain_id: ${domainId[$i]}" )
         if echo "$renewalMatch" | grep -q Minimum; then
           # shellcheck disable=SC2001
           renewalDetails="$( echo "$renewalMatch" | sed 's/.* \([0-9]\+ Days\) * \(Minimum.*\) * domain_id:.*/\1 Until Expiry, \2/g' )"
@@ -1610,8 +1607,7 @@ if [ "$freenom_renew_domain" -eq 1 ]; then
     if [ -z "$renewError" ]; then
       if [ "$(echo -e "$renewalResult" | grep "Minimum Advance Renewal is")" != "" ]; then
         renewError="$( echo -e "$renewalResult" | grep "textred" | \
-            sed -e 's/<[^>]\+>//g' -e 's/\(  \|\t\|
-\)//g' | sed ':a;N;$!ba;s/\n/, /g')"
+            sed -e 's/<[^>]\+>//g' -e 's/\(  \|\t\|\)//g' | sed ':a;N;$!ba;s/\n/, /g')"
       fi
     fi
     eMsg="These domain(s) failed to renew: ${renewError}"
