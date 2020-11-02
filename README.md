@@ -137,7 +137,7 @@ systemctl daemon-reload
 
 In case of any errors make sure you're using the correct paths and "freenom.conf" is setup. Check `systemctl status <unit>` and the logs.
 
-##### NOTE: to use 'user mode' instead of system mode replace "/system" by "/user" and use `freenomctl --user`
+##### NOTE: to use 'user mode' instead of system mode replace "/system" by "/user" and use `systemctl --user`
 
 ## Email Notifications
 
@@ -229,7 +229,7 @@ In case of issues try running the curl and dig command above manually.
 
 Usually you can just replace "freenom.sh" with the new version (unless you're not using a seperate config file).
 
-An exeption is when config options were added/changed which you may need to compare and merge. Such config changes are listed [below](#Changes).
+An exception is when config options were added/changed which you may need to compare and merge. Such config changes are listed [below](#Changes).
 
 ## Uninstall
 
