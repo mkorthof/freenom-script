@@ -12,7 +12,7 @@
 # This is free software, and you are welcome to redistribute it               #
 # under certain conditions.                                                   #
 # See LICENSE file for more information                                       #
-# gpl-3.0-only                                                  v2020-09-27   #
+# gpl-3.0-only                                                  v2020-12-12   #
 ###############################################################################
 
 ########
@@ -32,6 +32,7 @@ scriptName="$(basename "$0")"
 infoCount="0"
 warnCount="0"
 errCount="0"
+# check for older curl versions (issue #25)
 oldCurl="0"
 if curl --version | grep -Eiq "^curl (7\.[0-5]|[0-6]\.)"; then
     oldCurl=1
@@ -228,12 +229,12 @@ NOTES:
             will override any settings in script or config file
 
 _EOF_
-# TEST (-u):     or use [-a] to update All domains and records
-#          ./$scriptName -u -a
+# TEST (-u): or use [-a] to update All domains and records
+#            (example) ./$scriptName -u -a
   exit 0
 }
 
-# Function getDomainArgs: use regexps to get domain name, id etc
+# Function getDomainArgs: use regexes to get domain name, id etc
 func_getDomainArgs () {
   local _d_args
   local _arg_domain_name
@@ -248,7 +249,7 @@ func_getDomainArgs () {
   # first remove debug arg
   _d_args="$( echo "$*" | sed -E 's/ ?-debug ([0-9])//' )"
 
-  # then remove "-c'"arg and save other options to $_d_args
+  # then remove "-c" arg and save other options to $_d_args
   # NOTE: (#12) this re has issues with bash 5.0.3/sed 4.7 but works on bash 4.4.12/sed 4.4
   #   sed -E 's| ?-c [][a-zA-Z0-9 !"#$%&'\''()*+,-.:;<=>?@^_`{}~/]+ ?||g'
   _d_args="$( echo "$_d_args" | sed -E 's| ?(-c ([^ ]+\|['\''"].+['\''"])) ?||g' )"
@@ -357,7 +358,7 @@ func_randIp() {
     [ "$debug" -ge 3 ] && set +x
 }
 
-# Function sortIpCimd: trim ipCmd array from conf for update_ipv=4|6 and whether we want dig or not
+# Function sortIpCimd: trim ipCmd array from conf for update_ipv=4|6 and dig
 #                      replaces %ipv% with $freenom_update_ipv
 #                      creates new array: $ipCmdSorted
 func_sortIpCmd () {
@@ -385,7 +386,9 @@ func_sortIpCmd () {
     fi
   done
   if [ "$debug" -ge 2 ]; then
-    for ((i=0; i < ${#ipCmdSorted[@]}; i++)); do echo "DEBUG: $(date '+%H:%M:%S') sortIpCmd    i=$i ipCmdSorted: ${ipCmdSorted[$i]}"; done
+    for ((i=0; i < ${#ipCmdSorted[@]}; i++)); do
+      echo "DEBUG: $(date '+%H:%M:%S') sortIpCmd    i=$i ipCmdSorted: ${ipCmdSorted[$i]}"
+    done
   fi
   if [ ! "${#ipCmdSorted[@]}" -gt 0 ]; then
     echo "Error: no \"get ip\" command found"
@@ -438,7 +441,7 @@ func_httpError() {
   printf "Error: %s (try %s/%s)\\n" "$_msg" "$showRetry" "$freenom_http_retry"
 }
 
-# Function lc/uc: convert $1 beween upper and UPPERCASE
+# Function lc/uc: convert $1 beween lower and UPPERCASE
 func_lc () {
   echo "$@" | tr '[:upper:]' '[:lower:]'
 }
@@ -749,7 +752,7 @@ if [ "$freenom_update_ip" -eq 1 ]; then
     func_updateDomVars
     if ! func_ipCheck "$updateDomain"; then
       if [[ -n "$freenom_update_ip_log" && "$freenom_update_ip_log" -eq 1 ]]; then
-        uMsg="Update: Skipping \"${updateDomain}\" - found same ip \"$currentIp\""
+        uMsg="Update: Skipping \"${updateDomain}\", found same ip \"$currentIp\""
         echo "$uMsg"
         echo "[$(date)] $uMsg" >> "${out_path}.log"
         echo "[$(date)] Done" >> "${out_path}.log"
@@ -1244,7 +1247,7 @@ if [[ "$freenom_update_ip" -eq 1 && "$freenom_update_all" -eq 0 ]]; then
   func_setRec "${freenom_subdomain_name}"
 fi
 
-# TEST feature: handle updating *ALL* domains and records (-u -a)
+# TEST feature: handle updating *ALL* domains and records (-u -a), #19
 #         TODO: maybe add matching against user supplied list of (sub)domains?
 
 if [[ -n "$freenom_update_all" && "$freenom_update_all" -eq 1 ]]; then
@@ -1283,7 +1286,7 @@ if [[ -n "$freenom_update_all" && "$freenom_update_all" -eq 1 ]]; then
                   "$pad8" "$r" "${recType[$r]}" "${recName[$r]}" "${recTTL[$r]}" "${recValue[$r]}"
               fi
             else
-              uMsg="Update: Skipping \"${updateDomain}\" - found same ip (\"$currentIp\")"
+              uMsg="Update: Skipping \"${updateDomain}\", found same ip (\"$currentIp\")"
               echo "$uMsg"
               echo "[$(date)] $uMsg" >> "${out_path}.log"
               continue

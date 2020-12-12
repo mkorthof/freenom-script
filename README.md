@@ -2,7 +2,7 @@
 
 ## Last Update ##
 
-***Latest version: v2020-08-25 ([CHANGES.md](CHANGES.md))***
+***Latest version: v2020-12-12 ([CHANGES.md](CHANGES.md))***
 
 **Make sure to add new config options when updating script**
 
@@ -80,7 +80,9 @@ Test the script by running `freenom.sh -l` and make sure your domains are listed
 
 ## Scheduling
 
-Optionally you can schedule the script to run automatically. The installer creates "/etc/cron.d/freenom" or systemd timers in 'system mode' so the script runs at certain intervals. It will output a message with instructions on how to set your domain(s) to renew/update or renew all:
+Optionally you can schedule the script to run automatically. The installer creates "/etc/cron.d/freenom" or systemd timers in 'system mode' so the script runs at certain intervals. It will output a message with instructions on how to set your domain(s) to renew/update, or renew all.
+
+Example:
 
 ``` bash
 systemctl enable --now freenom-renew@example.tk.timer
@@ -169,7 +171,7 @@ freenom_oldcurl_force="0"     # [0/1] force older curl version support
 ``` bash
 freenom_update_ip="0"         # [0/1] arg "-u"
 freenom_update_manual="0"     # [0/1] arg "-m"
-freenom_update_all="0"        # [0/1] arg "-a" (future update, not working yet)
+freenom_update_all="0"        # [0/1] arg "-a" (test, #19)
 freenom_list="0"              # [0/1] arg "-l"
 freenom_list_renewals="0"     # [0/1] args "-l -d"
 freenom_list_records="0"      # [0/1] arg "-z"
@@ -202,6 +204,8 @@ To manually update using set `freenom_static_ip` to your ip and `freenom_update_
 ### Issues
 
 Make sure 'curl' and/or 'dig' is installed (from e.g. dnsutils or bind-utils)
+
+Older cURL versions may have issues with special characters in password causing failed logins.
 
 In case of issues try running the curl and dig command above manually.
 
