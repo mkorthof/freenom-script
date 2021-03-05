@@ -199,7 +199,7 @@ There are a few more services defined for redundancy, the script will choose one
 Once your ip is found it's written to "freenom.ip4.domain.lock" (or ip6) to prevent unnecessary updates in case the ip is unchanged.
 To force an update you can remove this file which is located in the default output path "/var/log".
 
-To manually update using set `freenom_static_ip` to your ip and `freenom_update_manual="1"`, or use "-m" option.
+To manually update set `freenom_static_ip` to your ip and `freenom_update_manual="1"`, or use "-m" option.
 
 ### Issues
 
