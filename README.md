@@ -86,7 +86,7 @@ Example:
 
 ``` bash
 systemctl enable --now freenom-renew@example.tk.timer
-systemctl enable --now freenom-renew-all@.timer
+systemctl enable --now freenom-renew-all.timer
 systemctl enable --now freenom-update@example.tk.timer
 ```
 
@@ -131,7 +131,7 @@ Example:
 
 mkdir /path/to/systemd/timers.target.wants
 ln -s /path/to/systemd/freenom-renew@.service /etc/systemd/user/timers.target.wants/freenom-renew@example.tk.service
-ln -s /path/to/systemd/freenom-renew-all@.service /etc/systemd/user/timers.target.wants/freenom-renew-all@.service
+ln -s /path/to/systemd/freenom-renew-all.service /etc/systemd/user/timers.target.wants/freenom-renew-all.service
 ln -s /path/to/systemd/freenom-update@.service /etc/systemd/user/timers.target.wants/freenom-update@example.tk.service:
 # then reload systemd:
 systemctl daemon-reload
