@@ -73,7 +73,7 @@ ifeq ("$(SCHED)", "systemd")
     ifeq ("$(wildcard $(SYSDDIR)/freenom-*)","")
 	$(info To schedule domain renewals and updates, use these commands:)
 	$(info - systemctl enable --now freenom-renew@example.tk.timer)
-	$(info - systemctl enable --now freenom-renew-all@.timer)
+	$(info - systemctl enable --now freenom-renew-all.timer)
 	$(info - systemctl enable --now freenom-update@example.tk.timer)
 	$(info $() $() * replace 'example.tk' with your domain)
     endif
