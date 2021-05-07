@@ -18,3 +18,5 @@ tmp/
 freedns.sh
 git-freenom.sh
 typescript
+!test/html
+!*.html.gz

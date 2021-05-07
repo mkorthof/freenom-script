@@ -41,7 +41,7 @@ get_dns() {
   export freenom_update_ipv="$1"
   export freenom_domain_name="example.tk"
   export freenom_domain_id="1234567890"
-  export dnsManagementPage="$( cat $BATS_TEST_DIRNAME/$2 )"
+  export dnsManagementPage="$( zcat $BATS_TEST_DIRNAME/$2 )"
   fn="$(get_fn func_getRec)"
   if [ "$debug" -eq 0 ]; then
     output=$( echo "$( bash -c "source $config; $fn; export currentIp="$3"; func_getRec $freenom_domain_name; declare -p recType recName recTTL recValue" )" )
@@ -92,12 +92,12 @@ get_dns() {
 }
 
 @test "$(date '+%F %H:%M:%S') func_getRec ipv4" { 
-  get_dns "4" "html/dnsManagement.html" "1.2.3.4"
+  get_dns "4" "html/dnsManagement.html.gz" "1.2.3.4"
   assert_output --regexp "=\"A\".*=\"TEST\".*=\"[0-9]+.*=\"1\.2\.3\.4\""
 }
 
 @test "$(date '+%F %H:%M:%S') func_getRec ipv6" { 
-  get_dns "6" "html/dnsManagement_6.html" "2001:123:0:1:2:3:4:0"
+  get_dns "6" "html/dnsManagement_6.html.gz" "2001:123:0:1:2:3:4:0"
   assert_output --regexp "=\"AAAA\".*=\"TEST\".*=\"[0-9]+.*=\"2001:123:0:1:2:3:4:0\""
 }
 

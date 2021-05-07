@@ -2,6 +2,9 @@
 
 _order: latest/newest on top_
 
+- [**20210507**] fixed renew all systemd unit (PR #39 from aeolyus)
+- [**20200927**] fixed mistake unsetting a var (#34)
+- [**20200918**] fixed installer conf path issue #33
 - [**20200815**] fixed ip6 issue #32 and an ipv6check, added email alerts
   - **config changes:**
     - `MTA="/usr/sbin/sendmail"`

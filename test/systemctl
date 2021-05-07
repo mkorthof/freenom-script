@@ -7,5 +7,5 @@ if [ "$1" = "list-unit-files" ]; then
   echo freenom-update@.service    static
   echo freenom-update@.timer      staitic
 else
-  echo systemctl stub (1=$1, 2=$2, 3=$3)
+  echo "systemctl stub (1=$1, 2=$2, 3=$3)"
 fi
