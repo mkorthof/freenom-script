@@ -97,7 +97,7 @@ debug=0
   export debug=0
   export freenom_domain_name="example.tk"
   export freenom_domain_id="1234567890"
-  ##export dnsManagementPage="$( cat $BATS_TEST_DIRNAME/html/dnsManagement.html )"
+  ##export dnsManagementPage="$( zcat $BATS_TEST_DIRNAME/html/dnsManagement.html.gz )"
   run $script -l
   if [ "$debug" -eq 0 ]; then
     [ "$status" -eq 0 ]
@@ -106,7 +106,7 @@ debug=0
     # assert_output --regexp "Domain: \"example\.tk\" Id: \"[0-9]\""
     assert_output --partial 'Domain: "example.tk"'
   else
-    ##echo "# DEBUG: stub=$BATS_TEST_DIRNAME/html/dnsManagement.html" >&3
+    ##echo "# DEBUG: stub=$BATS_TEST_DIRNAME/html/dnsManagement.html.gz" >&3
     assert_output x
   fi
 }
@@ -117,15 +117,15 @@ debug=0
   export debug=0
   export freenom_domain_name="example.tk"
   export freenom_domain_id="1234567890"
-  ##export dnsManagementPage="$( cat $BATS_TEST_DIRNAME/html/dnsManagement.html )"
-  ##export myDomainsPage="$( cat $BATS_TEST_DIRNAME/html/myDomainsPage.html )"
+  ##export dnsManagementPage="$( zcat $BATS_TEST_DIRNAME/html/dnsManagement.html.gz )"
+  ##export myDomainsPage="$( zcat $BATS_TEST_DIRNAME/html/myDomainsPage.html.gz )"
   run $script -l -d
   if [ "$debug" -eq 0 ]; then
     [ "$status" -eq 1 ]
     assert_output --partial "Listing Domains and ID's with renewal details, this might take a while..."
   else
-    ##echo "# DEBUG: stub=$BATS_TEST_DIRNAME/html/dnsManagement.html" >&3
-    ##echo "# DEBUG: stub=$BATS_TEST_DIRNAME/html/myDomainsPage.html" >&3
+    ##echo "# DEBUG: stub=$BATS_TEST_DIRNAME/html/dnsManagement.html.gz" >&3
+    ##echo "# DEBUG: stub=$BATS_TEST_DIRNAME/html/myDomainsPage.html.gz" >&3
     echo "# DEBUG: status=$status" >&3
     echo "# DEBUG: output=$output" >&3
     #assert_output x
@@ -147,6 +147,8 @@ debug=0
 }
 
 @test "$(date '+%F %H:%M:%S') args freenom.sh -u example.tk -s subdom -m 1.2.3.4" {
+  debug=0
+  export debug=0
   tmpip4="/var/log/freenom_subdom.example.tk.ip4"
   if [ "$( id -u )" -ne 0 ]; then
     tmpip4="/tmp/freenom_subdom.example.tk.ip4"
@@ -154,12 +156,12 @@ debug=0
   echo "1.2.3.4" > "$tmpip4"
   run $script -u example.tk -s subdom -m 1.2.3.4
   [ "$status" -eq 0 ]
-  assert_output --partial 'Update: Skipping "subdom.example.tk" - found same ip "1.2.3.4"'
+  assert_output --partial 'Update: Skipping "subdom.example.tk", found same ip "1.2.3.4"'
   [ -e "$tmpip4" ] && rm "$tmpip4"
 }
 
 @test "$(date '+%F %H:%M:%S') args freenom.sh -z invalid-example-123.tk" {
-#  skip
+  # skip
   debug=0
   export debug=0
   run $script -z invalid-example-123.tk
