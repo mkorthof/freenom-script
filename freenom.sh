@@ -55,7 +55,7 @@ for i in "$@"; do
     continue
   else
     if [ "$c" -eq 1 ]; then
-      if printf -- "%s" "$i" | grep -Eq -- "\-"; then
+      if printf -- "%s" "$i" | grep -Eq -- "^\-"; then
         echo "Error: config file not specfied, try \"$scriptName -h\""
         exit 1
       fi

@@ -2,6 +2,7 @@
 
 _order: latest/newest on top_
 
+- [**20210508**] fixed issue with `-c` option (#41)
 - [**20210507**] fixed renew all systemd unit (PR #39 from aeolyus)
 - [**20200927**] fixed mistake unsetting a var (#34)
 - [**20200918**] fixed installer conf path issue #33
