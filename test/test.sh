@@ -31,7 +31,7 @@ case $1 in
             exit 1
           fi
           ;;
-  *)      echo "$(basename "$0") <args|funcs|all>"
+  *)      echo "$(basename "$0") <args|funcs|sc|all>"
           exit 0
           ;;
 esac
