@@ -12,7 +12,7 @@
 # This is free software, and you are welcome to redistribute it               #
 # under certain conditions.                                                   #
 # See LICENSE file for more information                                       #
-# gpl-3.0-only                                                  v2020-08-19   #
+# gpl-3.0-only                                                  v2021-05-18   #
 ###############################################################################
 
 ########
@@ -80,7 +80,7 @@ if [ -z "$scriptConf" ]; then
     fi
   done
 fi
-unset i
+unset -v i
 # make sure we dont source ourselves
 if [ "$scriptConf" = "$0" ] || [ "$scriptConf" = "${BASH_SOURCE[0]}" ]; then
   echo "Error: invalid config file \"$scriptConf\" specified"
@@ -561,7 +561,7 @@ func_updateDomVars () {
 # Options #
 ###########
 
-unset -f "$a"
+unset -v a
 
 # handle debug
 if printf -- "%s" "$*" | grep -Eiq '(^|[^a-z])\-debug'; then
