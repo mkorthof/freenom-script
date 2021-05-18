@@ -8,7 +8,7 @@ jobs:
         steps:
             - uses: actions/checkout@v1
             - name: Show OS version
-              run: cat /etc/os-version
+              run: cat /etc/os-release
             - name: Get latest shellcheck
               run: wget -qO- "https://github.com/koalaman/shellcheck/releases/download/latest/shellcheck-latest.linux.x86_64.tar.xz" | tar -Jxvf - shellcheck-latest/shellcheck --strip-components 1
             - name: Show shellcheck version
