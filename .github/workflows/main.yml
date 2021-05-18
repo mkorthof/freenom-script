@@ -6,11 +6,11 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/checkout@v1
             - name: Show OS version
-              run: cat /etc/os-release
+              run: wget -qO- "https://github.com/koalaman/shellcheck/releases/download/latest/shellcheck-latest.linux.x86_64.tar.xz" | tar -Jxvf - shellcheck-latest/shellcheck --strip-components 1
             - name: Show shellcheck version
               run: shellcheck -V
-            - uses: actions/checkout@v1
             - name: Set conf
               run: sed -i 's|/usr/local/etc/freenom.conf|freenom.sh|g' freenom.sh
             - name: Run shellcheck
