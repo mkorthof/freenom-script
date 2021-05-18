@@ -14,6 +14,6 @@ jobs:
             - name: Show shellcheck version
               run: ./shellcheck -V
             - name: Set conf
-              run: sed -i 's|/usr/local/etc/freenom.conf|freenom.sh|g' freenom.sh
+              run: sed -i 's|/usr/local/etc/freenom.conf|freenom.conf|g' freenom.sh
             - name: Run shellcheck
               run: ./shellcheck -x freenom.sh
