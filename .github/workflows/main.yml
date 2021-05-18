@@ -6,6 +6,10 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
+            - name: Show OS version
+              run: cat /etc/os-release
+            - name: Show shellcheck version
+              run: shellcheck -V
             - uses: actions/checkout@v1
             - name: Set conf
               run: sed -i 's|/usr/local/etc/freenom.conf|freenom.sh|g' freenom.sh
