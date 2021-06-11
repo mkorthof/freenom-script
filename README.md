@@ -1,5 +1,7 @@
 # Domain Renewal and DynDNS for Freenom.com
 
+[![Shellcheck](https://github.com/mkorthof/freenom-script/actions/workflows/main.yml/badge.svg)](https://github.com/mkorthof/freenom-script/actions/workflows/main.yml)
+
 ## Last Update ##
 
 ***Latest version: v2021-06-12 ([CHANGES.md](CHANGES.md))***
