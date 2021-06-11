@@ -140,6 +140,19 @@ if [ ! -w "${out_path}.log" ]; then
   out_path="/tmp/$(basename -s '.sh' "$0")"
 fi
 
+if [ -z "$uaString" ]; then
+  echo "Error: setting \"uaString\" is missing in config"
+  if [ "$help" -eq 0 ]; then
+    exit 1
+  fi
+fi
+if [ -z "$ipCmd" ]; then
+  echo "Error: setting \"ipCmd\" is missing in config"
+  if [ "$help" -eq 0 ]; then
+    exit 1
+  fi
+fi
+
 if [ -z "$RCPTTO" ]; then
   RCPTTO="$freenom_email"
 fi
