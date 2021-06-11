@@ -2,43 +2,44 @@
 
 _order: latest/newest on top_
 
-- [**20210508**] fixed issue with `-c` option (#41)
-- [**20210507**] fixed renew all systemd unit (PR #39 from aeolyus)
-- [**20200927**] fixed mistake unsetting a var (#34)
-- [**20200918**] fixed installer conf path issue #33
-- [**20200815**] fixed ip6 issue #32 and an ipv6check, added email alerts
+- [**20210612**] check for uaString and ipCmd settings ([#42](https://github.com/mkorthof/freenom-script/issues/42))
+- [**20210508**] fixed issue with `-c` option ([#41](https://github.com/mkorthof/freenom-script/issues/41))
+- [**20210507**] fixed renew all systemd unit (PR [#39](https://github.com/mkorthof/freenom-script/issues/39) from aeolyus)
+- [**20200927**] fixed mistake unsetting a var ([#34](https://github.com/mkorthof/freenom-script/issues/34))
+- [**20200918**] fixed installer conf path issue [#33](https://github.com/mkorthof/freenom-script/issues/33)
+- [**20200815**] fixed ip6 issue [#32](https://github.com/mkorthof/freenom-script/issues/32) and an ipv6check, added email alerts
   - **config changes:**
     - `MTA="/usr/sbin/sendmail"`
     - `RCPTTO="admin@example.tk"`
     - `MAILFROM="Freenom Script <freenom-script@example.com>"`
-- [**20200713**] fixed systemd in installer and mistakes in readme (and #31)
+- [**20200713**] fixed systemd in installer and mistakes in readme (and [#31](https://github.com/mkorthof/freenom-script/issues/31))
 - [**20200705**] mainly fixes:
   - fixed ip update on apex record
   - fixed conf path detection
-  - fixed (older) curl failing login (#25)
-  - fixed missing expirydate (#28)
-  - fixed dot in subdomain aka "sub subdomain" (#29)
-  - added (test) option: update all domains/records '-a' (#19)
+  - fixed (older) curl failing login ([#25](https://github.com/mkorthof/freenom-script/issues/25))
+  - fixed missing expirydate ([#28](https://github.com/mkorthof/freenom-script/issues/28))
+  - fixed dot in subdomain aka "sub subdomain" ([#29](https://github.com/mkorthof/freenom-script/issues/29))
+  - added (test) option: update all domains/records '-a' ([#19](https://github.com/mkorthof/freenom-script/issues/19))
   - improved logging update errors
   - **config changes:**
     - `freenom_http_sleep="3 3"`
     - `freenom_oldcurl_force="0"`
 - [**20200312**] added checks for required bins
 - [**20200307**] fixed Makefile, installing freenom.sh was disabled
-- [**20200128**] fixed escaping special chars in password (#21)
-- [**20200127**] fixed domain renewals (#23)
+- [**20200128**] fixed escaping special chars in password ([#21](https://github.com/mkorthof/freenom-script/issues/21))
+- [**20200127**] fixed domain renewals ([#23](https://github.com/mkorthof/freenom-script/issues/23))
 - [**20191127**] always cleanup cookie file
-- [**20191125**] update all domains (#19)
+- [**20191125**] update all domains ([#19](https://github.com/mkorthof/freenom-script/issues/19))
   - **config change:** `freenom_update_all="0"`
-- [**20191108**] static ip update (#18)
+- [**20191108**] static ip update ([#18](https://github.com/mkorthof/freenom-script/issues/18))
   - **config changes:**
     - `freenom_static_ip=""`
     - `freenom_update_manual="0"`
 - [**20191017**] changed default conf path to /usr/local/etc
 - [**20191005**] errorUpdateResult is no longer saved to html file
-- [**20190931**] added systemd templates (PR #15 from sdcloudt)
+- [**20190931**] added systemd templates (PR [#15](https://github.com/mkorthof/freenom-script/issues/15) from sdcloudt)
 - [**20190927**] added installer
-- [**20190922**] fixed issue #12 (sdcloudt)
+- [**20190922**] fixed issue [#12](https://github.com/mkorthof/freenom-script/issues/12) (sdcloudt)
 - [**20190920**] changed out dir
   - **config change:** `freenom_out_dir="/var/log/freenom"`
 - [**20190920**] added curl retries
