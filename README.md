@@ -96,7 +96,7 @@ If systemd is not available on your system the installer will use cron instead.
 
 To manually configure cron:
 
-1) Copy script and conf files (see [Installation](#Installation))
+1) Copy script and conf files (see [Installation](#installation))
 2) Copy [cron.d/freenom](cron.d/freenom) to "/etc/cron.d/freenom" and edit it, or create the file yourself with these line(s)
 
 Example:
@@ -137,7 +137,7 @@ ln -s /path/to/systemd/freenom-update@.service /etc/systemd/user/timers.target.w
 systemctl daemon-reload
 ```
 
-In case of any errors make sure you're using the correct paths and "freenom.conf" is setup. Check `systemctl status <unit>` and the logs.
+In case of any errors make sure you're using the correct paths and "freenom.conf" is setup. Check `systemctl status <unit>` and logs.
 
 ##### NOTE: to use 'user mode' instead of system mode replace "/system" by "/user" and use `freenomctl --user`
 
@@ -181,14 +181,14 @@ freenom_renew_all="0"         # [0/1] args "-r -a"
 
 ## DynDNS
 
-To update A or AAAA records the nameservers for the domain must be set to the default Freenom Name Server.
+To update A or AAAA records the nameservers for the domain must be set to the default Freenom Name Servers.
 
 - As value your current ip address will be used ("Target")
 - An record will be added if there is none or modified if the record already exists
 
 ### IP Address
 
-To get your current ip address from a number of public services the script uses 3 methods, HTTP, DNS or manually:
+To get your current ip address from a number of public services the script uses 3 methods:
 
 - HTTP method: `curl https://checkip.amazonaws.com`
 - DNS method: `dig TXT +short o-o.myaddr.l.google.com @ns1.google.com`
@@ -196,16 +196,16 @@ To get your current ip address from a number of public services the script uses 
 
 There are a few more services defined for redundancy, the script will choose one at random. By default it will retry 3 times to get ip.
 
-Once your ip is found it's written to "freenom.ip4.domain.lock" (or ip6) to prevent unnecessary updates in case the ip is unchanged.
-To force an update you can remove this file which is located in the default output path "/var/log".
+Once your ip is found it's written to "freenom.ip4.domain.lock" (or 'ip6') to prevent unnecessary updates in case the ip is unchanged.
+To force an update you can remove this file which is located in the default output path: "/var/log".
 
-To manually update using set `freenom_static_ip` to your ip and `freenom_update_manual="1"`, or use "-m" option.
+To manually update: set `freenom_static_ip=<your ip>` and `freenom_update_manual="1"`, or use the `-m` option.
 
 ### Issues
 
-Make sure 'curl' and/or 'dig' is installed (from e.g. dnsutils or bind-utils)
+Make sure 'curl' and/or 'dig' is installed (e.g. debian: dnsutils or redhat: bind-utils)
 
-In case of issues try running the curl and dig command above manually.
+In case of issues try running curl and dig command manually.
 
 - To list all 'get ip' commands run `freenom.sh -i` (or `grep getIp freenom.sh`)
 - To disable IPv6: set `freenom_update_ipv="4"`
@@ -213,31 +213,26 @@ In case of issues try running the curl and dig command above manually.
 
 ## Files
 
-- **Installer:**
-  - `Makefile`
-- **Script:**
-  - `freenom.sh`
-  - `freenom.conf`
+- **Installer:** `Makefile`
+- **Script:** `freenom.sh` and `freenom.conf`
 - **Output:**
-  - Default path: `"/var/log/freenom/"`
-  - `freenom.log`
-  - `freenom_<domain>.ip{4,6}`
-  - `freenom_renewalResult-<id>.html`
-- **More info:**
-  - See "Output files" and "freenom_out_dir" variable in config
-  - Use `freenom.sh -o` to view Result html files
+  - Path: `"/var/log/freenom/"` (default)
+  - Files: `freenom.log`, `freenom_<domain>.ip{4,6}`, `freenom_renewalResult-<id>.html`
+- **Details:** use `freenom.sh -o` to view Result html files
+  
+ Also see comment "Output files" and `freenom_out_dir` variable in conf.
 
 ## Updating
 
-Usually you can just replace "freenom.sh" with the new version (unless you're not using a seperate config file).
+Usually you can just replace "freenom.sh" with the new version, if you're using a seperate config file.
 
-An exeption is when config options were added/changed which you may need to compare and merge. Such config changes are listed [below](#Changes).
+An exeption is when config options were added/changed which you may need to compare and merge. Such config changes are listed in [CHANGES.md](CHANGES.md).
 
 ## Uninstall
 
 Run `make uninstall`.
 
-You can also manually reverse the steps under Installation above (remove .sh, .conf and scheduler files).
+You can also manually reverse the steps under [Installation](#installation) above (e.g. remove .sh, .conf and scheduler files).
 
 ## Sources
 
