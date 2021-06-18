@@ -702,7 +702,7 @@ if [ -z "$freenom_renew_all" ]; then freenom_renew_all=0; fi
 if [ -z "$freenom_update_force" ]; then freenom_update_force=0; fi
 if [ -z "$freenom_update_ip" ]; then freenom_update_ip=0; fi
 if [ -z "$freenom_update_ipv" ]; then freenom_update_ipv=4; fi
-if [ -z "$freenom_update_ttl" ]; then freenom_update_ttl=3600; fi
+if [ -z "$freenom_update_ttl" ]; then freenom_update_ttl="3600"; fi
 if [ -z "$freenom_update_ip_retry" ]; then freenom_update_ip_retry=3; fi
 
 if [ "$debug" -ge 1 ]; then
