@@ -353,7 +353,8 @@ func_showResult () {
       # shellcheck disable=SC2086
       "$i" ${s_args}"${1}" | \
         sed -e '/<a href.*>/d' -e '/<style type="text\/css">/,/</d' -e '/class="lang-/d' \
-            -e 's/<[^>]\+>//g' -e '/[;}{):,>]$/d' -e '//d' -e 's/\t//g' -e '/^ \{2,\}$/d' -e '/^$/d'
+            -e 's/<[^>]\+>//g' -e '/[;}{):,>]$/d' -e '/
+/d' -e 's/\t//g' -e '/^ \{2,\}$/d' -e '/^$/d'
     ;;
     *)
       echo "Error: cannot display \"$1\""
@@ -709,10 +710,15 @@ fi
 
 # more config checks: if these vars are missing, set defaults
 if [ -z "$freenom_http_retry" ]; then freenom_http_retry=1; fi
+if [ -z "$freenom_list" ]; then freenom_list=0; fi
+if [ -z "$freenom_list_records" ]; then freenom_list_records=0; fi
+if [ -z "$freenom_list_renewals" ]; then freenom_list_renewals=0; fi
+if [ -z "$freenom_renew_all" ]; then freenom_renew_all=0; fi
 if [ -z "$freenom_update_force" ]; then freenom_update_force=0; fi
+if [ -z "$freenom_update_ip" ]; then freenom_update_ip=0; fi
 if [ -z "$freenom_update_ipv" ]; then freenom_update_ipv=4; fi
 if [ -z "$freenom_update_ttl" ]; then freenom_update_ttl="3600"; fi
-if [ -z "$freenom_update_ip_retry" ]; then freenom_update_ip_retry="3"; fi
+if [ -z "$freenom_update_ip_retry" ]; then freenom_update_ip_retry=3; fi
 
 if [ "$debug" -ge 1 ]; then
   func_debugVars "$@"
@@ -1343,7 +1349,8 @@ if [ "$freenom_list" -eq 1 ]; then
             sed -n '/<table/,/<\/table>/{//d;p;}' | \
             sed '/Domain/,/<\/thead>/{//d;}' | \
             sed 's/<.*domain=\([0-9]\+\)".*>/ domain_id: \1\n/g' | \
-            sed -e 's/<[^>]\+>/ /g' -e 's/\(  \|\t\)\+/ /g' -e '/^[ \t]\+/d' )"
+            sed -e 's/<[^>]\+>/ /g' -e 's/\(  \|\t\)\+/ /g' -e '/^[ \t]\+
+/d' )"
         fi
         break
       else
@@ -1355,7 +1362,8 @@ if [ "$freenom_list" -eq 1 ]; then
   for ((i=0; i < ${#domainName[@]}; i++)); do
     if [ "$freenom_list_renewals" -eq 1 ]; then
       if [ -n "$domainRenewalsResult" ]; then
-        renewalMatch=$( echo "$domainRenewalsResult" | sed 's///g' | sed ':a;N;$!ba;s/\n //g' | grep "domain_id: ${domainId[$i]}" )
+        renewalMatch=$( echo "$domainRenewalsResult" | sed 's/
+//g' | sed ':a;N;$!ba;s/\n //g' | grep "domain_id: ${domainId[$i]}" )
         if echo "$renewalMatch" | grep -q Minimum; then
           # shellcheck disable=SC2001
           renewalDetails="$( echo "$renewalMatch" | sed 's/.* \([0-9]\+ Days\) * \(Minimum.*\) * domain_id:.*/\1 Until Expiry, \2/g' )"
@@ -1622,7 +1630,8 @@ if [ "$freenom_renew_domain" -eq 1 ]; then
     if [ -z "$renewError" ]; then
       if [ "$(echo -e "$renewalResult" | grep "Minimum Advance Renewal is")" != "" ]; then
         renewError="$( echo -e "$renewalResult" | grep "textred" | \
-            sed -e 's/<[^>]\+>//g' -e 's/\(  \|\t\|\)//g' | sed ':a;N;$!ba;s/\n/, /g')"
+            sed -e 's/<[^>]\+>//g' -e 's/\(  \|\t\|
+\)//g' | sed ':a;N;$!ba;s/\n/, /g')"
       fi
     fi
     eMsg="These domain(s) failed to renew: ${renewError}"
