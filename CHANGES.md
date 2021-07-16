@@ -2,6 +2,7 @@
 
 _order: latest/newest on top_
 
+- [**20210618**] added more config checks (PR [#43](https://github.com/mkorthof/freenom-script/issues/43) from nathanfranke)
 - [**20210612**] check for uaString and ipCmd settings ([#42](https://github.com/mkorthof/freenom-script/issues/42))
 - [**20210508**] fixed issue with `-c` option ([#41](https://github.com/mkorthof/freenom-script/issues/41))
 - [**20210507**] fixed renew all systemd unit (PR [#39](https://github.com/mkorthof/freenom-script/issues/39) from aeolyus)
