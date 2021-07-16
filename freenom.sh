@@ -213,14 +213,15 @@ FREENOM.COM DOMAIN RENEWAL AND DYNDNS
 
 USAGE:
             $scriptName -l [-d]
-            $scriptName -r <domain> [-s <subdomain>]
+            $scriptName -r <domain OR -a> [-s <subdomain>]
             $scriptName -u <domain> [-s <subdomain>] [-m <ip>] [-f]
             $scriptName -z <domain>
 
 OPTIONS:
             -l    List all domains with id's in account
                   add [-d] to show renewal Details
-            -r    Renew domain(s)
+            -r    Renew <domain> or use '-r -a' to update All
+                  add [-s] to update <Subdomain>
             -u    Update <domain> A record with current ip
                   add [-s] to update <Subdomain> record
                   add [-m <ip>] to Manually update static <ip>
@@ -235,7 +236,7 @@ OPTIONS:
 
 EXAMPLES:
             ./$scriptName -r example.com
-            ./$scriptName -c /etc/myfn.conf -r -a
+            ./$scriptName -c /etc/mycustom.conf -r -a
             ./$scriptName -u example.com -s mail
 
 NOTES:
@@ -243,8 +244,8 @@ NOTES:
             will override any settings in script or config file
 
 _EOF_
-# TEST (-u):     or use [-a] to update All domains and records
-#          ./$scriptName -u -a
+# TEST:     use [-a] with -u to update All domains and records
+#           ./$scriptName -u -a
   exit 0
 }
 
@@ -264,7 +265,7 @@ func_getDomainArgs () {
   _d_args="$( echo "$*" | sed -E 's/ ?-debug ([0-9])//' )"
 
   # then remove "-c'"arg and save other options to $_d_args
-  # NOTE: (#12) this re has issues with bash 5.0.3/sed 4.7 but works on bash 4.4.12/sed 4.4
+  # NOTE: (#12) this regex has issues with bash 5.0.3/sed 4.7 but works on bash 4.4.12/sed 4.4
   #   sed -E 's| ?-c [][a-zA-Z0-9 !"#$%&'\''()*+,-.:;<=>?@^_`{}~/]+ ?||g'
   _d_args="$( echo "$_d_args" | sed -E 's| ?(-c ([^ ]+\|['\''"].+['\''"])) ?||g' )"
 
@@ -980,17 +981,17 @@ then
     fi
   done
   uMsg="Try \"$scriptName [-u|-r|-z] [domain] [id] [-s subdomain]\""
-  cMsg="Or set \"freenom_domain_name\" in config"
+  cMsg="Or, set \"freenom_domain_name\" in config"
   if [ "$freenom_domain_id" == "" ]; then
     [ "$freenom_domain_name" != "" ] && fMsg=" for \"$freenom_domain_name\""
     echo -e "[$(date)] Error: Domain renewal - No Domain ID \"$freenom_domain_name\"" >> "${out_path}.log"
-    printf "Error: Could not find Domain ID%s\n%7s%s\n%7s%s\n" "$fMsg" ' ' "$uMsg" ' ' "$cMsg"
+    printf "Error: Could not find Domain ID%s\n%7s%s\n%7s%s\n\n" "$fMsg" ' ' "$uMsg" ' ' "$cMsg"
     exit 1
   fi
   if [ "$freenom_domain_name" == "" ]; then
     if [ "$freenom_domain_id" != "" ]; then iMsg=" ($freenom_domain_id)"; fi
     echo -e "[$(date)] Error: Domain renewal - Domain Name missing${iMsg}" >> "${out_path}.log"
-    printf "Error: Domain Name missing\n%7s%s\n%7s%s\n" ' ' "$uMsg" ' ' "$cMsg"
+    printf "Error: Domain Name missing\n%7s%s\n%7s%s\n\n" ' ' "$uMsg" ' ' "$cMsg"
     exit 1
   fi
 fi
@@ -1427,9 +1428,9 @@ func_renewDate() {
       echo "DEBUG: $pad8 renew_domain func_renewDate renewEpoch=$renewEpoch currentEpoch=$currentEpoch"
     fi
     if [ "$debug" -ge 2 ]; then
-      echo "TEST: renew_domain func_renewDate listing full expiry date array:"
+      echo "DEBUG: renew_domain func_renewDate listing expiry date array:"
       for ((j=0; j<${#a[@]}; j++)); do
-        echo "DEBUG: $pad8 renew_domain func_renewDate i=${i} ${a[$j]}"
+        echo "DEBUG: $pad8 renew_domain func_renewDate i=${i} j=${j} - a=${a[$j]}"
       done
     fi
     # TEST: example - set a date after renewDate

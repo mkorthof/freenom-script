@@ -4,7 +4,7 @@
 
 ## Last Update ##
 
-***Latest version: v2021-06-12 ([CHANGES.md](CHANGES.md))***
+***Latest version: v2021-06-18 ([CHANGES.md](CHANGES.md))***
 
 **Make sure to add new config options when updating script**
 
@@ -18,40 +18,42 @@ You'll need to have already registered an account at Freenom.com with at least o
 ## Usage
 
 ```shell
+
 FREENOM.COM DOMAIN RENEWAL AND DYNDNS
 =====================================
 
 USAGE:
             freenom.sh -l [-d]
-            freenom.sh -r <domain> [-s <subdomain>] | [-a]
+            freenom.sh -r <domain OR -a> [-s <subdomain>]
             freenom.sh -u <domain> [-s <subdomain>] [-m <ip>] [-f]
             freenom.sh -z <domain>
 
 OPTIONS:
             -l    List all domains with id's in account
                   add [-d] to show renewal Details
-            -r    Renew domain(s)
-                  add [-a] to renew All domains
+            -r    Renew <domain> or use '-r -a' to update All
+                  use [-s] with -r to update subdomains
             -u    Update <domain> A record with current ip
-                  add [-s] to update <Subdomain>
-                  add [-m <ip>] to manually update static <ip>
-                  add [-f] to force update on unchanged ip
-            -z    Zone listing of dns records for <domain>
+                  add [-s] to update <Subdomain> record
+                  add [-m <ip>] to Manually update static <ip>
+                  add [-f] to Force update on unchanged ip
+            -z    Zone listing dns records for <domain>
 
             -4    Use ipv4 and modify A record on "-u" (default)
             -6    Use ipv6 and modify AAAA record on "-u"
             -c    Config <file> to be used instead freenom.conf
             -i    Ip commands list used to get current ip
-            -o    Output html result file(s) for renewals
+            -o    Output renewals result html file(s)
 
 EXAMPLES:
             ./freenom.sh -r example.com
-            ./freenom.sh -c /etc/myfn.conf -r -a
+            ./freenom.sh -c /etc/mycustom.conf -r -a
             ./freenom.sh -u example.com -s mail
 
 NOTES:
             Using "-u" or "-r" and specifying <domain> as argument
             will override any settings in script or config file
+
 ```
 
 ## Installation
@@ -207,7 +209,7 @@ Make sure 'curl' and/or 'dig' is installed (e.g. debian: dnsutils or redhat: bin
 
 In case of issues try running curl and dig command manually.
 
-- To list all 'get ip' commands run `freenom.sh -i` (or `grep getIp freenom.sh`)
+- To list all 'get ip' commands run `freenom.sh -i` (or `grep getIp freenom.conf`)
 - To disable IPv6: set `freenom_update_ipv="4"`
 - To disable dig: set `freenom_update_dig="0"`
 
