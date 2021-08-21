@@ -12,5 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Install BATS
+        run: git clone https://github.com/bats-core/bats-core.git && cd bats-core && ./install.sh
       - name: Run all BATS tests
         run: test/test.sh all
