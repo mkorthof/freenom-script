@@ -24,7 +24,7 @@ jobs:
         run: git clone https://github.com/bats-core/bats-core.git && cd bats-core && sudo ./install.sh /usr/local
       - name: Configure BATS
         run: sed -i '/args freenom.sh -l (example.tk)/a skip' test/freenom-args.bats
-      - name: Enable debug
-        run: sed -i 's/debug=0/debug=1/g' test/freenom-args.bats test/freenom-funcs.bats
+      #- name: Enable debug
+      #  run: sed -i 's/debug=0/debug=1/g' test/freenom-args.bats test/freenom-funcs.bats
       - name: Run all BATS tests
         run: test/test.sh all
