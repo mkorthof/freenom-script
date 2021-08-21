@@ -16,6 +16,10 @@ jobs:
           submodules: 'true'
       - name: Install freenom-script
         run: sudo make install
+      - name: Configure freenom-script email
+        run: sudo sed -i 's/^#\(freenom_email="you@example.com\)/\1/g' /usr/local/etc/freenom.conf
+      - name: Configure freenom-script password
+        run: sudo sed -i 's/^#\(freenom_passwd="yourpassword\)/\1/g' /usr/local/etc/freenom.conf
       - name: Install BATS
         run: git clone https://github.com/bats-core/bats-core.git && cd bats-core && sudo ./install.sh /usr/local
       - name: Run all BATS tests
