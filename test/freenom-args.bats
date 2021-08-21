@@ -93,7 +93,7 @@ debug=0
 }
 
 @test "$(date '+%F %H:%M:%S') args freenom.sh -l (example.tk)" {
-  debug=0
+  debug=1
   export debug
   export freenom_domain_name="example.tk"
   export freenom_domain_id="1234567890"
