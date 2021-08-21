@@ -12,7 +12,7 @@
 # This is free software, and you are welcome to redistribute it               #
 # under certain conditions.                                                   #
 # See LICENSE file for more information                                       #
-# gpl-3.0-only                                                  v2021-05-18   #
+# gpl-3.0-only                                                  v2021-08-21   #
 ###############################################################################
 
 ########
@@ -282,7 +282,7 @@ func_getDomainArgs () {
     )"
   fi
   _arg_domain_id="$( echo "$_d_args" | sed -n -E 's/.*([0-9]{10}+).*/\1/p' )"
-  _arg_subdomain_name="$( echo "$_d_args" | sed -n -E 's/.*-s ?([^ ]+).*/\1/p' )"
+  _arg_subdomain_name="$( echo "$_d_args" | sed -n -E 's/.*-s ([^ ]+).*/\1/p' )"
 
   # if domain arg is not empty use that instead of setting from conf
   if [[ -n "$freenom_update_all" && "$freenom_update_all" -eq 0 ]]; then
@@ -638,8 +638,8 @@ elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-i'; then
     printf "%2s: %s\n" "$i" "${ipCmd[$i]}"
   done
   printf "\nNOTES:\n"
-  printf "  %%ipv%% gets replaced by \$freenom_update_ipv\n"
-  printf "  %%agent%% gets replaced with useragent string\n\n"
+  printf "  %%ipv%% gets replaced by \$freenom_update_ipv ('4' or '6')\n"
+  printf "  %%agent%% gets replaced with useragent string from conf\n\n"
   exit 0
 # update ip
 elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-u'; then

@@ -15,7 +15,7 @@ setup() {
   debug=0
 }
 
-debug=0 
+debug=0
 
 @test "script: $script" {}
 @test "config: $config" {} 
@@ -94,7 +94,7 @@ debug=0
 
 @test "$(date '+%F %H:%M:%S') args freenom.sh -l (example.tk)" {
   debug=0
-  export debug=0
+  export debug
   export freenom_domain_name="example.tk"
   export freenom_domain_id="1234567890"
   ##export dnsManagementPage="$( zcat $BATS_TEST_DIRNAME/html/dnsManagement.html.gz )"
@@ -112,9 +112,9 @@ debug=0
 }
 
 @test "$(date '+%F %H:%M:%S') args freenom.sh -l -d (example.tk)" {
-#  skip
+  # skip
   debug=0
-  export debug=0
+  export debug
   export freenom_domain_name="example.tk"
   export freenom_domain_id="1234567890"
   ##export dnsManagementPage="$( zcat $BATS_TEST_DIRNAME/html/dnsManagement.html.gz )"
@@ -134,7 +134,7 @@ debug=0
 
 @test "$(date '+%F %H:%M:%S') args freenom.sh -u invalid-example-123.tk" {
   debug=0
-  export debug=0
+  export debug
   run $script -u invalid-example-123.tk
   if [ "$debug" -eq 0 ]; then
     [ "$status" -eq 1 ]
@@ -148,22 +148,50 @@ debug=0
 
 @test "$(date '+%F %H:%M:%S') args freenom.sh -u example.tk -s subdom -m 1.2.3.4" {
   debug=0
-  export debug=0
-  tmpip4="/var/log/freenom_subdom.example.tk.ip4"
+  export debug
+  export freenom_domain_id="1234567890"
+  tmpip4="/var/log/freenom/freenom_subdom.example.tk.ip4"
   if [ "$( id -u )" -ne 0 ]; then
     tmpip4="/tmp/freenom_subdom.example.tk.ip4"
   fi
   echo "1.2.3.4" > "$tmpip4"
   run $script -u example.tk -s subdom -m 1.2.3.4
-  [ "$status" -eq 0 ]
-  assert_output --partial 'Update: Skipping "subdom.example.tk" - found same ip "1.2.3.4"'
+  if [ "$debug" -eq 0 ]; then
+    [ "$status" -eq 0 ]
+    assert_output --partial 'Update: Skipping "subdom.example.tk" - found same ip "1.2.3.4"'
+  else
+    echo "# DEBUG: status=$status" >&3
+    echo "# DEBUG: output=$output" >&3
+    assert_output x
+  fi
+  [ -e "$tmpip4" ] && rm "$tmpip4"
+}
+
+@test "$(date '+%F %H:%M:%S') args freenom.sh -u example.tk -s subdom-stest -m 1.2.3.4" {
+  debug=0
+  export debug
+  export freenom_domain_id="1234567890"
+  tmpip4="/var/log/freenom/freenom_subdom-stest.example.tk.ip4"
+  if [ "$( id -u )" -ne 0 ]; then
+    tmpip4="/tmp/freenom_subdom-stest.example.tk.ip4"
+  fi
+  echo "1.2.3.4" > "$tmpip4"
+  run $script -u example.tk -s subdom-stest -m 1.2.3.4
+  if [ "$debug" -eq 0 ]; then
+    [ "$status" -eq 0 ]
+    assert_output --partial 'Update: Skipping "subdom-stest.example.tk" - found same ip "1.2.3.4"'
+  else
+    echo "# DEBUG: status=$status" >&3
+    echo "# DEBUG: output=$output" >&3
+    #assert_output x
+  fi
   [ -e "$tmpip4" ] && rm "$tmpip4"
 }
 
 @test "$(date '+%F %H:%M:%S') args freenom.sh -z invalid-example-123.tk" {
   # skip
   debug=0
-  export debug=0
+  export debug
   run $script -z invalid-example-123.tk
   if [ "$debug" -eq 0 ]; then
     [ "$status" -eq 1 ]
