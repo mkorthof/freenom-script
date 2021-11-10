@@ -30,7 +30,7 @@ recursive (TAP)
 
 `bats -r ./test/freenom* -t`
 
-## Libaries
+## Libraries
 
 * `git submodule add https://github.com/ztombol/bats-support test/bats-support`
 * `git submodule add https://github.com/jasonkarns/bats-assert-1 test/bats-assert-1`
