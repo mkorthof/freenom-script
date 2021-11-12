@@ -141,7 +141,7 @@ systemctl daemon-reload
 
 In case of any errors make sure you're using the correct paths and "freenom.conf" is setup. Check `systemctl status <unit>` and logs.
 
-##### NOTE: to use 'user mode' instead of system mode replace "/system" by "/user" and use `freenomctl --user`
+##### NOTE: to use 'user mode' instead of system mode replace "/system" by "/user" and use `systemctl --user`
 
 ## Email Notifications
 
