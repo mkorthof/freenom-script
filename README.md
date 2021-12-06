@@ -145,12 +145,19 @@ In case of any errors make sure you're using the correct paths and "freenom.conf
 
 ## Email Notifications
 
-To enable email alerts make sure `MTA` is set, the default is 'sendmail'. Emails will be send on renew or update errors. If you do not have/want an MTA installed you could use [bashmail](https://git.io/JJdto) instead.
+To enable email alerts, make sure `MTA` is set; the default is `/usr/sbin/sendmail`. Emails will be sent on renewal or update errors. If you do not have/want an MTA installed you could use [bashmail](https://git.io/JJdto) instead.
 
 If you want to receive the alerts on a different email address than `freenom_email` set `RCPTTO`. You can also set an optional "From" address: `MAILFROM="Freenom Script <freenom-script@example.tk>"`
 
 Leaving `MTA` empty or commented disables alerts.
 
+## Apprise Notifications
+
+To enable [Apprise](https://github.com/caronc/apprise) notifications, make sure `APPRISE` is set to the location where you installed the Apprise CLI; the default is `/usr/local/bin/apprise`. You must also set the `APPRISE_SERVER_URLS` array to contain one or more server URLs; notifications are sent to all of the listed server URLs. As with email notifications, Apprise notifications are sent on renewal or update errors.
+
+For details on how to construct server URLs, refer to https://github.com/caronc/apprise/blob/master/README.md.
+
+Leaving the `APPRISE_SERVER_URLS` array empty disables Apprise notifications.
 
 ### Optional Overrides
 
