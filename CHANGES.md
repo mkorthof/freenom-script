@@ -2,7 +2,8 @@
 
 _order: latest/newest on top_
 
-- [**20210821**] fix issue [#50](https://github.com/mkorthof/freenom-script/issues/50)
+- [**20211207**] fixed issue [#52](https://github.com/mkorthof/freenom-script/issues/52): remove CR using \r instead of ^M with sed
+- [**20210821**] fixed issue [#50](https://github.com/mkorthof/freenom-script/issues/50)
 - [**20210618**] added more config checks (PR [#43](https://github.com/mkorthof/freenom-script/issues/43) from nathanfranke)
 - [**20210612**] check for uaString and ipCmd settings ([#42](https://github.com/mkorthof/freenom-script/issues/42))
 - [**20210508**] fixed issue with `-c` option ([#41](https://github.com/mkorthof/freenom-script/issues/41))
