@@ -3,4 +3,4 @@ Description="Update ip of freenom domain %I"
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/freenom.sh -u %I
+ExecStart=/usr/local/bin/freenom.sh -U %I
