@@ -261,6 +261,11 @@ func_getDomainArgs () {
     _subdom_set=1
   fi
 
+  local _fulldom_set=0
+  if printf -- "%s" "$*" | grep -Eq -- '(^|[^a-zA-Z])\-U'; then
+    _fulldom_set=1
+  fi
+
   # first remove debug arg
   _d_args="$( echo "$*" | sed -E 's/ ?-debug ([0-9])//' )"
 
@@ -283,6 +288,15 @@ func_getDomainArgs () {
   fi
   _arg_domain_id="$( echo "$_d_args" | sed -n -E 's/.*([0-9]{10}+).*/\1/p' )"
   _arg_subdomain_name="$( echo "$_d_args" | sed -n -E 's/.*-s ([^ ]+).*/\1/p' )"
+
+  # split subdomain from fulldomain
+  if [ "$_fulldom_set" -ge 1 ] && [ "$_subdom_set" -eq 0 ]; then
+    if [ "$(( 0 + $(echo "$_arg_domain_name" | tr '.' '\n' | wc -l) ))" -ge 3 ]; then
+      _subdom_set=1
+      _arg_subdomain_name="$( echo "$_arg_domain_name" | sed -n -E 's/^([0-9a-zA-Z]*)\..*/\1/p' )"
+      _arg_domain_name="$( echo "$_arg_domain_name" | sed -n -E 's/^[0-9a-z]*\.(.*)/\1/p' )"
+    fi
+  fi
 
   # if domain arg is not empty use that instead of setting from conf
   if [[ -n "$freenom_update_all" && "$freenom_update_all" -eq 0 ]]; then
