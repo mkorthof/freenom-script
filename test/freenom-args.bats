@@ -92,15 +92,8 @@ debug=0
   assert_output --partial 'Error: invalid or missing subdomain'
 }
 
-# TODO:
-#   Error: logfile "/var/log/freenom/freenom.log" not writable, using "/tmp/freenom.log"
-#
-#   Listing Domains and ID's...
-#
-#   [01] Domain: "example.tk" Id: "1234567890" RegDate: "" ExpiryDate: ""
-
 @test "$(date '+%F %H:%M:%S') args freenom.sh -l (example.tk)" {
-  debug=1
+  debug=0
   export debug
   export freenom_domain_name="example.tk"
   export freenom_domain_id="1234567890"
