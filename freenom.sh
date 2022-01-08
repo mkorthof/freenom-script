@@ -501,7 +501,7 @@ mailEvent() {
 appriseEvent() {
   if [ -n "$APPRISE" ] && [ "${#APPRISE_SERVER_URLS[@]}" -gt 0 ]; then
     if [ "$debug" -ge 1 ]; then
-      echo "DEBUG: $(date '+%H:%M:%S') apprise $pad4   HOSTNAME=$HOSTNAME APPRISE=$APPRISE APPRISE_SERVER_URLS=(${APPRISE_SERVER_URLS[@]}) 1=$1 2=$2"
+      echo "DEBUG: $(date '+%H:%M:%S') apprise $pad4   HOSTNAME=$HOSTNAME APPRISE=$APPRISE APPRISE_SERVER_URLS=(${APPRISE_SERVER_URLS[*]}) 1=$1 2=$2"
     fi
     if [ "$debug" -ge 3 ]; then
       set -x
