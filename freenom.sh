@@ -454,7 +454,7 @@ func_httpError() {
   printf "Error: %s (try %s/%s)\\n" "$_msg" "$showRetry" "$freenom_http_retry"
 }
 
-# Function lc/uc: convert $1 beween upper and UPPERCASE
+# Function lc/uc: convert $1 beween lower and UPPERCASE
 func_lc () {
   echo "$@" | tr '[:upper:]' '[:lower:]'
 }
