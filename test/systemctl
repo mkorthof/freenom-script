@@ -5,7 +5,7 @@ if [ "$1" = "list-unit-files" ]; then
   echo freenom-renew@.service     masked
   echo freenom-renew@.timer       static
   echo freenom-update@.service    static
-  echo freenom-update@.timer      staitic
+  echo freenom-update@.timer      static
 else
   echo "systemctl stub (1=$1, 2=$2, 3=$3)"
 fi
