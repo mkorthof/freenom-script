@@ -496,6 +496,27 @@ mailEvent() {
   fi
 }
 
+# Function appriseEvent: send Apprise notification
+#         parameters: $1: event 2: $messages
+appriseEvent() {
+  if [ "${#APPRISE_SERVER_URLS[@]}" -gt 0 ]; then
+    if [ "$debug" -ge 1 ]; then
+      echo "DEBUG: $(date '+%H:%M:%S') apprise $pad4   HOSTNAME=$HOSTNAME APPRISE=$APPRISE APPRISE_SERVER_URLS=(${APPRISE_SERVER_URLS[@]}) 1=$1 2=$2"
+    fi
+    if [ "$debug" -ge 3 ]; then
+      set -x
+    fi
+    "$APPRISE" --title "freenom.sh: \"$1\" on \"$HOSTNAME\"" --body "$2" "${APPRISE_SERVER_URLS[@]}"
+    EXITCODE="$?"
+    if [ "$EXITCODE" -ne 0 ]; then
+      echo "Error: exit code \"$EXITCODE\" while running $APPRISE"
+    fi
+    if [ "$debug" -ge 3 ]; then
+      set +x
+    fi
+  fi
+}
+
 # debug functions
 
 # Function debugHttp: show curl error
@@ -1609,6 +1630,7 @@ if [ "$freenom_update_ip" -eq 1 ]; then
     eMsg="Update(s) using \"${currentIp}\" failed: ${updateError}"
     echo -e "[$(date)] $eMsg" >> "${out_path}.log"
     mailEvent UpdateError "$eMsg"
+    appriseEvent UpdateError "$eMsg"
   fi
 fi
 
@@ -1634,6 +1656,7 @@ if [ "$freenom_renew_domain" -eq 1 ]; then
     eMsg="These domain(s) failed to renew: ${renewError}"
     echo -e "[$(date)] $eMsg" >> "${out_path}.log"
     mailEvent RenewError "$eMsg"
+    appriseEvent RenewError "$eMsg"
   fi
 fi
 
