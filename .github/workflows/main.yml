@@ -5,7 +5,7 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
     build:
         runs-on: ubuntu-latest
-        steps:
+        test-sc:
             - uses: actions/checkout@v1
             - name: Show OS version
               run: cat /etc/os-release
