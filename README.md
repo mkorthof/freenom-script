@@ -4,7 +4,7 @@
 
 ## Last Update ##
 
-***Latest version: v2021-12-07 ([CHANGES.md](CHANGES.md))***
+***Latest version: v2022-08-01 ([CHANGES.md](CHANGES.md))***
 
 **Make sure to add new config options when updating script**
 
@@ -143,7 +143,9 @@ In case of any errors make sure you're using the correct paths and "freenom.conf
 
 ##### NOTE: to use 'user mode' instead of system mode replace "/system" by "/user" and use `systemctl --user`
 
-## Email Notifications
+## Notifications
+
+### Email
 
 To enable email alerts, make sure `MTA` is set; the default is `/usr/sbin/sendmail`. Emails will be sent on renewal or update errors. If you do not have/want an MTA installed you could use [bashmail](https://git.io/JJdto) instead.
 
@@ -151,15 +153,17 @@ If you want to receive the alerts on a different email address than `freenom_ema
 
 Leaving `MTA` empty or commented disables alerts.
 
-## Apprise Notifications
+### Apprise
 
-To enable [Apprise](https://github.com/caronc/apprise) notifications, make sure `APPRISE` is set to the location where you installed the Apprise CLI; the default is `/usr/local/bin/apprise`. You must also set the `APPRISE_SERVER_URLS` array to contain one or more server URLs; notifications are sent to all of the listed server URLs. As with email notifications, Apprise notifications are sent on renewal or update errors.
+Uses external lib to send notification to many services like Telegram, Discord, Slack, Amazon SNS, MS Teams etc.
 
-For details on how to construct server URLs, refer to https://github.com/caronc/apprise/blob/master/README.md.
+To enable [Apprise](https://github.com/caronc/apprise) notifications, make sure `APPRISE` is set to the location where you installed the Apprise CLI; the default is `/usr/local/bin/apprise`. You must also set the `APPRISE_SERVER_URLS` array to contain one or more server URLs. Notifications are sent to all of the listed server URLs. As with email notifications, Apprise notifications are sent on renewal or update errors.
+
+For details on how to construct server URLs, refer to [supported notifications](https://github.com/caronc/apprise#supported-notifications).
 
 Leaving the `APPRISE_SERVER_URLS` array empty disables Apprise notifications.
 
-### Optional Overrides
+## Optional Overrides
 
 The following options can be changed in config, they are however OK to leave as-is.
 
@@ -229,15 +233,15 @@ In case of issues try running curl and dig command manually.
   - Files: `freenom.log`, `freenom_<domain>.ip{4,6}`, `freenom_renewalResult-<id>.html`
 - **Details:** use `freenom.sh -o` to view Result html files
   
- Also see comment "Output files" and `freenom_out_dir` variable in conf.
+Also see comment "Output files" and `freenom_out_dir` variable in conf.
 
-## Updating
+### Updating
 
 Usually you can just replace "freenom.sh" with the new version, if you're using a seperate config file.
 
 An exeption is when config options were added/changed which you may need to compare and merge. Such config changes are listed in [CHANGES.md](CHANGES.md).
 
-## Uninstall
+### Uninstall
 
 Run `make uninstall`.
 
