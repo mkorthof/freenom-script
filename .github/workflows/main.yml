@@ -3,9 +3,9 @@ name: Shellcheck
 on: [push, pull_request, workflow_dispatch]
 # on: [workflow_dispatch]
 jobs:
-    build:
+    test-sc:
         runs-on: ubuntu-latest
-          test-sc:
+            steps:
             - uses: actions/checkout@v1
             - name: Show OS version
               run: cat /etc/os-release
