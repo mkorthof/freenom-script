@@ -293,8 +293,8 @@ func_getDomainArgs () {
   if [ "$_fulldom_set" -ge 1 ] && [ "$_subdom_set" -eq 0 ]; then
     if [ "$(( 0 + $(echo "$_arg_domain_name" | tr '.' '\n' | wc -l) ))" -ge 3 ]; then
       _subdom_set=1
-      _arg_subdomain_name="$( echo "$_arg_domain_name" | sed -n -E 's/^([0-9a-zA-Z]*)\..*/\1/p' )"
-      _arg_domain_name="$( echo "$_arg_domain_name" | sed -n -E 's/^[0-9a-z]*\.(.*)/\1/p' )"
+      _arg_subdomain_name="$( echo "$_arg_domain_name" | sed -n -E 's/^([0-9a-zA-Z\-]*)\..*/\1/p' )"
+      _arg_domain_name="$( echo "$_arg_domain_name" | sed -n -E 's/^[0-9a-zA-Z\-]*\.(.*)/\1/p' )"
     fi
   fi
 
