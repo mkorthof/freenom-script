@@ -255,22 +255,24 @@ func_getDomainArgs () {
   local _arg_domain_name
   local _arg_domain_id
   local _arg_subdomain_name
+  local _subdom_set
 
-  local _subdom_set=0
+  # check for subdomain arg '-s'
+  _subdom_set=0
   if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-s'; then
     _subdom_set=1
   fi
 
-  # first remove debug arg
+  # first remove debug arg...
   _d_args="$( echo "$*" | sed -E 's/ ?-debug ([0-9])//' )"
 
-  # then remove "-c'"arg and save other options to $_d_args
+  # ...then remove '-c' arg and save other options to $_d_args
   # NOTE: (#12) this regex has issues with bash 5.0.3/sed 4.7 but works on bash 4.4.12/sed 4.4
-  #   sed -E 's| ?-c [][a-zA-Z0-9 !"#$%&'\''()*+,-.:;<=>?@^_`{}~/]+ ?||g'
+  #             sed -E 's| ?-c [][a-zA-Z0-9 !"#$%&'\''()*+,-.:;<=>?@^_`{}~/]+ ?||g'
   _d_args="$( echo "$_d_args" | sed -E 's| ?(-c ([^ ]+\|['\''"].+['\''"])) ?||g' )"
 
   # now get domain_name by removing:
-  #   - option "-m <ip>" and "-s"
+  #   - options "-m <ip>" and "-s"
   #   - 'digits' which match domain id
   #   - any other args e.g. "-[a-z]"
   if [[ -n "$freenom_update_all" && "$freenom_update_all" -eq 0 ]]; then
@@ -284,7 +286,7 @@ func_getDomainArgs () {
   _arg_domain_id="$( echo "$_d_args" | sed -n -E 's/.*([0-9]{10}+).*/\1/p' )"
   _arg_subdomain_name="$( echo "$_d_args" | sed -n -E 's/.*-s ([^ ]+).*/\1/p' )"
 
-  # if domain arg is not empty use that instead of setting from conf
+  # if domain arg is not empty, use that instead of setting from conf
   if [[ -n "$freenom_update_all" && "$freenom_update_all" -eq 0 ]]; then
     if [ -n "$_arg_domain_name" ]; then
       freenom_domain_name="$_arg_domain_name"
@@ -305,7 +307,7 @@ func_getDomainArgs () {
   if [ "$debug" -ge 1 ]; then
     debugDomainArgs=1
   fi
-  # if we didnt get any args and no conf settings display error message
+  # if we didnt get any args and theres no conf settings, display error message
   if [[ -n "$freenom_update_all" && "$freenom_update_all" -eq 0 ]]; then
     if [ "$freenom_domain_name" == "" ]; then
       echo "Error: domain name missing"
