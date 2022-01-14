@@ -16,7 +16,7 @@ case $1 in
           func_msg "START"
           bats freenom-funcs.bats
           ;;
-  sc)  trap 'func_msg "END"; exit' EXIT HUP INT TERM
+  sc)     trap 'func_msg "END"; exit' EXIT HUP INT TERM
           func_msg "START"
           bats freenom-sc.bats
           ;;
