@@ -13,7 +13,7 @@
 This shell script makes sure your Freenom domains don't expire by auto renewing them.
 It's original functionality of updating an A record with the clients ip address is also retained.
 
-You'll need to have already registered an account at Freenom.com with at least one (free) domain added before you can run the script.
+You'll need to have already registered an account at Freenom.com with at least one (free) domain added, before you can run the script.
 
 ## Usage
 
@@ -64,9 +64,11 @@ _Note that this shell script requires recent versions of "Bash" and "cURL"_
 
 Run `make install` from git clone directory to automatically install the script, conf file and to configure scheduler.
 
-### Manually
+### Manual install
 
-Suggested installation path: "/usr/local/bin" and "/usr/local/etc" for the config file
+Suggested installation path: "/usr/local/bin"
+
+And for the config file: "/usr/local/etc" 
 
 ## Configuration
 
@@ -101,7 +103,7 @@ To manually configure cron:
 1) Copy script and conf files (see [Installation](#installation))
 2) Copy [cron.d/freenom](cron.d/freenom) to "/etc/cron.d/freenom" and edit it, or create the file yourself with these line(s)
 
-Example:
+#### Example
 
 ``` bash
 0 9 * * 0 root bash -c 'sleep $((RANDOM \% 60))m; /usr/local/bin/freenom.sh -r -a'
@@ -126,7 +128,7 @@ Thanks to [@sdcloudt](https://github.com/sdcloudt) you can use the template unit
 
 3) Reload systemd
 
-Example:
+#### Example
 
 ``` bash
 # Create symlinks:
@@ -204,11 +206,11 @@ In case of issues try running curl and dig command manually.
 ## Files
 
 - **Installer:** `Makefile`
-- **Script:** `freenom.sh` and `freenom.conf`
+- **Script/cfg:** `freenom.sh` and `freenom.conf`
 - **Output:**
   - Path: `"/var/log/freenom/"` (default)
   - Files: `freenom.log`, `freenom_<domain>.ip{4,6}`, `freenom_renewalResult-<id>.html`
-- **Details:** use `freenom.sh -o` to view Result html files
+- **View details:** use `freenom.sh -o` to view Result html files
   
 Also see comment "Output files" and `freenom_out_dir` variable in conf.
 
@@ -230,8 +232,8 @@ See included [orig](orig) dir
 
 - Original script: [gist.github.com/a-c-t-i-n-i-u-m/bc4b1ff265b277dbf195](https://gist.github.com/a-c-t-i-n-i-u-m/bc4b1ff265b277dbf195)
 - Updated script: [gist.github.com/pgaulon/3a844a626458f56903d88c5bb1463cc6](https://gist.github.com/pgaulon/3a844a626458f56903d88c5bb1463cc6)
-- Reference: [github.com/dabendan2/freenom-dns](https://github.com/dabendan2/freenom-dns) (npm)
-- Reference: [github.com/patrikx3/freenom](https://github.com/patrikx3/freenom) (npm)
+- Reference: [github.com/dabendan2/freenom-dns](https://github.com/dabendan2/freenom-dns) (nodejs/npm)
+- Reference: [github.com/patrikx3/freenom](https://github.com/patrikx3/freenom) (nodejs/npm)
 
 ## Changes
 
