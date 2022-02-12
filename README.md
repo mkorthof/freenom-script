@@ -93,7 +93,7 @@ Optionally you can schedule the script to run automatically. The installer creat
 - Systemd:
     - `systemctl enable --now freenom-renew-all.timer`
     - `systemctl enable --now freenom-update@example.tk.timer`
-    - `systemctl enable --now freenom-update@mysubdom.xample.tk.timer`
+    - `systemctl enable --now freenom-update@mysubdom.example.tk.timer`
     _If systemd is not available on your system the installer will use cron instead._
 
 ### Manually setup cron
