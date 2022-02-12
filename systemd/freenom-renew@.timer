@@ -1,5 +1,5 @@
 [Unit]
-Description="Time freenom-script-renew for %I repetitively"
+Description="Weekly renewal of freenom domain %I"
 
 [Timer]
 OnCalendar=weekly

@@ -2,6 +2,7 @@
 
 _order: latest/newest on top_
 
+- [**20220212**] changed systemd unit file to support updating subdomains (PR [#54](https://github.com/mkorthof/freenom-script/pull/54))
 - [**20220108**] added support for [Apprise](https://github.com/caronc/apprise) (PR [#53](https://github.com/mkorthof/freenom-script/pull/53) from jjlin)
   - **config changes:**
     - `APPRISE="/usr/local/bin/apprise"` 

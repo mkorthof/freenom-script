@@ -13,11 +13,6 @@ endif
 EXISTCRON = 0
 ifneq ("$(wildcard /run/systemd/system)", "")
   SCHED = systemd
-#  ifneq ("$(wildcard /usr/lib/systemd/system)","")
-#    SYSDDIR = /lib/systemd/system
-#  else ifneq ("$(wildcard /lib/systemd/system)","")
-#    SYSDDIR = /usr/lib/systemd/system
-#  endif
   LISTUNITS := $(shell systemctl list-unit-files --no-legend --no-page "freenom-*" 2>/dev/null|cut -d" " -f1)
 else ifneq ("$(shell which cron 2>/dev/null)", "")
   EXISTCRON = 1
@@ -72,10 +67,10 @@ ifeq ("$(SCHED)", "systemd")
 	$(shell systemctl daemon-reload)
     ifeq ("$(wildcard $(SYSDDIR)/freenom-*)","")
 	$(info To schedule domain renewals and updates, use these commands:)
-	$(info - systemctl enable --now freenom-renew@example.tk.timer)
 	$(info - systemctl enable --now freenom-renew-all.timer)
 	$(info - systemctl enable --now freenom-update@example.tk.timer)
-	$(info $() $() * replace 'example.tk' with your domain)
+	$(info - systemctl enable --now freenom-update@mysubdom.example.tk.timer)
+	$(info $() $() * replace 'example.tk' and/or 'mysubdom' with your domain)
     endif
   endif
 else ifeq ("$(SCHED)", "cron")
@@ -108,9 +103,6 @@ ifneq ("$(wildcard $(SYSDDIR)/freenom-*)","")
 	done
 	$(shell systemctl daemon-reload)
 endif
-#ifneq ("$(wildcard /etc/systemd/user/freenom-*)","")
-#	rm -rf /etc/systemd/user/freenom-*
-#endif
 ifneq ("$(wildcard $(CRONDIR)/freenom)","")
 	$(shell rm $(CRONDIR)/freenom)
 endif

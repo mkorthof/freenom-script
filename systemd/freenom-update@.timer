@@ -1,5 +1,5 @@
 [Unit]
-Description="Time freenom-script-update for %I repetitively"
+Description="Hourly ip update of freenom domain %I"
 
 [Timer]
 OnBootSec=2min
