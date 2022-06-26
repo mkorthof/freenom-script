@@ -1,5 +1,5 @@
 [Unit]
-Description="Renew all freenom domains"
+Description=Renew all freenom domains
 
 [Service]
 Type=oneshot

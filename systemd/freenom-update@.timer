@@ -1,5 +1,5 @@
 [Unit]
-Description="Hourly ip update of freenom domain %I"
+Description=Hourly ip update of freenom domain %I
 
 [Timer]
 OnBootSec=2min

@@ -4,7 +4,7 @@
 
 ## Last Update ##
 
-***Latest version: v2022-01-08 ([CHANGES.md](CHANGES.md))***
+***Latest version: v2022-06-26 ([CHANGES.md](CHANGES.md))***
 
 **Make sure to add new config options when updating script**
 
@@ -29,21 +29,21 @@ USAGE:
             freenom.sh -z <domain>
 
 OPTIONS:
-            -l    List all domains with id's in account
+            -l    List all domains and id's in account
                   add [-d] to show renewal Details
             -r    Renew <domain> or use '-r -a' to update All
-                  use [-s] with -r to update subdomains
+                  add [-s] to update <Subdomain>
             -u    Update <domain> A record with current ip
                   add [-s] to update <Subdomain> record
                   add [-m <ip>] to Manually update static <ip>
                   add [-f] to Force update on unchanged ip
-            -z    Zone listing dns records for <domain>
+            -z    Zone for <domain>, shows dns records
 
             -4    Use ipv4 and modify A record on "-u" (default)
             -6    Use ipv6 and modify AAAA record on "-u"
-            -c    Config <file> to be used instead freenom.conf
+            -c    Config <file> to be used, instead freenom.conf
             -i    Ip commands list used to get current ip
-            -o    Output renewals result html file(s)
+            -o    Output renewals, shows html file(s)
 
 EXAMPLES:
             ./freenom.sh -r example.com
@@ -51,8 +51,8 @@ EXAMPLES:
             ./freenom.sh -u example.com -s mail
 
 NOTES:
-            Using "-u" or "-r" and specifying <domain> as argument
-            will override any settings in script or config file
+            When "-u" or "-r" is used with argument <domain>
+            any settings in script or config file are overridden
 
 ```
 
@@ -190,7 +190,7 @@ To get your current ip address from a number of public services the script uses 
 
 There are a few more services defined for redundancy, the script will choose one at random. By default it will retry 3 times to get ip.
 
-Once your ip is found it's written to "freenom.ip4.domain.lock" (or 'ip6') to prevent unnecessary updates in case the ip is unchanged.
+Once your ip is found it's written to "freenom_\<domain\>.ml.ip4" (or 'ip6'). Same if freenom returns dnserror "There were no changes". This is to prevent unnecessary updates in case the ip is unchanged.
 To force an update you can remove this file which is located in the default output path: "/var/log".
 
 To manually update: set `freenom_static_ip=<your ip>` and `freenom_update_manual="1"`, or use the `-m` option.

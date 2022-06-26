@@ -1,5 +1,5 @@
 [Unit]
-Description="Weekly renewal of all freenom domains"
+Description=Weekly renewal of all freenom domains
 
 [Timer]
 OnCalendar=weekly

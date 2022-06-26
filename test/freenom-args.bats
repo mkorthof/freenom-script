@@ -35,7 +35,7 @@ debug=0
 @test "$(date '+%F %H:%M:%S') args freenom.sh -h" {
   run $script -h
   [ "$status" -eq 0 ]
-  assert_output --partial "USAGE:"
+  assert_output --partial "Usage:"
 }
 
 @test "$(date '+%F %H:%M:%S') args freenom.sh -c $config" {

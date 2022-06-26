@@ -1,5 +1,5 @@
 [Unit]
-Description="Update ip of freenom domain %I"
+Description=Update ip of freenom domain %I
 
 [Service]
 Type=oneshot
