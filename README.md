@@ -133,11 +133,11 @@ Thanks to [@sdcloudt](https://github.com/sdcloudt) you can use the template unit
 # Create symlinks:
 
 mkdir /path/to/systemd/timers.target.wants
-ln -s /path/to/systemd/freenom-renew@.service /etc/systemd/user/timers.target.wants/freenom-renew@example.tk.service
+ln -s /path/to/systemd/freenom-renew-all.service /etc/systemd/user/timers.target.wants/freenom-renew-all.service
 ln -s /path/to/systemd/freenom-update@.service /etc/systemd/user/timers.target.wants/freenom-update@example.tk.service:
 
 # (optional) to renew a specific domain, replace freenom-renew-all by:
-ln -s /path/to/systemd/freenom-renew-all.service /etc/systemd/user/timers.target.wants/freenom-renew-all.service
+ln -s /path/to/systemd/freenom-renew@.service /etc/systemd/user/timers.target.wants/freenom-renew@example.tk.service
 
 # then reload systemd:
 systemctl daemon-reload
