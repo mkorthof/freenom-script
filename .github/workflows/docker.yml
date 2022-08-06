@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.GHCR_PAT }}          
       - name: Push image
         run: |
-          docker tag -t freenom-script:latest ghcr.io/mkorthof/freenom-script:latest
+          docker tag freenom-script:latest ghcr.io/mkorthof/freenom-script:latest
           docker push ghcr.io/mkorthof/freenom-script:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
