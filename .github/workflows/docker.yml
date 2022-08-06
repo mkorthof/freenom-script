@@ -15,7 +15,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build image
-        run: ./docker/build.sh
+        run: |
+          docker build -t freenom-script:latest -f- . <<EOF
+          FROM debian:stable-slim
+          ARG DEBIAN_FRONTEND=noninteractive
+          ARG DEBCONF_NOWARNINGS="yes"
+          COPY freenom.sh /usr/local/bin/
+          COPY freenom.conf /usr/local/etc/
+          RUN apt-get -yq update && apt-get -yq install --no-install-recommends curl ca-certificates bind9-dnsutils && rm -rf /var/lib/apt/lists/*
+          USER nobody
+          ENTRYPOINT [ "/usr/local/bin/freenom.sh" ]
+
       #- name: Login to DockerHub
       #  uses: docker/login-action@v1
       #  with:
