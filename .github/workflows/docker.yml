@@ -25,13 +25,12 @@ jobs:
           RUN apt-get -yq update && apt-get -yq install --no-install-recommends curl ca-certificates bind9-dnsutils && rm -rf /var/lib/apt/lists/*
           USER nobody
           ENTRYPOINT [ "/usr/local/bin/freenom.sh" ]
-
       #- name: Login to DockerHub
       #  uses: docker/login-action@v1
       #  with:
       #    username: ${{ secrets.DOCKERHUB_USERNAME }}
       #    password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Login to Github Packages
+      - name: Login to Github Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
@@ -41,5 +40,3 @@ jobs:
         run: |
           docker tag freenom-script:latest ghcr.io/mkorthof/freenom-script:latest
           docker push ghcr.io/mkorthof/freenom-script:latest
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
