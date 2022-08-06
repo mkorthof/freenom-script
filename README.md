@@ -19,17 +19,15 @@ You'll need to have already registered an account at Freenom.com with at least o
 
 ```shell
 
-FREENOM.COM DOMAIN RENEWAL AND DYNDNS
-=====================================
+freenom.com Domain Renewal and DynDNS
+-------------------------------------
 
-USAGE:
-            freenom.sh -l [-d]
+Usage:      freenom.sh -l [-d]
             freenom.sh -r <domain OR -a> [-s <subdomain>]
             freenom.sh -u <domain> [-s <subdomain>] [-m <ip>] [-f]
             freenom.sh -z <domain>
 
-OPTIONS:
-            -l    List all domains and id's in account
+Options:    -l    List all domains and id's in account
                   add [-d] to show renewal Details
             -r    Renew <domain> or use '-r -a' to update All
                   add [-s] to update <Subdomain>
@@ -41,18 +39,16 @@ OPTIONS:
 
             -4    Use ipv4 and modify A record on "-u" (default)
             -6    Use ipv6 and modify AAAA record on "-u"
-            -c    Config <file> to be used, instead freenom.conf
-            -i    Ip commands list used to get current ip
+            -c    Config <file> to use, instead of freenom.conf
+            -i    Ip commands list, used to get current ip
             -o    Output renewals, shows html file(s)
 
-EXAMPLES:
-            ./freenom.sh -r example.com
+Examples    ./freenom.sh -r example.com
             ./freenom.sh -c /etc/mycustom.conf -r -a
             ./freenom.sh -u example.com -s mail
 
-NOTES:
-            When "-u" or "-r" is used with argument <domain>
-            any settings in script or config file are overridden
+            * When "-u" or "-r" is used with argument <domain>
+              any settings in script or config file are overridden
 
 ```
 
@@ -69,6 +65,14 @@ Run `make install` from git clone directory to automatically install the script,
 Suggested installation path: "/usr/local/bin"
 
 And for the config file: "/usr/local/etc" 
+
+### Docker
+
+There's an image available from GitHub Container Registry:
+
+ `docker run --rm --env freenom_email="you@example.com" --env freenom_passwd="yourpassword" h ghcr.io/mkorthof/freenom_script -l`
+
+For more information see [Docker.md](Docker.md)
 
 ## Configuration
 

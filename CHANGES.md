@@ -2,6 +2,8 @@
 
 _order: latest/newest on top_
 
+- [**20220806**] add docker image [#57](https://github.com/mkorthof/freenom-script/issues/57)
+  - **config change:** `uaString`
 - [**20220626**] update ip file on freenom dnserror "There were no changes"
 - [**20220325**] added pid to logs, **config changes:** ipCmd uaString
 - [**20220212**] changed systemd unit file to support updating subdomains (PR [#54](https://github.com/mkorthof/freenom-script/pull/54))
