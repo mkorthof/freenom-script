@@ -1,0 +1,35 @@
+name: Build and Publish
+
+#on:
+#  push:
+#    branches: [main]
+#  pull_request:
+
+on: workflow_dispatch
+
+defaults:
+  build-and-push-docker-image:
+    name: Build Docker image and push to repositories
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build image
+        run: ./docker/build.sh
+      #- name: Login to DockerHub
+      #  uses: docker/login-action@v1
+      #  with:
+      #    username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #    password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to Github Packages
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}          
+      - name: Push image
+        run: |
+          docker tag -t freenom-script:latest ghcr.io/mkorthof/freenom-script:latest
+          docker push ghcr.io/mkorthof/freenom-script:latest
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
