@@ -1,9 +1,16 @@
 name: Shellcheck
 
 #on: [workflow_dispatch]
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+     paths: freenom.sh
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
 jobs:
     test-sc:
+        name: Test shellcheck
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v1
