@@ -70,7 +70,7 @@ And for the config file: "/usr/local/etc"
 
 There's an image available from GitHub Container Registry:
 
- `docker run --rm --env freenom_email="you@example.com" --env freenom_passwd="yourpassword" h ghcr.io/mkorthof/freenom_script -l`
+ `docker run --rm --env freenom_email="you@example.com" --env freenom_passwd="yourpassword" ghcr.io/mkorthof/freenom_script -l`
 
 For more information see [Docker.md](Docker.md)
 
