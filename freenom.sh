@@ -194,9 +194,10 @@ fi
 #############
 
 # Function cleanup: remove cookie file using trap
+# shellcheck disable=SC2317
 func_cleanup() {
   if [[ -n "$cookie_file" && -f "$cookie_file" ]]; then
-    if [ $debug -ge 1 ]; then
+    if [ "$debug" -ge 1 ]; then
       echo "DEBUG: $(date '+%H:%M:%S') func_cleanup cookie_file=$cookie_file"
     fi
     rm "$cookie_file"
@@ -540,6 +541,7 @@ func_debugVars () {
 }
 
 # Function debugArrays: show domain Id, Name, Expiry
+# shellcheck disable=2317
 func_debugArrays () {
   echo "DEBUG: $pad8 arrays domainId domainName domainExpiryDate:"
   echo "${domainId[@]}"
@@ -548,6 +550,7 @@ func_debugArrays () {
 }
 
 # Function debugMyDomainsResult
+# shellcheck disable=2317
 func_debugMyDomainsResult () {
   if [ "$debug" -ge 1 ]; then
     IFS_SAVE=$IFS
@@ -607,6 +610,7 @@ if printf -- "%s" "$*" | grep -Eiq '(^|[^a-z])\-debug'; then
 fi
 # show help
 #if printf -- "%s" "$*" | grep -Eqi '(^|[^a-z])\-h'; then
+# shellcheck disable=2317
 if [ "$help" -eq 1 ]; then
   func_help
   exit 0
@@ -887,6 +891,7 @@ fi
 # retrieve client area page, get domain detail urls and loop over them to get all data
 # arrays: domainId, domainName, domainRegDate, domainExpiryDate
 
+# shellcheck disable=SC2004
 if [ "$freenom_domain_id" == "" ]; then
   myDomainsURL="https://my.freenom.com/clientarea.php?action=domains&itemlimit=all&token=$token"
   # DEBUG: for debugging use local file instead:
@@ -1056,6 +1061,7 @@ func_getDnsPage () {
 #          parameters : $1 = domain name
 #          returns    : v1 = recnum, v2 = type|name|ttl|value, v3 = recname/value(ip), records
 #                       sets v3 to uppercase domain if 'name' is empty
+# shellcheck disable=SC2004
 func_getRec() {
   IFS_SAVE=$IFS
   IFS=$'\n'
@@ -1248,6 +1254,7 @@ if [[ -n "$freenom_update_ipv" && "$freenom_update_ipv" -eq 4 ]]; then freenom_u
 fi
 
 # handle updating single domain and record
+# shellcheck disable=SC2004
 if [[ "$freenom_update_ip" -eq 1 && "$freenom_update_all" -eq 0 ]]; then
   dnsEmpty="0"
   recMatch="0"
@@ -1311,6 +1318,7 @@ fi
 # XXX: TEST feature - handle updating *ALL* domains and records (-u -a)
 # TODO: maybe add matching against user supplied list of (sub)domains?
 
+# shellcheck disable=SC2004
 if [[ -n "$freenom_update_all" && "$freenom_update_all" -eq 1 ]]; then
   echo "NOTICE: Updating all domains is a TEST feature"
   # loop over domains ($d)
