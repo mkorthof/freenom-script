@@ -4,7 +4,7 @@
 
 ## Last Update ##
 
-***Latest version: v2022-06-26 ([CHANGES.md](CHANGES.md))***
+***Latest version: v2022-08-06 ([CHANGES.md](CHANGES.md))***
 
 **Make sure to add new config options when updating script**
 
