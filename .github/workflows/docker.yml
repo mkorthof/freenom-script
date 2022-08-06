@@ -1,11 +1,11 @@
 name: Docker build and push
 
-#on:
-#  push:
-#    branches: [main]
-#  pull_request:
-
-on: workflow_dispatch
+on:
+  push:
+    paths: freenom.sh
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build-and-push-docker-image:
