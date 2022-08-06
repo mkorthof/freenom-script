@@ -5,7 +5,6 @@ on:
   push:
      paths: freenom.sh
   pull_request:
-    branches: [ master ]
   workflow_dispatch:
 
 jobs:
