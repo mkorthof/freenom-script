@@ -12,7 +12,7 @@ To list domains, run:
 
 Or, use a config file:
 
-`docker run --rm --volume $(pwd)/freenom.conf:/usr/local/etc/freenom.confd ghcr.io/mkorthof/freenom-script -l`
+`docker run --rm --volume $(pwd)/freenom.conf:/usr/local/etc/freenom.conf ghcr.io/mkorthof/freenom-script -l`
 
 ## Build your own image
 
