@@ -122,6 +122,7 @@ debug=0
   run $script -l -d
   if [ "$debug" -eq 0 ]; then
     [ "$status" -eq 1 ]
+    refute_output --partial "Error: Login"
     assert_output --partial "Listing Domains and ID's with renewal details, this might take a while..."
   else
     ##echo "# DEBUG: stub=$BATS_TEST_DIRNAME/html/dnsManagement.html.gz" >&3
@@ -138,6 +139,7 @@ debug=0
   run $script -u invalid-example-123.tk
   if [ "$debug" -eq 0 ]; then
     [ "$status" -eq 1 ]
+    refute_output --partial "Error: Login"
     #assert_output --partial 'Error: Could not find Domain ID for "invalid-example-123.tk"'
   else
     echo "# DEBUG: status=$status" >&3
@@ -195,6 +197,7 @@ debug=0
   run $script -z invalid-example-123.tk
   if [ "$debug" -eq 0 ]; then
     [ "$status" -eq 1 ]
+    refute_output --partial "Error: Login"
     #assert_output --partial 'Error: Could not find Domain ID for "invalid-example-123.tk"'
     #assert_output --regexp 'DNS Zone: "invalid-example-123.tk" \(1234567890\).*No records found'
   else

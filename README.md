@@ -1,10 +1,11 @@
 # Domain Renewal and DynDNS for Freenom.com
 
 [![Shellcheck](https://github.com/mkorthof/freenom-script/actions/workflows/main.yml/badge.svg)](https://github.com/mkorthof/freenom-script/actions/workflows/main.yml)
+[![Docker](https://github.com/mkorthof/freenom-script/actions/workflows/docker.yml/badge.svg)](https://github.com/mkorthof/freenom-script/actions/workflows/docker.yml)
 
 ## Last Update ##
 
-***Latest version: v2022-08-06 ([CHANGES.md](CHANGES.md))***
+***Latest version: v2022-08-12 ([CHANGES.md](CHANGES.md))***
 
 **Make sure to add new config options when updating script**
 
@@ -53,6 +54,8 @@ Examples    ./freenom.sh -r example.com
 ```
 
 ## Installation
+
+Using a full Linux distro including coreutils is recommended (e.g. Debian). Embedded and BusyBox based systems are untested and will probably not work correctly or at all.
 
 _Note that this shell script requires recent versions of "Bash" and "cURL"_
 

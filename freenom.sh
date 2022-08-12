@@ -12,7 +12,7 @@
 # This is free software, and you are welcome to redistribute it               #
 # under certain conditions.                                                   #
 # See LICENSE file for more information                                       #
-# gpl-3.0-only                                                  v2022-08-06   #
+# gpl-3.0-only                                                  v2022-08-12   #
 ###############################################################################
 
 ########
@@ -22,12 +22,18 @@
 set -eo pipefail
 
 # check some requirements
-for i in curl grep date basename; do
+for i in curl grep date basename dirname sed; do
   if ! command -v $i >/dev/null 2>&1; then
     echo "Error: could not find \"$i\", exiting..."
     exit 1
   fi
 done
+if [ -z "$BASH" ]; then
+  echo "Warning: bash not detected"
+fi
+if [ "$(readlink /proc/$$/exe 2>&1)" = "/bin/busybox" ]; then
+  echo "Warning: looks like we're running under BusyBox"
+fi
 scriptName="$(basename "$0")"
 infoCount="0"
 warnCount="0"
@@ -140,7 +146,7 @@ if [ ! -e "${out_path}.log" ]; then
   touch "${out_path}.log" >/dev/null 2>&1 || true
 fi
 if [ ! -w "${out_path}.log" ]; then
-  echo "Error: logfile \"${out_path}.log\" not writable, using \"/tmp/$(basename -s '.sh' "$0").log\""
+  echo "Warning: logfile \"${out_path}.log\" not writable, using \"/tmp/$(basename -s '.sh' "$0").log\""
   out_path="/tmp/$(basename -s '.sh' "$0")"
 fi
 
@@ -168,7 +174,7 @@ if [ ! -x "$MTA" ]; then
     MTA="/usr/sbin/sendmail"
   else
     MTA=""
-    echo "Warning: no MTA found, cant send email"
+    echo "Warning: No MTA found, cant send email"
   fi
 fi
 
@@ -790,8 +796,8 @@ if [ "$freenom_update_ip" -eq 1 ]; then
       uMsg="\n%7sUse \"-m <ip>\" or remove static option for auto detect\n"
     fi
   fi
+  # shellcheck disable=SC2059
   if [ "$currentIp" == "" ]; then
-    # shellcheck disable=SC2059
     printf "Error: ${eMsg}${uMsg}\n"
     echo "[$(date)] [$$] Error: $eMsg" >>"${out_path}.log"
     exit 1
@@ -826,7 +832,9 @@ while [ "$retry" -le "$freenom_http_retry" ]; do
   loginPage="$(curl $c_opts $c_exOpts -A "$agent" -c "$cookie_file" -w "$http_code" \
     "https://my.freenom.com/clientarea.php" 2>&1)" ||
     {
-      echo "Error: Login token - failure (curl error code: $?)"
+      eMsg="Error: Login token - failure (curl error code: $?)"
+      echo "$eMsg"
+      echo "[$(date)] [$$] $eMsg" >>"${out_path}.log"
       exit 1
     }
   func_httpOut "$loginPage"
@@ -850,7 +858,9 @@ if [ "$debug" -ge 1 ]; then
   func_debugHttp "logintoken" "clientarea token=$token"
 fi
 if [ -z "$token" ]; then
-  echo "Error: Login token - value empty after $freenom_http_retry max tries, exiting..."
+  eMsg="Error: Login token - value empty after $freenom_http_retry max tries, exiting..."
+  echo "$eMsg"
+  echo "[$(date)] [$$] $eMsg" >>"${out_path}.log"
   exit 1
 fi
 
@@ -870,8 +880,8 @@ while [ "$retry" -le "$freenom_http_retry" ]; do
   fi
   func_httpOut "$loginResult"
   loginResult="$httpOut"
-  incorrect="Location: /clientarea.php\?incorrect=true|Login Details Incorrect"
-  if [ "$(echo -e "$loginResult" | grep -E "$incorrect")" != "" ]; then
+  incorrectPat="Location: /clientarea.php\?incorrect=true|Login Details Incorrect"
+  if [ "$(echo -e "$loginResult" | grep -E "$incorrectPat")" != "" ]; then
     eMsg="Error: Login failed, incorrect details"
     echo "$eMsg"
     echo "[$(date)] [$$] $eMsg" >>"${out_path}.log"
@@ -888,7 +898,9 @@ if [ "$debug" -ge 1 ]; then
   func_debugHttp "login" "dologin.php username=$freenom_email"
 fi
 if [ "$retry" -gt "$freenom_http_retry" ]; then
-  echo "Error: Login - max retries $freenom_http_retry was reached, exiting..."
+  eMsg="Error: Login - max retries $freenom_http_retry was reached, exiting..."
+  echo "$eMsg"
+  echo "[$(date)] [$$] $eMsg" >>"${out_path}.log"
   exit 1
 fi
 
@@ -922,7 +934,9 @@ if [ "$freenom_domain_id" == "" ]; then
     fi
   done
   if [ "$retry" -gt "$freenom_http_retry" ]; then
-    echo "Error: My domains page - $freenom_http_retry max retries was reached, exiting..."
+    eMsg="Error: My domains page - $freenom_http_retry max retries was reached, exiting..."
+    echo "$eMsg"
+    echo "[$(date)] [$$] $eMsg" >>"${out_path}.log"
     exit 1
   fi
   # if we have mydomains page, get domaindetails url(s) from result
@@ -951,7 +965,7 @@ if [ "$freenom_domain_id" == "" ]; then
           domainId[$i]="$(echo "$url" | sed -n 's/.*id=\([0-9]\+\).*/\1/p;g')"
           domainName[$i]="$(echo -e "$domainDetails" | sed -n 's/.*Domain:\(.*\)<[a-z].*/\1/p' | sed -e 's/<[^>]\+>//g' -e 's/  *//g')"
           if [ "$debug" -ge 1 ]; then
-            echo "DEBUG: $pad8 domains $pad4 domainId=${domainId[$i]} domainName=${domainName[$i]} (${#domainId[@]}/$(echo "$myDomainsResult" | wc -w))"
+            echo "DEBUG: $(date '+%H:%M:%S') domains $pad4 domainId=${domainId[$i]} domainName=${domainName[$i]} (${#domainId[@]}/$(echo "$myDomainsResult" | wc -w))"
           fi
           break
         else
@@ -972,7 +986,7 @@ if [ "$freenom_domain_id" == "" ]; then
       elif [[ "$freenom_renew_domain" -eq 1 || "$freenom_list" -eq 1 || "$freenom_list_renewals" -eq 1 ]]; then
         domainRegDate[$i]="$(echo -e "$domainDetails" | sed -n 's/.*Registration Date:\(.*\)<.*/\1/p' | sed -e 's/<[^>]\+>//g' -e 's/  *//g')"
         domainExpiryDate[$i]="$(echo -e "$domainDetails" | sed -n 's/.*Expiry date:\(.*\)<.*/\1/p' | sed 's/<[^>]\+>//g')"
-        if [ "$debug" -ge 1 ]; then echo "DEBUG: $(date '+%H:%M:%S') domains $pad4 domainRegDate=${domainRegDate[$i]} domainExpiryDate=${domainExpiryDate[$i]}"; fi
+        if [ "$debug" -ge 1 ]; then echo "DEBUG: $pad8 domains $pad4 domainRegDate=${domainRegDate[$i]} domainExpiryDate=${domainExpiryDate[$i]}"; fi
       fi
       i=$((i + 1))
       func_sleep
@@ -1063,7 +1077,9 @@ func_getDnsPage() {
     fi
   done
   if [ "$retry" -gt "$freenom_http_retry" ]; then
-    echo "Error: DNS Management Page - $freenom_http_retry maximum retries was reached, exiting..."
+    eMsg="Error: DNS Management Page - $freenom_http_retry maximum retries was reached, exiting..."
+    echo "$eMsg"
+    echo "[$(date)] [$$] $eMsg" >>"${out_path}.log"
     exit 1
   fi
 }
