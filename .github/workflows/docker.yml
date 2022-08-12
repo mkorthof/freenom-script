@@ -2,13 +2,13 @@ name: Docker build and push
 
 on:
   push:
-    paths: freenom.sh
-    branches: [main]
+  #  paths: freenom.sh
+  #  branches: [main]
   pull_request:
   workflow_dispatch:
 
 jobs:
-  build-and-push-docker-image:
+  docker-image:
     name: Build Docker image and push to repositories
     runs-on: ubuntu-latest
     steps:
