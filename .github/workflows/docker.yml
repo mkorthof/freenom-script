@@ -2,7 +2,7 @@ name: Docker build and push
 
 on:
   push:
-    paths: freenom.sh
+    #paths: freenom.sh
     branches: [master, main]
   pull_request:
   workflow_dispatch:
