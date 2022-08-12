@@ -2,8 +2,8 @@ name: Docker build and push
 
 on:
   push:
-  #  paths: freenom.sh
-  #  branches: [main]
+    paths: freenom.sh
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.TOKEN }}
       - name: Build image
         run: |
           docker build -t freenom-script:latest -f- . <<EOF
