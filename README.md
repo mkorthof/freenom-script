@@ -214,18 +214,18 @@ In case of issues try running curl and dig command manually.
 
 ## Files
 
-- **Installer:** `Makefile`
-- **Script/cfg:** `freenom.sh` and `freenom.conf`
-- **Output:**
+- Installer: `Makefile`
+- Script/config: `freenom.sh` and `freenom.conf`
+- Output:
   - Path: `"/var/log/freenom/"` (default)
   - Files: `freenom.log`, `freenom_<domain>.ip{4,6}`, `freenom_renewalResult-<id>.html`
-- **View details:** use `freenom.sh -o` to view Result html files
+- View details: use `freenom.sh -o` to view Result html files
   
 Also see comment "Output files" and `freenom_out_dir` variable in conf.
 
 ### Updating
 
-Usually you can just replace "freenom.sh" with the new version, if you're using a seperate config file.
+Usually you can just replace "freenom.sh" with the new version, if you're using a separate config file.
 
 An exeption is when config options were added/changed which you may need to compare and merge. Such config changes are listed in [CHANGES.md](CHANGES.md).
 
