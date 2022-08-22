@@ -14,7 +14,7 @@
 This shell script makes sure your Freenom domains don't expire by auto renewing them.
 It's original functionality of updating an A record with the clients ip address is also retained.
 
-You'll need to have already registered an account at Freenom.com with at least one (free) domain added, before you can run the script. Social Login will not work (workaround: password reset, see [kb](https://my.freenom.com/knowledgebase.php?action=displayarticle&id=27) and issue #56).
+You'll need to have already registered an account at Freenom.com with at least one (free) domain added, before you can run the script. Social Login will not work (workaround: password reset, see [kb](https://my.freenom.com/knowledgebase.php?action=displayarticle&id=27) and issue [#56](https://github.com/mkorthof/freenom-script/issues/56)).
 
 ## Usage
 
