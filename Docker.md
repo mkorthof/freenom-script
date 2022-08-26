@@ -1,5 +1,7 @@
 # Docker
 
+<https://github.com/mkorthof/freenom-script/pkgs/container/freenom_script>
+
 > amd64/linux 
 > ghcr.io/mkorthof/freenom-script:latest
 > latest: digest: sha256:ed84b6764f8f0ae3b6b28f61a3cc019108be5cc96a57f3454fdf23124e22a20f   size: 1158
