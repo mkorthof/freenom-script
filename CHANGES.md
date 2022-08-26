@@ -3,7 +3,7 @@
 _order: latest/newest on top_
 
 - [**20220812**] added bash/busybox check, log login errors
-- [**20220806**] add docker image [#57](https://github.com/mkorthof/freenom-script/issues/57)
+- [**20220806**] add docker image ([#57](https://github.com/mkorthof/freenom-script/issues/57))
   - **config change:** `uaString`
 - [**20220626**] update ip file on freenom dnserror "There were no changes"
 - [**20220325**] added pid to logs, **config changes:** ipCmd uaString
