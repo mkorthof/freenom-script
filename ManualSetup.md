@@ -1,6 +1,25 @@
-# Manual Setup
+# Scheduling
 
-### Manually setup systemd
+## Manually setup cron
+
+Steps:
+
+1) Copy [cron.d/freenom](cron.d/freenom) from repo to "/etc/cron.d/freenom"
+2) Edit file to specify domain(s)
+
+#### Example
+
+``` bash
+0 9 * * 0 root bash -c 'sleep $((RANDOM \% 60))m; /usr/local/bin/freenom.sh -r -a'
+0 * * * * root bash -c 'sleep $((RANDOM \% 15))m; /usr/local/bin/freenom.sh -u example.tk'
+0 * * * * root bash -c 'sleep $((RANDOM \% 15))m; /usr/local/bin/freenom.sh -u example.tk -s mysubdom'
+```
+
+This first line in this example will run the script with "renew all domains" options every week on Sunday between 9.00 and 10.00
+
+The second line updates the A record of `example.tk` with the current client ip address, at hourly intervals
+
+## Manually setup systemd
 
 Add one or more "[timer(s)](https://www.freedesktop.org/software/systemd/man/systemd.timer.html)"
 
