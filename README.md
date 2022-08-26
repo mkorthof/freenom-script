@@ -96,12 +96,13 @@ Test the script by running `freenom.sh -l` and make sure your domains are listed
 Optionally you can schedule the script to run automatically. The installer creates "/etc/cron.d/freenom" or systemd timers in 'system mode' so the script runs at certain intervals. It will output a message with instructions on how to set your domain(s) to renew/update or renew all:
 
 - Cron:
-    - edit the created file, uncomment line(s)
+    - edit the created file in /etc/cron.d and uncomment line(s)
 - Systemd:
     - `systemctl enable --now freenom-renew-all.timer`
     - `systemctl enable --now freenom-update@example.tk.timer`
     - `systemctl enable --now freenom-update@mysubdom.example.tk.timer`
-    _If systemd is not available on your system the installer will use cron instead._
+    
+_If systemd is not available on your system, the installer will use cron instead._
 
 ### Manual setup
 
