@@ -71,7 +71,7 @@ And for the config file: "/usr/local/etc"
 
 ### Docker
 
-There's an image available from GitHub Container Registry:
+There's an [image](https://github.com/mkorthof/freenom-script/pkgs/container/freenom_script) available from GitHub Container Registry which you can run like this:
 
  `docker run --rm --env freenom_email="you@example.com" --env freenom_passwd="yourpassword" ghcr.io/mkorthof/freenom_script -l`
 
