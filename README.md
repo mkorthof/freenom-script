@@ -85,9 +85,9 @@ Settings can be changed in the script itself or set in a separate config file (d
 
 First edit config and **set your email and password** which you use to sign-in to freenom.com
 
-- The default filename is "freenom.conf" in the same location as the script or "/usr/local/etc/freenom.conf"
+- The default filename is "freenom.conf" in the same location as the script, or "/usr/local/etc/freenom.conf"
 - You can also use `freenom.sh -c /path/to/file.conf`
-- To optionally put config in the script itself instead: copy settings from conf into `freenom.sh` (before "Main")
+- To optionally put config in the script itself instead: copy settings from conf file into `freenom.sh` (before "Main")
 
 ### Testing
 
