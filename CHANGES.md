@@ -60,7 +60,7 @@ _order: latest/newest on top_
 - [**20190621**] changed 'cannot renew until' warnings to notices
 - [**20190621**] added tests (BATS)
 - [**20190621**] added recType check (A or AAAA) for dyndns
-- [**20190420**] option to use seperate .conf file
+- [**20190420**] option to use separate .conf file
 - [**20190420**] option to skip renewal notice details in log
 - [**20190420**] option to list existing dns records
 - [**20190317**] retry getting current ip
