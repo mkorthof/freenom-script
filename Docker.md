@@ -12,7 +12,7 @@ To list domains, run:
 
 `docker run --rm --env freenom_email="you@example.com" --env freenom_passwd="yourpassword" ghcr.io/mkorthof/freenom-script -l`
 
-Or, use a config file:
+Use a config file:
 
 `docker run --rm --volume $(pwd)/freenom.conf:/usr/local/etc/freenom.conf ghcr.io/mkorthof/freenom-script -l`
 
