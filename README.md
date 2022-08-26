@@ -81,7 +81,7 @@ For more information see [Docker.md](Docker.md)
 
 ## Configuration
 
-Settings can be changed in the script itself or set in a seperate config file (default). Every setting has comments with possible options and examples.
+Settings can be changed in the script itself or set in a separate config file (default). Every setting has comments with possible options and examples.
 
 First edit config and **set your email and password** which you use to sign-in to freenom.com
 
