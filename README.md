@@ -16,8 +16,6 @@ It's original functionality of updating an A record with the clients ip address 
 
 You'll need to have already registered an account at Freenom.com with at least one (free) domain added, before you can run the script.
 
-Make sure you have an actual freenom account as Social Sign-in will not work (workaround: password reset, see their [kb](https://my.freenom.com/knowledgebase.php?action=displayarticle&id=27) and issue [#56](https://github.com/mkorthof/freenom-script/issues/56)).
-
 ## Usage
 
 ```shell
@@ -162,6 +160,8 @@ To force an update you can remove this file which is located in the default outp
 To manually update: set `freenom_static_ip=<your ip>` and `freenom_update_manual="1"`, or use the `-m` option.
 
 ### Issues
+
+You need an actual freenom account, as Social Sign-in will not work. Workaround: use password reset, see their [kb](https://my.freenom.com/knowledgebase.php?action=displayarticle&id=27) and issue [#56](https://github.com/mkorthof/freenom-script/issues/56).
 
 Make sure 'curl' and/or 'dig' is installed (e.g. debian: dnsutils or redhat: bind-utils)
 
