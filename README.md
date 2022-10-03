@@ -94,7 +94,7 @@ Default settings such as retries and timeouts can be changed, they are however O
 
 ### Testing
 
-Test the script by running `freenom.sh -l` and make sure your domains are listed. To update A record or Renew domains, see [Usage](#usage) or `freenom.sh -h`  
+Test the script by running `freenom.sh -l` and make sure your domains are listed. To Renewi domains or update A record, see [Usage](#usage) or `freenom.sh -h`  
 
 ## Scheduling
 
