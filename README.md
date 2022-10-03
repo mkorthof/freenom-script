@@ -81,7 +81,7 @@ There's an [image](https://github.com/mkorthof/freenom-script/pkgs/container/fre
 
  `docker run --rm --env freenom_email="you@example.com" --env freenom_passwd="yourpassword" ghcr.io/mkorthof/freenom_script -l`
 
-For more information see [docs/Docker.md](Docker.md)
+For more information see [Docker.md](docs/Docker.md)
 
 ## Configuration
 
@@ -112,7 +112,7 @@ _If systemd is not available on your system, the installer will use cron instead
 
 ### Manual setup
 
-See [docs/Scheduling.md](Scheduling.md)
+See [Scheduling.md](docs/Scheduling.md)
 
 ## Notifications
 
@@ -138,7 +138,7 @@ Leaving the `APPRISE_SERVER_URLS` array empty disables Apprise notifications.
 
 Default settings such as retries and timeouts can be changed in config, they are however OK to leave as-is.
 
-See [docs/Overrides.md](Overrides.md)
+See [Overrides.md](docs/Overrides.md)
 
 ## DynDNS
 
