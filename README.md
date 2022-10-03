@@ -94,7 +94,7 @@ Default settings such as retries and timeouts can be changed, they are however O
 
 ### Testing
 
-Test the script by running `freenom.sh -l` and make sure your domains are listed. To Renewi domains or update A record, see [Usage](#usage) or `freenom.sh -h`  
+Test the script by running `freenom.sh -l` and make sure your domains are listed. To Renew domains or Update A record, see [Usage](#usage) or `freenom.sh -h`  
 
 ## Scheduling
 
@@ -131,7 +131,7 @@ To enable [Apprise](https://github.com/caronc/apprise) notifications, make sure 
 
 For details on how to construct server URLs, refer to [supported notifications](https://github.com/caronc/apprise#supported-notifications).
 
-Leaving the `APPRISE_SERVER_URLS` array empty disables Apprise. 
+Leaving the `APPRISE_SERVER_URLS` array empty disables Apprise notifications. 
 
 ## DynDNS
 
