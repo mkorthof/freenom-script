@@ -67,9 +67,10 @@ Run `make install` from git clone directory to automatically install the script,
 
 ### Manual install
 
-Suggested installation path: "/usr/local/bin"
+Suggested installation path: "/usr/local/bin/freenom.sh"
 
-And for the config file: "/usr/local/etc" 
+And for the config file: "/usr/local/etc/freenom.cond
+F" 
 
 ### Docker
 
@@ -77,7 +78,7 @@ There's an [image](https://github.com/mkorthof/freenom-script/pkgs/container/fre
 
  `docker run --rm --env freenom_email="you@example.com" --env freenom_passwd="yourpassword" ghcr.io/mkorthof/freenom_script -l`
 
-For more information see [Docker.md](Docker.md)
+For more information see [docs/Docker.md](Docker.md)
 
 ## Configuration
 
@@ -108,7 +109,7 @@ _If systemd is not available on your system, the installer will use cron instead
 
 ### Manual setup
 
-See [Scheduling.md](Scheduling.md)
+See [docs/Scheduling.md](Scheduling.md)
 
 ## Notifications
 
@@ -134,7 +135,7 @@ Leaving the `APPRISE_SERVER_URLS` array empty disables Apprise notifications.
 
 Default settings such as retries and timeouts can be changed in config, they are however OK to leave as-is.
 
-See [Overrides.md](Overrides.md)
+See [docs/Overrides.md](Overrides.md)
 
 ## DynDNS
 
