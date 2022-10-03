@@ -63,7 +63,11 @@ _Note that this shell script requires recent versions of "Bash" and "cURL"_
 
 ### Auto Installer
 
-Run `make install` from git clone directory to automatically install the script, conf file and to configure scheduler.
+Run: `make install` 
+
+(from git clone directory)
+
+This automatically installs the script, .conf file and configures scheduler.
 
 ### Manual install
 
