@@ -69,8 +69,7 @@ Run `make install` from git clone directory to automatically install the script,
 
 Suggested installation path: "/usr/local/bin/freenom.sh"
 
-And for the config file: "/usr/local/etc/freenom.cond
-F" 
+And for the config file: "/usr/local/etc/freenom.conf"
 
 ### Docker
 
@@ -170,7 +169,7 @@ In case of issues try running curl and dig command manually.
 
 ## Files
 
-- Installer: `Makefile`
+- Installer: Makefile (`make install`)
 - Script/config: `freenom.sh` and `freenom.conf`
 - Output:
   - Path: `"/var/log/freenom/"` (default)
