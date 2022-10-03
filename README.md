@@ -148,9 +148,9 @@ The script uses 3 methods to get your current ip address from a number of public
 
 - HTTP method: `curl https://checkip.amazonaws.com`
 - DNS method: `dig TXT +short o-o.myaddr.l.google.com @ns1.google.com`
-- Manually: you can set a static ip address instead of auto detect
+- Manually: you can also set a static ip address instead of auto detect (see below)
 
-There are a few more services defined for redundancy, the script will choose one at random. By default it will retry 3 times to get ip.
+There are a few more HTTPS and DNS services defined for redundancy, the script will choose one at random. By default it will retry to get the ip 3 times.
 
 Once your ip is found it's written to "freenom_\<domain\>.ml.ip4" (or 'ip6'). Same if freenom returns dnserror "There were no changes". This is to prevent unnecessary updates in case the ip is unchanged.
 To force an update you can remove this file which is located in the default output path: "/var/log".
