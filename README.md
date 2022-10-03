@@ -140,12 +140,11 @@ See [Overrides.md](Overrides.md)
 
 To update A or AAAA records the nameservers for the domain must be set to the default Freenom Name Servers.
 
-- As value your current ip address will be used ("Target")
-- An record will be added if there is none or modified if the record already exists
+The record will be added if there is none, or modified if the record already exists. Your current ip address will be used as value (aka "Target").
 
 ### IP Address
 
-To get your current ip address from a number of public services the script uses 3 methods:
+The script uses 3 methods to get your current ip address from a number of public services:
 
 - HTTP method: `curl https://checkip.amazonaws.com`
 - DNS method: `dig TXT +short o-o.myaddr.l.google.com @ns1.google.com`
