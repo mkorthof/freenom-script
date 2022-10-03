@@ -11,8 +11,7 @@
 
 ---
 
-This shell script makes sure your Freenom domains don't expire by auto renewing them.
-It's original functionality of updating an A record with the clients ip address is also retained.
+This shell script makes sure your Freenom domains don't expire by auto renewing them. It can also set an A record in dns with the clients ip address.
 
 You'll need to have already registered an account at Freenom.com with at least one (free) domain added, before you can run the script.
 
@@ -91,7 +90,7 @@ First edit config and **set your email and password** which you use to sign-in t
 - You can also use `freenom.sh -c /path/to/file.conf`
 - To optionally put config in the script itself instead: copy settings from conf file into `freenom.sh` (before "Main")
 
-Default settings such as retries and timeouts can be changed in config, they are however OK to leave as-is (see [Overrides.md](docs/Overrides.md)).
+Default settings such as retries and timeouts can be changed, they are however OK to leave as-is (see [Overrides.md](docs/Overrides.md)).
 
 ### Testing
 
