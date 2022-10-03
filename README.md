@@ -158,9 +158,7 @@ To manually update: set `freenom_static_ip=<your ip>` and `freenom_update_manual
 
 You need an actual freenom account, as Social Sign-in will not work. Workaround: use password reset, see [KB](https://my.freenom.com/knowledgebase.php?action=displayarticle&id=27) and issue [#56](https://github.com/mkorthof/freenom-script/issues/56).
 
-Make sure 'curl' and/or 'dig' is installed (e.g. debian: dnsutils or redhat: bind-utils)
-
-In case of issues try running curl and dig command manually.
+Make sure 'curl' and/or 'dig' is installed (e.g. debian: dnsutils or redhat: bind-utils). In case of issues try running curl and dig command manually.
 
 - To list all 'get ip' commands run `freenom.sh -i` (or `grep getIp freenom.conf`)
 - To disable IPv6: set `freenom_update_ipv="4"`
@@ -173,7 +171,7 @@ In case of issues try running curl and dig command manually.
 - Output:
   - Path: `"/var/log/freenom/"` (default)
   - Files: `freenom.log`, `freenom_<domain>.ip{4,6}`, `freenom_renewalResult-<id>.html`
-- View details: use `freenom.sh -o` to view Result html files
+- View Results: use `freenom.sh -o` to view html files
   
 Also see comment "Output files" and `freenom_out_dir` variable in conf.
 
