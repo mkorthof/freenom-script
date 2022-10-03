@@ -11,7 +11,7 @@
 
 ---
 
-This shell script makes sure your Freenom domains don't expire by auto renewing them. It can also set an A record in dns with the clients ip address.
+This shell script makes sure your Freenom domains don't expire by auto renewing them. It can also set a DNS record with the clients ip address.
 
 You'll need to have already registered an account at Freenom.com with at least one (free) domain added, before you can run the script.
 
