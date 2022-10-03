@@ -230,7 +230,7 @@ Usage:      $scriptName -l [-d]
 Options:    -l    List all domains and id's in account
                   add [-d] to show renewal Details
             -r    Renew <domain> or use '-r -a' to update All
-                  add [-s] to update <Subdomain>
+                  add [-s] to renew <Subdomain>
             -u    Update <domain> A record with current ip
                   add [-s] to update <Subdomain> record
                   add [-m <ip>] to Manually update static <ip>
