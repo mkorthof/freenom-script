@@ -91,6 +91,8 @@ First edit config and **set your email and password** which you use to sign-in t
 - You can also use `freenom.sh -c /path/to/file.conf`
 - To optionally put config in the script itself instead: copy settings from conf file into `freenom.sh` (before "Main")
 
+Default settings such as retries and timeouts can be changed in config, they are however OK to leave as-is (see [Overrides.md](docs/Overrides.md)).
+
 ### Testing
 
 Test the script by running `freenom.sh -l` and make sure your domains are listed. To update A record or Renew domains, see [Usage](#usage) or `freenom.sh -h`  
@@ -130,13 +132,7 @@ To enable [Apprise](https://github.com/caronc/apprise) notifications, make sure 
 
 For details on how to construct server URLs, refer to [supported notifications](https://github.com/caronc/apprise#supported-notifications).
 
-Leaving the `APPRISE_SERVER_URLS` array empty disables Apprise notifications.
-
-## Optional Overrides
-
-Default settings such as retries and timeouts can be changed in config, they are however OK to leave as-is.
-
-See [Overrides.md](docs/Overrides.md)
+Leaving the `APPRISE_SERVER_URLS` array empty disables Apprise. 
 
 ## DynDNS
 
