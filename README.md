@@ -179,7 +179,7 @@ Also see comment "Output files" and `freenom_out_dir` variable in conf.
 
 Usually you can just replace "freenom.sh" with the new version, if you're using a separate config file.
 
-An exeption is when config options were added/changed which you may need to compare and merge. Such config changes are listed in [CHANGES.md](CHANGES.md).
+An exception is when config options were added/changed which you may need to compare and merge. Such config changes are listed in [CHANGES.md](CHANGES.md).
 
 ### Uninstall
 
