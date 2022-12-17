@@ -2,6 +2,7 @@
 
 _order: latest/newest on top_
 
+- [**20221217**] fixed grep3.8 warnings (PR [#63](https://github.com/mkorthof/freenom-script/pull/63) from aleksav013)
 - [**20220812**] added bash/busybox check, log login errors
 - [**20220806**] add docker image ([#57](https://github.com/mkorthof/freenom-script/issues/57))
   - **config change:** `uaString`

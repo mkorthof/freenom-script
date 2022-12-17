@@ -3,7 +3,8 @@ name: Shellcheck
 #on: [workflow_dispatch]
 on:
   push:
-     paths: freenom.sh
+    paths: freenom.sh
+    branches: [master, main]
   pull_request:
   workflow_dispatch:
 
@@ -12,7 +13,7 @@ jobs:
         name: Test shellcheck
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v1
+            - uses: actions/checkout@v3
             - name: Show OS version
               run: cat /etc/os-release
             - name: Get latest shellcheck
