@@ -7,15 +7,20 @@
 ghcr.io/mkorthof/freenom-script:latest
 
 > default image
+
 > debian stable slim amd64
+
 > size: 127MB
 
 ## Alpine
 
 
 ghcr.io/mkorthof/freenom-script:alpine
+
 > alternative smaller image
+
 > alpine latest x86_64
+
 > size: 15MB
 
 ## Run
