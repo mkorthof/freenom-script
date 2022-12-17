@@ -57,12 +57,12 @@ SAVE_IFS="$IFS"
 IFS='|'
 c=0
 for i in "$@"; do
-  if printf -- "%s" "$i" | grep -Eq -- "(^|[^a-z])\-c"; then
+  if printf -- "%s" "$i" | grep -Eq -- "(^|[^a-z])-c"; then
     c=1
     continue
   else
     if [ "$c" -eq 1 ]; then
-      if printf -- "%s" "$i" | grep -Eq -- "^\-"; then
+      if printf -- "%s" "$i" | grep -Eq -- "^-"; then
         echo "Error: config file not specfied, try \"$scriptName -h\""
         exit 1
       fi
@@ -113,7 +113,7 @@ fi
 
 # check args for help
 help=0
-if printf -- "%s" "$*" | grep -Eqi '(^|[^a-z])\-h'; then
+if printf -- "%s" "$*" | grep -Eqi '(^|[^a-z])-h'; then
   help=1
 fi
 
@@ -266,7 +266,7 @@ func_getDomainArgs() {
 
   # check for subdomain arg '-s'
   _subdom_set=0
-  if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-s'; then
+  if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-s'; then
     _subdom_set=1
   fi
 
@@ -610,56 +610,56 @@ func_updateDomVars() {
 unset -v a
 
 # handle debug
-if printf -- "%s" "$*" | grep -Eiq '(^|[^a-z])\-debug'; then
+if printf -- "%s" "$*" | grep -Eiq '(^|[^a-z])-debug'; then
   debug="$(echo "$*" | sed -E 's/.*-debug ([0-9]) ?.*/\1/')"
   if [[ ! "$debug" =~ ^[0-9]$ ]]; then
     debug=0
   fi
 fi
 # show help
-#if printf -- "%s" "$*" | grep -Eqi '(^|[^a-z])\-h'; then
+#if printf -- "%s" "$*" | grep -Eqi '(^|[^a-z])-h'; then
 # shellcheck disable=2317
 if [ "$help" -eq 1 ]; then
   func_help
   exit 0
 fi
 # handle all other arguments
-if ! printf -- "%s" "$*" | grep -Eqi -- '\-[46lruziceo]'; then
+if ! printf -- "%s" "$*" | grep -Eqi -- '-[46lruziceo]'; then
   echo "Error: invalid or unknown argument(s), try \"$scriptName -h\""
   exit 1
 fi
 # ipv4/6
-if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-4'; then
+if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-4'; then
   freenom_update_ipv=4
   if [ "$debug" -ge 1 ]; then
     echo "DEBUG: $pad8 ipv freenom_update_ipv=$freenom_update_ipv"
   fi
-elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-6'; then
+elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-6'; then
   freenom_update_ipv=6
   if [ "$debug" -ge 1 ]; then
     echo "DEBUG: $pad8 ipv freenom_update_ipv=$freenom_update_ipv"
   fi
 fi
 # list domains and id's and exit, unless list_records is set
-if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-l'; then
+if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-l'; then
   freenom_list="1"
   lMsg=""
   # list domains with details
   a="$(echo "$*" | sed -E 's/ ?-debug ([0-9])//')"
-  if printf -- "%s" "$a" | grep -Eqi -- '(^|[^a-z])\-[dn]'; then
+  if printf -- "%s" "$a" | grep -Eqi -- '(^|[^a-z])-[dn]'; then
     freenom_list_renewals="1"
     lMsg=" with renewal details, this might take a while"
   fi
   printf "\nListing Domains and ID's%s...\n" "$lMsg"
   echo
 # list dns records
-elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-z'; then
+elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-z'; then
   printf "\nListing Domain Record(s)%s...\n" "$lMsg"
   echo
   func_getDomainArgs "$@"
   freenom_list_records="1"
 # output ipcmd list
-elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-i'; then
+elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-i'; then
   if [ "$debug" -ge 1 ]; then
     echo "DEBUG: $pad8 ipv freenom_update_ipv=$freenom_update_ipv"
   fi
@@ -673,14 +673,14 @@ elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-i'; then
   printf "  %%agent%% gets replaced with useragent string from conf\n\n"
   exit 0
 # update ip
-elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-u'; then
+elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-u'; then
   freenom_update_ip="1"
   a="$*"
-  if printf -- "%s" "$a" | grep -Eiq -- '(^|[^a-z])\-f'; then
+  if printf -- "%s" "$a" | grep -Eiq -- '(^|[^a-z])-f'; then
     freenom_update_force="1"
     a="$(echo "$a" | sed -E 's/ ?-f//')"
   fi
-  if printf -- "%s" "$a" | grep -Eiq -- '(^|[^a-z])\-m'; then
+  if printf -- "%s" "$a" | grep -Eiq -- '(^|[^a-z])-m'; then
     freenom_update_manual="1"
     arg_static_ip="$(echo "$a" | sed -n -E 's/.*-m ('"$ipRE"')([^0-9].*)?/\1/p')"
     if [ -n "$arg_static_ip" ]; then
@@ -691,20 +691,20 @@ elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-u'; then
     fi
   fi
   # TEST: update all records
-  if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-a'; then
+  if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-a'; then
     freenom_update_all="1"
   fi
   func_getDomainArgs "$@"
 # renew domains
-elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-r'; then
+elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-r'; then
   freenom_renew_domain="1"
-  if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-a'; then
+  if printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-a'; then
     freenom_renew_all="1"
   else
     func_getDomainArgs "$@"
   fi
 # show update and renewal result file(s)
-elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])\-[eo]'; then
+elif printf -- "%s" "$*" | grep -Eiq -- '(^|[^a-z])-[eo]'; then
   # use regex if file is specfied
   fget="$(printf -- "%s\n" "$*" | sed -En 's/.* ?-[eo] ?([][a-zA-Z0-9 !"#$%&'\''()*+,-.:;<=>?@^_`{}~.]+)[ -]?.*/\1/gp')"
   if [ -z "$fget" ]; then
