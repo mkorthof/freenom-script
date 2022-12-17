@@ -14,20 +14,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: 'true'
-      - name: Check DNS
-        run: | 
-          host my.freenom.com || true
-          dig my.freenom.com || true
-          dig my.freenom.com +trace || true
-          dig my.freenom.com +edns=0 || true
-          dig my.freenom.com 80.80.80.80 || true
-          curl -V|grep -i ares || true
-          cat /etc/resolv.conf || true
-          sudo grep -r "" /etc/netplan || true
-          sudo grep nameserver /etc -r || true
-          sudo grep 168.63.129.16 /etc || true
-          sudo cat /var/lib/dhcp/dhcpd.leases || true
-          sudo resolvectl status || true
+      - name: Set freenoms public nameservers
+        run: |
+          echo "nameserver 80.80.80.80" > /etc/resolv.conf
+          echo "nameserver 80.80.81.81" >> /etc/resolv.conf
       - name: Install freenom-script
         run: sudo make install
       - name: Configure freenom-script email
