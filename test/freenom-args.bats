@@ -197,6 +197,7 @@ debug=0
   run $script -z invalid-example-123.tk
   if [ "$debug" -eq 0 ]; then
     [ "$status" -eq 1 ]
+    # Fail if the given expression evaluates to true.
     refute_output --partial "Error: Login"
     #assert_output --partial 'Error: Could not find Domain ID for "invalid-example-123.tk"'
     #assert_output --regexp 'DNS Zone: "invalid-example-123.tk" \(1234567890\).*No records found'

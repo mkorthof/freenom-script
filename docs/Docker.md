@@ -1,22 +1,20 @@
 # Docker
 
-## Debian
-
-Default image
-
 <https://github.com/mkorthof/freenom-script/pkgs/container/freenom_script>
 
-> ghcr.io/mkorthof/freenom-script:latest
+## Debian
+
+ghcr.io/mkorthof/freenom-script:latest
+
+> default image
 > debian stable slim amd64
 > size: 127MB
 
 ## Alpine
 
-Alternative smaller image
 
-<https://github.com/mkorthof/freenom-script/pkgs/container/freenom_script:alpine>
-
-> ghcr.io/mkorthof/freenom-script:alpine
+ghcr.io/mkorthof/freenom-script:alpine
+> alternative smaller image
 > alpine latest x86_64
 > size: 15MB
 
@@ -32,4 +30,8 @@ Use a config file:
 
 ## Build your own image
 
-Copy docker build command from GitHub Actions workflow: [.github/workflows/docker.yml](https://github.com/mkorthof/freenom-script/blob/a4957766242a701971e7c4d43908a7687479de72/.github/workflows/docker.yml#L19). Running that HEREDOC from inside repo dir should create an image tagged `freenom-script:latest`. To test, try one of the run commands above.
+Run: `make docker`
+
+Creates "freenom-script:latest" and "freenom-script:alpine".
+
+To test, try one of the 'docker run' commands above.

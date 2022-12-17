@@ -34,7 +34,7 @@ ifneq ("$(wildcard $(CONFDIR)/$(CONF))", "")
   EXISTCONF = 1
 endif
 
-.PHONY: all clean distclean install uninstall
+.PHONY: all clean distclean install uninstall docker
 
 install:
 
@@ -106,6 +106,38 @@ endif
 ifneq ("$(wildcard $(CRONDIR)/freenom)","")
 	$(shell rm $(CRONDIR)/freenom)
 endif
+
+define DOCKERFILE_DEBIAN
+FROM debian:stable-slim
+ARG DEBIAN_FRONTEND=noninteractive
+ARG DEBCONF_NOWARNINGS="yes"
+COPY freenom.sh /usr/local/bin/
+COPY freenom.conf /usr/local/etc/
+RUN apt-get -yq update && apt-get -yq install --no-install-recommends curl ca-certificates bind9-dnsutils && rm -rf /var/lib/apt/lists/*
+USER nobody
+ENTRYPOINT [ "/usr/local/bin/freenom.sh" ]
+endef
+define DOCKERFILE_ALPINE
+FROM alpine:latest
+COPY freenom.sh /usr/local/bin/
+COPY freenom.conf /usr/local/etc/
+RUN apk update && apk add --no-cache bash curl ca-certificates bind-tools
+USER nobody
+ENTRYPOINT [ "/usr/local/bin/freenom.sh" ]
+endef
+export DOCKERFILE_DEBIAN
+export DOCKERFILE_ALPINE
+
+docker:
+
+ifeq ("$(wildcard $(CONF))","")
+	$(error ERROR: Installation File "$(CONF)" not found)
+endif
+ifeq ("$(wildcard $(SCRIPT))","")
+	$(error ERROR: Installation File "$(SCRIPT)" not found)
+endif
+	@echo "$$DOCKERFILE_DEBIAN" | docker build -t freenom-script:latest -f- .
+	@echo "$$DOCKERFILE_ALPINE" | docker build -t freenom-script:alpine -f- .
 
 all: install
 clean: uninstall
