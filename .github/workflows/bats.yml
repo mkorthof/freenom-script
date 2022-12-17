@@ -18,8 +18,8 @@ jobs:
         run: |
           #sudo echo "nameserver 80.80.80.80" > /etc/resolv.conf
           #sudo echo "nameserver 80.80.81.81" >> /etc/resolv.conf
-          resolvectl dns 80.80.80.80 80.80.81.81" || true 
-          systemd-resolve --set-dns= 80.80.80.80" --set-dns=80.80.81.81 || true
+          resolvectl dns "80.80.80.80 80.80.81.81" || true 
+          systemd-resolve --set-dns=80.80.80.80 --set-dns=80.80.81.81 || true
       - name: Install freenom-script
         run: sudo make install
       - name: Configure freenom-script email
