@@ -1,11 +1,12 @@
 # Domain Renewal and DynDNS for Freenom.com
 
-[![Shellcheck](https://github.com/mkorthof/freenom-script/actions/workflows/main.yml/badge.svg)](https://github.com/mkorthof/freenom-script/actions/workflows/main.yml)
+[![Shellcheck](https://github.com/mkorthof/freenom-script/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/mkorthof/freenom-script/actions/workflows/shellcheck.yml)
 [![Docker](https://github.com/mkorthof/freenom-script/actions/workflows/docker.yml/badge.svg)](https://github.com/mkorthof/freenom-script/actions/workflows/docker.yml)
+[![BATS](https://github.com/mkorthof/freenom-script/actions/workflows/bats.yml/badge.svg)](https://github.com/mkorthof/freenom-script/actions/workflows/bats.yml)
 
 ## Last Update ##
 
-***Latest version: v2022-08-12 ([CHANGES.md](CHANGES.md))***
+***Latest version: v2022-12-17 ([CHANGES.md](CHANGES.md))***
 
 **Make sure to add new config options when updating script**
 
