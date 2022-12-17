@@ -34,7 +34,7 @@ jobs:
           FROM alpine:latest
           COPY freenom.sh /usr/local/bin/
           COPY freenom.conf /usr/local/etc/
-          RUN apk update && apk add --no-cache curl ca-certificates bind-tools
+          RUN apk update && apk add --no-cache bash curl ca-certificates bind-tools
           USER nobody
           ENTRYPOINT [ "/usr/local/bin/freenom.sh" ]
       #- name: Login to DockerHub

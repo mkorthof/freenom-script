@@ -16,7 +16,7 @@ Alternative smaller image
 
 <https://github.com/mkorthof/freenom-script/pkgs/container/freenom_script:alpine>
 
-> ghcr.io/mkorthof/freenom-script:latest
+> ghcr.io/mkorthof/freenom-script:alpine
 > alpine latest x86_64
 > size: 15MB
 
