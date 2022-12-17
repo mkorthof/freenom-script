@@ -51,5 +51,6 @@ jobs:
       - name: Push image
         run: |
           docker tag freenom-script:latest ghcr.io/mkorthof/freenom-script:latest
+          docker tag freenom-script:alpine ghcr.io/mkorthof/freenom-script:alpine
           docker push ghcr.io/mkorthof/freenom-script:latest
           docker push ghcr.io/mkorthof/freenom-script:alpine
