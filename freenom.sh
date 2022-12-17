@@ -830,8 +830,7 @@ while [ "$retry" -le "$freenom_http_retry" ]; do
   # DEBUG: comment 'loginPage' line below for debugging
   # shellcheck disable=SC2086
   loginPage="$(curl $c_opts $c_exOpts -A "$agent" -c "$cookie_file" -w "$http_code" \
-    "https://my.freenom.com/clientarea.php" 2>&1)" ||
-    {
+    "https://my.freenom.com/clientarea.php" 2>&1)" || { \
       eMsg="Error: Login token - failure (curl error code: $?)"
       echo "$eMsg"
       echo "[$(date)] [$$] $eMsg" >>"${out_path}.log"
