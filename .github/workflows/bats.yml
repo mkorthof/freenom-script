@@ -16,8 +16,8 @@ jobs:
           submodules: 'true'
       - name: Set freenoms public nameservers
         run: |
-          echo "nameserver 80.80.80.80" > /etc/resolv.conf
-          echo "nameserver 80.80.81.81" >> /etc/resolv.conf
+          sudo echo "nameserver 80.80.80.80" > /etc/resolv.conf
+          sudo echo "nameserver 80.80.81.81" >> /etc/resolv.conf
       - name: Install freenom-script
         run: sudo make install
       - name: Configure freenom-script email
