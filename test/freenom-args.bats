@@ -141,7 +141,7 @@ debug=0
   if [ "$debug" -eq 0 ]; then
     [ "$status" -eq 1 ]
     refute_output --partial "Error: Login token"
-    #assert_output --partial 'Error: Could not find -ID for "invalid-example-123.tk"'
+    #assert_output --partial 'Error: Could not find Domain ID for "invalid-example-123.tk"'
   else
     echo "# DEBUG: status=$status" >&3
     echo "# DEBUG: output=$output" >&3
