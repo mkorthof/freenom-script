@@ -150,7 +150,7 @@ The script uses 3 methods to get your current ip address from a number of public
 
 There are a few more HTTP and DNS services defined for redundancy, the script will choose one at random. By default it will retry to get the ip 3 times.
 
-Once your ip is found it's written to "freenom_\<domain\>.ml.ip4" (or 'ip6'). Same if freenom returns dnserror "There were no changes". This is to prevent unnecessary updates in case the ip is unchanged.
+Once your ip is found it's written to "freenom_\<domain\>.ip4" (or 'ip6'). Same if freenom returns dnserror "There were no changes". This is to prevent unnecessary updates in case the ip is unchanged.
 To force an update you can remove this file which is located in the default output path: "/var/log".
 
 To manually update: set `freenom_static_ip=<your ip>` and `freenom_update_manual="1"`, or use the `-m` option.
