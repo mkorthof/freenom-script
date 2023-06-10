@@ -6,6 +6,7 @@ It's possible to change the defaults included in freenom.conf:
 
 ``` bash
 freenom_http_retry="3"        # number of curl retries
+freenom_http_resolve="1"      # use curl --resolve my.freenom.com:443:<ip>
 freenom_update_force="0"      # [0/1] force ip update, even if unchanged
 freenom_update_ttl="3600"     # ttl in sec (changed from 14440 to 3600)
 freenom_update_ip_retry="3"   # number of retries to get ip

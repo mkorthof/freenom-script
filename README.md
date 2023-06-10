@@ -6,9 +6,9 @@
 
 ## Last Update ##
 
- Freenom recently added CAPTCHA from AWS WAF, causing this script to stop working (June 2023).
+⚠ Freenom recently added CAPTCHA from AWS WAF, causing this script to stop working (June 2023).
 
-***Latest version: v2022-12-17 ([CHANGES.md](CHANGES.md))***
+***Latest version: v2023-06-10 ([CHANGES.md](CHANGES.md))***
 
 **Make sure to add new config options when updating script**
 
@@ -159,7 +159,15 @@ To manually update: set `freenom_static_ip=<your ip>` and `freenom_update_manual
 
 ### Issues
 
-You need an actual freenom account, as Social Sign-in will not work. Workaround: use password reset, see [KB](https://my.freenom.com/knowledgebase.php?action=displayarticle&id=27) and issue [#56](https://github.com/mkorthof/freenom-script/issues/56).
+#### Timeout
+
+In case of dns issues where resolving does not work correctly and curl times out to https://my.freecom.com ('exit code 28'), try setting `freenom_http_resolve="1"`. This make sure curl uses Freenoms own public dns servers.
+
+#### Account
+
+You need an actual Freenom account, as using Social Sign-in will not work. Workaround: use password reset, see [KB](https://my.freenom.com/knowledgebase.php?action=displayarticle&id=27) and issue [#56](https://github.com/mkorthof/freenom-script/issues/56).
+
+#### Get ip
 
 Make sure 'curl' and/or 'dig' is installed (e.g. debian: dnsutils or redhat: bind-utils). In case of issues try running curl and dig command manually.
 
