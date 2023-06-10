@@ -204,7 +204,7 @@ fi
 
 # Make sure 'my.freenom.com' resolves correctly
 if [ "${freenom_http_resolve:-0}" -eq 1 ]; then
-  if curl --max-time 10 --dns-servers $curlDns my.freenom.com >/dev/null 2>&1; then
+  if curl --max-time 10 --dns-servers "$curlDns" my.freenom.com >/dev/null 2>&1; then
     curlExtraOpts+=" --dns-servers $curlDns"
   else
     for ((i = 0; i < ${#resolveCmd[@]}; i++)); do
