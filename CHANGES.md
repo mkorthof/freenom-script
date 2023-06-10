@@ -2,6 +2,14 @@
 
 _order: latest/newest on top_
 
+- [**20230610**] added env var AWS_WAF_TOKEN ([#66](https://github.com/mkorthof/freenom-script/issues/66) [#67](https://github.com/mkorthof/freenom-script/issues/67))
+- [**20221224**] added option to make curl use public freenom dns
+  - **config changes:**
+    - `curlDns="80.80.80.80,80.80.81.81"`
+    - `resolveCmd+=("dig +short @80.80.80.80 my.freenom.com")`
+    - `resolveCmd+=("nslookup my.freenom.com 80.80.80.80")`
+    - `resolveCmd+=("host my.freenom.com 80.80.80.80")`
+    - renamed var `c_exOpts` to `curlExtraOpts`
 - [**20221217**] fixed grep3.8 warnings (PR [#63](https://github.com/mkorthof/freenom-script/pull/63) from aleksav013)
 - [**20220812**] added bash/busybox check, log login errors
 - [**20220806**] add docker image ([#57](https://github.com/mkorthof/freenom-script/issues/57))
