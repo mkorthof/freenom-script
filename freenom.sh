@@ -217,6 +217,22 @@ if [ "${freenom_http_resolve:-0}" -eq 1 ]; then
   fi
 fi
 
+# AWS WAF CAPTCHA token. To manually get it from browser:
+# goto my.freenom.com, solve captcha puzzle and copy cookie (valid 3 mins)
+if [ -n "$AWS_WAF_TOKEN" ]; then
+  AWS_WAF_TOKEN="${AWS_WAF_TOKEN#aws-waf-token?} )"
+  if echo "$AWS_WAF_TOKEN" | grep -Eq '[0-9a-f-]{36}:[A-Za-z0-9+/]{16}:[A-Za-z0-9+/]{227}='; then
+    curlExtraOpts+=" -b aws-waf-token=$AWS_WAF_TOKEN "
+  else
+    echo "Error: Incorrect AWS WAF CAPTCHA token"
+    exit 1
+  fi
+else
+  _wmsg="Warning: Missing AWS WAF CAPTCHA token"
+  echo "$_wmsg (\$AWS_WAF_TOKEN not set)"
+  echo -e "[$(date)] [$$] $_wmsg" >>"${out_path}.log"
+fi
+
 #############
 # Functions #
 #############
