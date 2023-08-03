@@ -8,7 +8,7 @@
 
 ⚠ Freenom recently added CAPTCHA from AWS WAF, causing this script to stop working (June 2023).
 
-***Latest version: v2023-06-10 ([CHANGES.md](CHANGES.md))***
+***Latest version: v2023-08-03 ([CHANGES.md](CHANGES.md))***
 
 **Make sure to add new config options when updating script**
 
