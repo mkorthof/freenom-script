@@ -107,8 +107,11 @@ ifneq ("$(wildcard $(CRONDIR)/freenom)","")
 	$(shell rm $(CRONDIR)/freenom)
 endif
 
+LABEL = \nLABEL org.opencontainers.image.source="https://github.com/mkorthof/freenom-script" \
+		\nLABEL org.opencontainers.image.description="Domain Renewal and DynDNS for Freenom.com"
 define DOCKERFILE_DEBIAN
-FROM debian:stable-slim
+FROM debian:stable-slim \
+$(if $(CI), $(LABEL))
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBCONF_NOWARNINGS="yes"
 COPY freenom.sh /usr/local/bin/
@@ -118,7 +121,8 @@ USER nobody
 ENTRYPOINT [ "/usr/local/bin/freenom.sh" ]
 endef
 define DOCKERFILE_ALPINE
-FROM alpine:latest
+FROM alpine:latest \
+$(if $(CI), $(LABEL))
 COPY freenom.sh /usr/local/bin/
 COPY freenom.conf /usr/local/etc/
 RUN apk update && apk add --no-cache bash curl ca-certificates bind-tools
