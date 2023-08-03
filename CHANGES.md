@@ -2,7 +2,8 @@
 
 _order: latest/newest on top_
 
-- [**20230610**] added env var AWS_WAF_TOKEN ([#66](https://github.com/mkorthof/freenom-script/issues/66) [#67](https://github.com/mkorthof/freenom-script/issues/67))
+- [**20230803**] fix aws token vaidation  ([#68](https://github.com/mkorthof/freenom-script/issues/66))
+- [**20230610**] added env var AWS_WAF_TOKEN ([#66](https://github.com/mkorthof/freenom-script/issues/66))
 - [**20221224**] added option to make curl use public freenom dns
   - **config changes:**
     - `curlDns="80.80.80.80,80.80.81.81"`
