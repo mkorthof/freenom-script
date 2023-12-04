@@ -6,6 +6,8 @@
 
 ## Last Update ##
 
+⚠ Ordering new domains from Freenom is no longer possible (October 2023).
+
 ⚠ Freenom recently added CAPTCHA from AWS WAF, causing this script to stop working (June 2023).
 
 ***Latest version: v2023-08-03 ([CHANGES.md](CHANGES.md))***
