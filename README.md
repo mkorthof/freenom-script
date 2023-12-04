@@ -6,7 +6,7 @@
 
 ## Last Update ##
 
-⚠ Ordering new domains from Freenom is no longer possible (October 2023).
+⚠ As it seems Freenom is no longer able to manage any of their ccTLDs .tk .cf .ga etc and lost their ICANN accreditation for gTLDs, this really is the end  (December 2023).
 
 ⚠ Freenom recently added CAPTCHA from AWS WAF, causing this script to stop working (June 2023).
 
